@@ -41,7 +41,7 @@ bool CreateTMBModel() {
 
 RCPP_EXPOSED_CLASS(Parameter)
 RCPP_MODULE(fims) {
-  Rcpp::function("CreateTMBModel", &CreateTMBModel);
+ // Rcpp::function("CreateTMBModel", &CreateTMBModel);
 
   Rcpp::class_<Parameter>("Parameter")
       .constructor()

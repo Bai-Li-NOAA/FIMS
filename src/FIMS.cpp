@@ -13,6 +13,8 @@ template<class Type>
 Type objective_function<Type>::operator()() {
 
 
+    CreateTMBModel<Type>();
+    
     PARAMETER_VECTOR(p);
 
     Type nll = 0;

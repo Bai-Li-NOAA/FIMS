@@ -78,7 +78,7 @@ public:
     }
 
     template<typename Type>
-    virtual bool add_to_fims_tmb() {
+     bool add_to_fims_tmb() {
         std::shared_ptr<fims::Information<Type> > d0 =
                 fims::Information<Type>::GetInstance();
 

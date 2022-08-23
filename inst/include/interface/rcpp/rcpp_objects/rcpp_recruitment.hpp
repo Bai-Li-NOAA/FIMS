@@ -70,7 +70,7 @@ public:
     /** @brief this adds the parameter values and derivatives to the TMB model
      * object */
     template<typename Type>
-    virtual bool add_to_fims_tmb() {
+     bool add_to_fims_tmb() {
         // base model
         std::shared_ptr<fims::Information<Type> > d0 =
                 fims::Information<Type>::GetInstance();

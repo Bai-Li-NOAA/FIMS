@@ -106,7 +106,7 @@ class EWAAGrowthInterface : public GrowthInterfaceBase {
 
   /** @brief this adds the values to the TMB model object */
   template< typename Type>
-  virtual bool add_to_fims_tmb() {
+  bool add_to_fims_tmb() {
     // base model
     std::shared_ptr<fims::Information<Type> > d0 =
         fims::Information<Type>::GetInstance();

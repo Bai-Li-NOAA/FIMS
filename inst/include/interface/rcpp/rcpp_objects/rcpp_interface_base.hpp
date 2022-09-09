@@ -61,14 +61,14 @@ class Parameter {
    * @brief Constructor for initializing Parameter.
    * @details Inputs include value, min, max, estimated.
    */
-  Parameter(double value, double min, double max, bool estimated)
-      : value(value), min(min), max(max), estimated(estimated) {}
+  Parameter(double value_, double min_, double max_, bool estimated_)
+      : value(value_), min(min_), max(max_), estimated(estimated_) {}
 
   /**
    * @brief Constructor for initializing Parameter.
    * @details Inputs include value.
    */
-  Parameter(double value) { this->value = value; }
+  Parameter(double value_) { this->value = value_; }
 
   /**
    * @brief Constructor for initializing Parameter.

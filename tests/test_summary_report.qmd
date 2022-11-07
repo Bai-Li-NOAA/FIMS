@@ -1,0 +1,105 @@
+---
+title: "Fisheries Integrated Modeling System (FIMS) Testing Summary Report"
+date: "`r Sys.Date()`"
+number-sections: true
+crossref:
+  chapters: true
+  fig-title: Figure     
+  tbl-title: Table     
+  title-delim: .     
+format:
+   html:
+    fig-width: 8
+    fig-height: 4
+    code-fold: true     
+editor: visual
+
+---
+
+```{r}
+#| label: load-packages
+#| include: false
+
+required_pkg <- c("DiagrammeR", "here", "knitr")
+pkg_to_install <- required_pkg[!(required_pkg %in%
+                                   installed.packages()[, "Package"])]
+if (length(pkg_to_install)) install.packages(pkg_to_install)
+lapply(required_pkg, library, character.only = TRUE)
+
+library(DiagrammeR)
+```
+
+# FIMS testing framework {#sec-fims-testing-framework}
+
+FIMS testing framework includes various types of testing to make sure 
+that changes to FIMS code are working as expected. The current testing 
+frameworks include both functional and non-functional tests. Details of each type of test can be found in the @sec-testing-glossary: Testing glossary.
+
+```{r}
+#| label: fig-create-testing-types-diagram
+#| fig-cap: Types of FIMS tests.
+#| warning: false
+#| echo: false
+
+DiagrammeR::mermaid("
+graph LR
+  1[Testing Types]-->2[Functional Testing]
+  1-->3[Non-Functional Testing]
+  2-->2-1[Unit Testing]
+  2-->2-2[Integration Testing]
+  3-->3-1[Run-time Testing]
+  3-->3-2[Platform Compatibility Testing]
+  3-->3-3[One-off Testing]
+ 
+")
+
+```
+
+# Test summary{#sec-test-summary}
+
+```{r}
+#| label: tbl-create-test-coverage-table
+#| tbl-cap: Summary of unit and integration tests.
+#| warning: false
+#| echo: false
+
+ctest_files <- list.files(
+        path = here::here("tests", "gtest"), 
+        pattern = "test_"
+)
+rtest_files <- list.files(
+        path = here::here("tests", "testthat"),
+        pattern = "test-"
+)
+
+# library(testthat)
+# report <- covr::file_coverage(
+#         source_files = here::here("R", "use_module.R"), 
+#         test_files = here::here("tests", "testthat", "test-use-module.R"))
+#         report
+# test_summary_var <- c(
+#         "Test Type", 
+#         "Language",
+#         "Test Excuted", 
+#         "Test Passed",
+#         "Test Failed",
+#         "Code Coverage", 
+# )
+# test_summary_data <- data.frame(
+#         matrix(ncol = length(test_summary_var), 
+#                nrow = length(ctest_files)+length(rtest_files))
+# )
+# colnames(test_summary_data) <- test_summary_var
+# knitr::kable(test_summary_data)
+# codecov_data <- covr::package_coverage(
+#         path = ".", 
+#         type = "tests"
+# )
+
+```
+## Test type and purpose{#sec-test-type-and-purpose}
+## Key findings{#sec-key-findings}
+## Defects{#sec-defects}
+
+# Testing glossary{#sec-testing-glossary}
+## Unit testing

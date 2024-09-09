@@ -80,6 +80,26 @@ class AgeCompDataInterface : public DataInterfaceBase {
   /** @brief get the ID of the interface base object
    */
   virtual uint32_t get_id() { return this->id; }
+  
+  
+  virtual std::string to_json() {
+    std::stringstream ss;
+    
+    ss << "\"module\" : {\n";
+    ss << " \"name\": \"data\",\n";
+    ss << " \"type\" : \"AgeComp\",\n";
+    ss << " \"id\":" << this->id << ",\n";
+    ss << " \"rank\": " << 2 << ",\n";
+    ss << " \"dimensions\": [" << this->ymax << "," << this->amax << "],\n";
+    ss << " \"values\": [";
+    for (size_t i = 0; i < age_comp_data.size() - 1; i++) {
+      ss << age_comp_data[i] << ", ";
+    }
+    ss << age_comp_data[age_comp_data.size() - 1] << "]\n";
+    ss << "}";
+    return ss.str();
+  }
+  
 
 #ifdef TMB_MODEL
 
@@ -143,6 +163,25 @@ class IndexDataInterface : public DataInterfaceBase {
   /** @brief get the ID of the interface base object
    */
   virtual uint32_t get_id() { return this->id; }
+  
+  
+  virtual std::string to_json() {
+    std::stringstream ss;
+    
+    ss << "\"module\" : {\n";
+    ss << " \"name\": \"data\",\n";
+    ss << " \"type\": \"Index\",\n";
+    ss << " \"id\": " << this->id << ",\n";
+    ss << " \"rank\": " << 1 << ",\n";
+    ss << " \"dimensions\": [" << this->ymax << "],\n";
+    ss << " \"values\": [";
+    for (size_t i = 0; i < index_data.size() - 1; i++) {
+      ss << index_data[i] << ", ";
+    }
+    ss << index_data[index_data.size() - 1] << "]\n";
+    ss << "}";
+    return ss.str();
+  }
 
 #ifdef TMB_MODEL
 

@@ -126,7 +126,7 @@ namespace fims_popdy {
             mortality_Z.resize(nyears * nages);
             proportion_mature_at_age.resize((nyears + 1) * nages);
             proportion_female.resize(nages);
-            weight_at_age.resize(nages);
+            weight_at_age.resize(nyears * nages);
             unfished_numbers_at_age.resize((nyears + 1) * nages);
             biomass.resize((nyears + 1));
             unfished_biomass.resize((nyears + 1));
@@ -163,9 +163,11 @@ namespace fims_popdy {
 
             // Transformation Section
             for (size_t age = 0; age < this->nages; age++) {
-                this->weight_at_age[age] = growth->evaluate(ages[age]);
+
                 for (size_t year = 0; year < this->nyears; year++) {
+
                     size_t i_age_year = age * this->nyears + year;
+                    this->weight_at_age[i_age_year] = growth->evaluate(year, ages[age]);
                     this->M[i_age_year] = fims_math::exp(this->log_M[i_age_year]);
                     // mortality_F is a fims::Vector and therefore needs to be filled
                     // within a loop
@@ -267,7 +269,7 @@ namespace fims_popdy {
          */
         void CalculateBiomass(size_t i_age_year, size_t year, size_t age) {
             this->biomass[year] +=
-                    this->numbers_at_age[i_age_year] * this->weight_at_age[age];
+                    this->numbers_at_age[i_age_year] * this->weight_at_age[i_age_year];
         }
 
         /**
@@ -280,7 +282,7 @@ namespace fims_popdy {
          */
         void CalculateUnfishedBiomass(size_t i_age_year, size_t year, size_t age) {
             this->unfished_biomass[year] +=
-                    this->unfished_numbers_at_age[i_age_year] * this->weight_at_age[age];
+                    this->unfished_numbers_at_age[i_age_year] * this->weight_at_age[i_age_year];
         }
 
         /**
@@ -293,7 +295,7 @@ namespace fims_popdy {
         void CalculateSpawningBiomass(size_t i_age_year, size_t year, size_t age) {
             this->spawning_biomass[year] +=
                     this->proportion_female[age] * this->numbers_at_age[i_age_year] *
-                    this->proportion_mature_at_age[i_age_year] * this->weight_at_age[age];
+                    this->proportion_mature_at_age[i_age_year] * this->weight_at_age[i_age_year];
         }
 
         /**
@@ -309,7 +311,7 @@ namespace fims_popdy {
             this->unfished_spawning_biomass[year] +=
                     this->proportion_female[age] *
                     this->unfished_numbers_at_age[i_age_year] *
-                    this->proportion_mature_at_age[i_age_year] * this->weight_at_age[age];
+                    this->proportion_mature_at_age[i_age_year] * this->weight_at_age[i_age_year];
         }
 
         /**
@@ -322,12 +324,12 @@ namespace fims_popdy {
             Type phi_0 = 0.0;
             phi_0 += numbers_spr[0] * this->proportion_female[0] *
                     this->proportion_mature_at_age[0] *
-                    this->growth->evaluate(ages[0]);
+                    this->growth->evaluate(0, ages[0]);
             for (size_t a = 1; a < (this->nages - 1); a++) {
                 numbers_spr[a] = numbers_spr[a - 1] * fims_math::exp(-this->M[a]);
                 phi_0 += numbers_spr[a] * this->proportion_female[a] *
                         this->proportion_mature_at_age[a] *
-                        this->growth->evaluate(ages[a]);
+                        this->growth->evaluate(0, ages[a]);
             }
 
             numbers_spr[this->nages - 1] =
@@ -336,7 +338,7 @@ namespace fims_popdy {
             phi_0 += numbers_spr[this->nages - 1] *
                     this->proportion_female[this->nages - 1] *
                     this->proportion_mature_at_age[this->nages - 1] *
-                    this->growth->evaluate(ages[this->nages - 1]);
+                    this->growth->evaluate(0, ages[this->nages - 1]);
             return phi_0;
         }
 
@@ -402,12 +404,12 @@ namespace fims_popdy {
                 // I = qN (N is total numbers), I is an index in numbers
                 if (this->fleets[fleet_]->is_survey == false) {
                     index_ = this->fleets[fleet_]->catch_numbers_at_age[i_age_year] *
-                            this->weight_at_age[age];
+                            this->weight_at_age[i_age_year];
                 } else {
                     index_ = this->fleets[fleet_]->q.get_force_scalar(year) *
                             this->fleets[fleet_]->selectivity->evaluate(ages[age]) *
                             this->numbers_at_age[i_age_year] *
-                            this->weight_at_age[age]; // this->weight_at_age[age];
+                            this->weight_at_age[i_age_year]; // this->weight_at_age[age];
                 }
                 fleets[fleet_]->expected_index[year] += index_;
             }
@@ -459,7 +461,7 @@ namespace fims_popdy {
 
                 this->fleets[fleet_]->catch_weight_at_age[i_age_year] =
                         this->fleets[fleet_]->catch_numbers_at_age[i_age_year] *
-                        this->weight_at_age[age];
+                        this->weight_at_age[i_age_year];
 
             }
         }

@@ -59,7 +59,7 @@ public:
      * @brief A method for each child growth interface object to inherit so
      * each growth option can have an evaluate() function.
      */
-    virtual double evaluate(double age) = 0;
+    virtual double evaluate(int year, double age) = 0;
 };
 // static id of the GrowthInterfaceBase object
 uint32_t GrowthInterfaceBase::id_g = 1;
@@ -79,7 +79,7 @@ public:
     /**
      * @brief Weights (mt) for each age class.
      */
-    std::vector<double> weights;
+    Rcpp::NumericVector weights;
     /**
      * @brief Ages (years) for each age class.
      */
@@ -100,7 +100,7 @@ public:
     EWAAGrowthInterface() : GrowthInterfaceBase() {
     }
 
-    EWAAGrowthInterface(int nyears, std::vector<double> ages, std::vector<double> weights) :
+    EWAAGrowthInterface(int nyears, std::vector<double> ages, Rcpp::NumericVector weights) :
     GrowthInterfaceBase(), nyears(nyears), weights(weights), ages(ages) {
         this->set_ewaa(this->nyears, this->ages.size(), weights);
         this->initialized = true;
@@ -113,11 +113,11 @@ public:
     }
 
     void set_ewaa(int nyears, int nages, Rcpp::NumericVector weights) {
-        if (weights.size() != (nyear * nages)) {
+        if (weights.size() != (nyears * nages)) {
             FIMS_ERROR_LOG("weights vector not equal to nyears*nages");
         } else {
             int index = 0;
-            for (int i = 0 i < nyears; i++) {
+            for (int i = 0; i < nyears; i++) {
                 for (int j = 0; j < nages; j++) {
                     this->ewaa[i][ages[j]] = weights[index];
                     index++;
@@ -158,18 +158,18 @@ public:
     virtual double evaluate(int year, double age) {
         fims_popdy::EWAAgrowth<double> EWAAGrowth;
 
-        if (initialized == false) {
-            this->ewaa = make_map(this->ages, this->weights);
-            // Check that ages and weights vector are the same length
-            if (this->ages.size() != this->weights.size()) {
-                Rcpp::stop("ages and weights must be the same length");
-            }
-            initialized = true;
-        } else {
-            Rcpp::stop("this empirical weight at age object is already initialized");
-        }
+//        if (initialized == false) {
+//            this->ewaa = make_map(this->ages, this->weights);
+//            // Check that ages and weights vector are the same length
+//            if (this->ages.size() != this->weights.size()) {
+//                Rcpp::stop("ages and weights must be the same length");
+//            }
+//            initialized = true;
+//        } else {
+//            Rcpp::stop("this empirical weight at age object is already initialized");
+//        }
         EWAAGrowth.ewaa = this->ewaa;
-        return EWAAGrowth.evaluate(age);
+        return EWAAGrowth.evaluate(0,age);
     }
 
     /**
@@ -215,7 +215,7 @@ public:
 
         // set relative info
         ewaa_growth->id = this->id;
-        ewaa_growth->ewaa = make_map(this->ages, this->weights); // this->ewaa;
+        ewaa_growth->ewaa = this->ewaa;
         // add to Information
         info->growth_models[ewaa_growth->id] = ewaa_growth;
 

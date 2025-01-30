@@ -83,7 +83,7 @@ public:
     /**
      * @brief Ages (years) for each age class.
      */
-    std::vector<double> ages;
+    Rcpp::NumericVector ages;
     /**
      * @brief A map of empirical weight-at-age values. TODO: describe this
      * parameter better.
@@ -100,9 +100,10 @@ public:
     EWAAGrowthInterface() : GrowthInterfaceBase() {
     }
 
-    EWAAGrowthInterface(int nyears, std::vector<double> ages, Rcpp::NumericVector weights) :
+    EWAAGrowthInterface(int nyears, Rcpp::NumericVector ages, Rcpp::NumericVector weights) :
     GrowthInterfaceBase(), nyears(nyears), weights(weights), ages(ages) {
-        this->set_ewaa(this->nyears, this->ages.size(), weights);
+        
+        this->set_ewaa(this->nyears, ages.size(), weights);
         this->initialized = true;
     }
 
@@ -114,7 +115,10 @@ public:
 
     void set_ewaa(int nyears, int nages, Rcpp::NumericVector weights) {
         if (weights.size() != (nyears * nages)) {
-            FIMS_ERROR_LOG("weights vector not equal to nyears*nages");
+            
+            std::stringstream ss;
+            ss<<"weights vector not equal to nyears*nages, "<<weights.size() <<" != "<<(nyears*nages);
+            FIMS_ERROR_LOG(ss.str().c_str());
         } else {
             int index = 0;
             for (int i = 0; i < nyears; i++) {
@@ -169,7 +173,7 @@ public:
 //            Rcpp::stop("this empirical weight at age object is already initialized");
 //        }
         EWAAGrowth.ewaa = this->ewaa;
-        return EWAAGrowth.evaluate(0,age);
+        return EWAAGrowth.evaluate(year,age);
     }
 
     /**

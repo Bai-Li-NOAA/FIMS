@@ -808,10 +808,11 @@ RCPP_MODULE(fims) {
 
     Rcpp::class_<EWAAGrowthInterface>("EWAAgrowth")
             .constructor()
-            .constructor<int,Rcpp::NumericVector,Rcpp::NumericVector>()
+            .constructor<int, Rcpp::NumericVector, Rcpp::NumericVector>()
             .field("ages", &EWAAGrowthInterface::ages, "Ages for each age class.")
             .field("weights", &EWAAGrowthInterface::weights, "Weights for each age class.")
             .method("get_id", &EWAAGrowthInterface::get_id)
+            .method("set_ewaa", &EWAAGrowthInterface::set_ewaa)
             .method("evaluate", &EWAAGrowthInterface::evaluate);
 
     Rcpp::class_<DnormDistributionsInterface>("DnormDistribution")

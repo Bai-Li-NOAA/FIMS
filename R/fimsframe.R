@@ -412,7 +412,8 @@ methods::setMethod(
         value = ifelse(value == -999, NA, value)
       ) |>
       dplyr::summarize(mean_value = mean(.data[["value"]], na.rm = TRUE)) |>
-      dplyr::pull(.data[["mean_value"]])
+      dplyr::pull(.data[["mean_value"]]) |>
+      rep(get_n_years(x))
   }
 )
 #' @rdname m_

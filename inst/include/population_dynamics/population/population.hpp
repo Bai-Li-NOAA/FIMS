@@ -204,7 +204,7 @@ namespace fims_popdy {
                     this->mortality_F[i_age_year] +=
                             this->fleets[fleet_]->Fmort[year] *
                             // evaluate is a member function of the selectivity class
-                            this->fleets[fleet_]->selectivity->evaluate(ages[age]);
+                            this->fleets[fleet_]->selectivity->evaluate(ages[age], year);
 
                 }
             }

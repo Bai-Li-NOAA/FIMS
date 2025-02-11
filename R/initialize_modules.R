@@ -882,5 +882,12 @@ set_param_vector <- function(field, module, module_input) {
   }
 
   # Set the estimation information for the entire parameter vector
-  module[[field]]$set_all_estimable(module_input[[field_estimated_name]])
+  if (length(module_input[[field_estimated_name]]) == 1) {
+    module[[field]]$set_all_estimable(module_input[[field_estimated_name]])
+  } else {
+    for (i in seq_along(module_input[[field_estimated_name]])) {
+      module[[field]][i][["estimated"]] <-
+        module_input[[field_estimated_name]][i]
+    }
+  }
 }

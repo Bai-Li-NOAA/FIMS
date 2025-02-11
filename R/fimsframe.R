@@ -403,17 +403,12 @@ methods::setMethod(
   "m_weight_at_age",
   "FIMSFrame",
   function(x) {
+    # TODO: What to do when there are -999?
     dplyr::filter(
       .data = as.data.frame(x@data),
       .data[["type"]] == "weight-at-age"
     ) |>
-      dplyr::group_by(.data[["age"]]) |>
-      dplyr::mutate(
-        value = ifelse(value == -999, NA, value)
-      ) |>
-      dplyr::summarize(mean_value = mean(.data[["value"]], na.rm = TRUE)) |>
-      dplyr::pull(.data[["mean_value"]]) |>
-      rep(get_n_years(x))
+      dplyr::pull(.data[["value"]])
   }
 )
 #' @rdname m_

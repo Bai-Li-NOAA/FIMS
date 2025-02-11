@@ -809,8 +809,9 @@ RCPP_MODULE(fims) {
     Rcpp::class_<EWAAGrowthInterface>("EWAAgrowth")
             .constructor()
             .constructor<int, Rcpp::NumericVector, Rcpp::NumericVector>()
+            .field("nyears", &EWAAGrowthInterface::nyears, "The number of years in the model.")
             .field("ages", &EWAAGrowthInterface::ages, "Ages for each age class.")
-            .field("weights", &EWAAGrowthInterface::weights, "Weights for each age class.")
+            .field("weights", &EWAAGrowthInterface::weights, "Weights for each age class by each year, e.g., year-1 age-1, year-1 age-2, ...")
             .method("get_id", &EWAAGrowthInterface::get_id)
             .method("set_ewaa", &EWAAGrowthInterface::set_ewaa)
             .method("evaluate", &EWAAGrowthInterface::evaluate);

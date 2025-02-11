@@ -70,6 +70,16 @@ initialize_module <- function(parameters, data, module_name) {
   module <- methods::new(module_class)
   module_input <- parameters[["parameters"]][[module_name]]
 
+  if (module_class_name == "EWAAgrowth") {
+    module <- methods::new(
+      EWAAgrowth,
+      get_n_years(data),
+      get_ages(data),
+      m_weight_at_age(data)
+    )
+    return(module)
+  }
+
   if (module_class_name == "Fleet") {
     module_fields <- setdiff(module_fields, c(
       "log_expected_index",

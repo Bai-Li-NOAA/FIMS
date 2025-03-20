@@ -87,6 +87,10 @@ public:
         }
     }
 
+    Vector(std::initializer_list<Type> list){
+        this->vec_m = list;
+    }
+    
     /**
      * @brief Initialization constructor from std::vector<Type> type.
      */

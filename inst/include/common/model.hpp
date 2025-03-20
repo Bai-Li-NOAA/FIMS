@@ -153,6 +153,17 @@ namespace fims_model {
                 p->Evaluate();
             }
 
+            typename fims_info::Information<Type>::model_map_iterator m_it;
+
+            for (m_it = this->fims_information->models_map.begin(); m_it !=
+                    this->fims_information->models_map.end(); ++m_it) {
+                std::shared_ptr<fims_popdy::FisheryModelBase<Type> > m = (*m_it).second;
+                m->Prepare();
+                m->Evaluate();
+            }
+        
+
+
             typename fims_info::Information<Type>::fleet_iterator f_it;
             // Loop over fleets/surveys, and evaluate age comp and index expected values
             for (f_it = this->fims_information->fleets.begin();

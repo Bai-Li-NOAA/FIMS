@@ -1,3 +1,5 @@
+#ifndef FIMS_UTILITIES_FIMS_JSON_HPP
+#define FIMS_UTILITIES_FIMS_JSON_HPP
 /**
  * @file fims_json.hpp
  * @brief A simple JSON parsing and generation library.
@@ -534,3 +536,5 @@ namespace fims {
         }
     }
 }
+
+#endif

@@ -82,6 +82,10 @@ namespace fims_popdy {
         fims::Vector<Type> catch_weight_at_age; /*!<model expected weight at age*/
         bool is_survey = false; /*!< is this fleet object a survey*/
 
+        std::map<std::string, fims::Vector<Type> > derived_quantities; /*!< derived quantities for specific model type, i.e. caa, surplus production, etc */
+        typedef typename std::map<std::string, fims::Vector<Type> >::iterator derived_quantities_iterator;
+
+
 #ifdef TMB_MODEL
         ::objective_function<Type> *of;
 #endif

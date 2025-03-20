@@ -89,6 +89,7 @@ namespace fims_popdy {
 
         // fleet
         int fleet_id = -999; /*!< id of fleet model object*/
+        std::set<uint32_t> fleet_ids;
         std::vector<std::shared_ptr<fims_popdy::Fleet<Type>>>
         fleets; /*!< shared pointer to fleet module */
 
@@ -100,6 +101,9 @@ namespace fims_popdy {
         // available anywhere in the R package
 #endif
 
+
+        std::map<std::string, fims::Vector<Type> > derived_quantities; /*!< derived quantities for specific model type, i.e. caa, surplus production, etc */
+        typedef typename std::map<std::string, fims::Vector<Type> >::iterator derived_quantities_iterator;
         // this -> means you're referring to a class member (member of self)
 
         Population() {
@@ -122,6 +126,8 @@ namespace fims_popdy {
             nfleets = fleets.size();
             expected_catch.resize(nyears * nfleets);
             years.resize(nyears);
+            numbers_at_age.resize((this->nyears + 1) *
+                    this->nages);
             mortality_F.resize(nyears * nages);
             mortality_Z.resize(nyears * nages);
             proportion_mature_at_age.resize((nyears + 1) * nages);

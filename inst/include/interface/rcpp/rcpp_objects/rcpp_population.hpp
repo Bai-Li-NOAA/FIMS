@@ -78,6 +78,15 @@ class PopulationInterface : public PopulationInterfaceBase {
    * @brief The number of age bins.
    */
   SharedInt nages;
+
+  /**
+   * list of fleets that operate on this population.
+   */
+  std::set<uint32_t> fleet_ids;
+  /**
+   * Iterator for fleet ids.
+   */
+  typedef typename std::set<uint32_t>::iterator fleet_ids_iterator;
   /**
    * @brief The number of fleets.
    */
@@ -207,6 +216,16 @@ class PopulationInterface : public PopulationInterfaceBase {
   }
 
   /**
+   * @brief Add a fleet id to the list of fleets
+   * operating on this population.
+   * @param Unique ID for a fleet.
+   */
+  void AddFleet(uint32_t fleet_id)
+  {
+    this->fleet_ids.insert(fleet_id);
+  }
+
+  /**
    * @brief Evaluate the population function.
    */
   virtual void evaluate() {
@@ -300,7 +319,7 @@ class PopulationInterface : public PopulationInterfaceBase {
    */ 
   virtual std::string to_json() {
     std::stringstream ss;
-
+   //ToDo: add list of fleet ids operating on this population
     ss << "{\n";
     ss << " \"name\" : \"Population\",\n";
 
@@ -394,7 +413,7 @@ class PopulationInterface : public PopulationInterfaceBase {
     // set relative info
     population->id = this->id;
     population->nyears = this->nyears.get();
-    population->nfleets = this->nfleets.get();
+    population->nfleets = this->fleet_ids.size();
     population->nseasons = this->nseasons.get();
     population->nages = this->nages.get();
     if (this->nages.get() == this->ages.size()) {
@@ -431,6 +450,11 @@ class PopulationInterface : public PopulationInterfaceBase {
 
     population->numbers_at_age.resize((nyears + 1) * nages);
     info->variable_map[this->numbers_at_age.id_m] = &(population)->numbers_at_age;
+
+    for (fleet_ids_iterator it = this->fleet_ids.begin(); it != this->fleet_ids.end(); ++it)
+    {
+      population->fleet_ids.insert(*it);
+    }
 
     // add to Information
     info->populations[population->id] = population;

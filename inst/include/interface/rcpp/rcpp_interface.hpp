@@ -19,6 +19,7 @@
 #include "rcpp_objects/rcpp_recruitment.hpp"
 #include "rcpp_objects/rcpp_selectivity.hpp"
 #include "rcpp_objects/rcpp_distribution.hpp"
+#include "rcpp_objects/rcpp_models.hpp"
 #include "../../utilities/fims_json.hpp"
 #include "../rcpp/rcpp_objects/rcpp_interface_base.hpp"
 
@@ -651,6 +652,7 @@ RCPP_MODULE(fims) {
       .method("GetObservedLengthCompDataID", &FleetInterface::GetObservedLengthCompDataID)
       .method("SetObservedIndexData", &FleetInterface::SetObservedIndexData)
       .method("GetObservedIndexDataID", &FleetInterface::GetObservedIndexDataID)
+      .method("get_id", &FleetInterface::get_id)
       .method("SetSelectivity", &FleetInterface::SetSelectivity);
 
     Rcpp::class_<AgeCompDataInterface>("AgeComp")
@@ -683,6 +685,7 @@ RCPP_MODULE(fims) {
             .method("SetMaturity", &PopulationInterface::SetMaturity, "Set the unique id for the Maturity object")
             .method("SetGrowth", &PopulationInterface::SetGrowth, "Set the unique id for the growth object")
             .method("SetRecruitment", &PopulationInterface::SetRecruitment, "Set the unique id for the Recruitment object")
+            .method("AddFleet", &PopulationInterface::AddFleet, "Set a unique fleet id to the list of fleets operating on this population")
             .method("evaluate", &PopulationInterface::evaluate, "evaluate the population function");
 
     Rcpp::class_<LogisticMaturityInterface>("LogisticMaturity")
@@ -764,6 +767,11 @@ RCPP_MODULE(fims) {
         .field("x", &DmultinomDistributionsInterface::x, "Input for distribution when not observations, e.g., prior or random effect.")
         .field("expected_values", &DmultinomDistributionsInterface::expected_values, "numeric non-negative vector of length K, specifying the probability for the K classes.")
         .field("dims", &DmultinomDistributionsInterface::dims, "dimension of the multivariate input, e.g., c(num rows, num cols).");
+
+    Rcpp::class_<CatchAtAgeInterface>("CatchAtAge")
+            .constructor()
+            .method("AddPopulation", &CatchAtAgeInterface::AddPopulation)
+            .method("Show", &CatchAtAgeInterface::Show);
 }
 
 #endif /* RCPP_INTERFACE_HPP */

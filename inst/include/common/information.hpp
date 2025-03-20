@@ -20,6 +20,7 @@
 #include "../population_dynamics/population/population.hpp"
 #include "../population_dynamics/recruitment/recruitment.hpp"
 #include "../population_dynamics/selectivity/selectivity.hpp"
+#include "../models/fisheries_models.hpp"
 #include "def.hpp"
 #include "fims_vector.hpp"
 #include "model_object.hpp"
@@ -53,6 +54,13 @@ namespace fims_info {
         typedef typename std::map<
         uint32_t, std::shared_ptr<fims_data_object::DataObject<Type> > >::iterator
         data_iterator; /**< iterator for the data objects */
+
+        //        // model objects
+        //        std::map<uint32_t, std::shared_ptr<fims_popdy::FisheryModelBase<Type> > >
+        //        model_objects; /**< map that holds data objects >*/
+        //        typedef typename std::map<
+        //        uint32_t, std::shared_ptr<fims_popdy::FisheryModelBase<Type> > >::iterator
+        //        models_iterator; /**< iterator for the data objects */
 
         // life history modules
         std::map<uint32_t, std::shared_ptr<fims_popdy::RecruitmentBase<Type> > >
@@ -117,11 +125,19 @@ namespace fims_info {
         density_components_iterator;
         /**< iterator for distribution objects>*/
 
-        std::unordered_map<uint32_t, fims::Vector<Type>* >
-        variable_map; /**<hash map to link a parameter, derived value, or observation
-                        to its shared location in memory */
-        typedef typename std::unordered_map<uint32_t, fims::Vector<Type>* >::iterator
-        variable_map_iterator; /**< iterator for variable map>*/
+        std::unordered_map<uint32_t,
+                           std::shared_ptr<fims_popdy::FisheryModelBase<Type>>>
+            models_map; /**<hash map of fishery models, eg. CAA, GMACS, Spatial, etc*/
+
+        typedef typename std::unordered_map<uint32_t,
+                                            std::shared_ptr<fims_popdy::FisheryModelBase<Type>>>::iterator
+            model_map_iterator; /**< iterator for variable map>*/
+
+        std::unordered_map<uint32_t, fims::Vector<Type> *>
+            variable_map; /**<hash map to link a parameter, derived value, or observation
+                            to its shared location in memory */
+        typedef typename std::unordered_map<uint32_t, fims::Vector<Type> *>::iterator
+            variable_map_iterator; /**< iterator for variable map>*/
 
         Information() {
         }
@@ -499,6 +515,36 @@ namespace fims_info {
             }
         }
 
+        void CreateModelingObjects(bool &valid_model)
+        {
+            for (model_map_iterator it = this->models_map.begin();
+                 it != this->models_map.end(); ++it)
+            {
+
+                std::shared_ptr<fims_popdy::FisheryModelBase<Type>> &model =
+                    (*it).second;
+                std::set<uint32_t>::iterator jt;
+
+                for (jt = model->population_ids.begin();
+                     jt != model->population_ids.end(); ++jt)
+                {
+
+                    population_iterator pt = this->populations.find((*jt));
+
+                    if (pt != this->populations.end())
+                    {
+                        model->populations.push_back((*pt).second);
+                    }
+                    else
+                    {
+                        valid_model = false;
+                        FIMS_ERROR_LOG("No population object defined for model " + fims::to_string(model->GetId()));
+                    }
+                }
+                model->Initialize();
+            }
+        }
+
         /**
          * @brief Loop over all fleets and set pointers to fleet objects
          * 
@@ -570,18 +616,35 @@ namespace fims_info {
                 std::shared_ptr<fims_popdy::Population<Type> > p = (*it).second;
 
                 FIMS_INFO_LOG("Initializing population " + fims::to_string(p->id));
-                // error check and set population elements
-                // check me - add another fleet iterator to push information from
-                for (fleet_iterator it = this->fleets.begin(); it != this->fleets.end();
-                        ++it) {
-                    // Initialize fleet object
-                    std::shared_ptr<fims_popdy::Fleet<Type> > f = (*it).second;
-                    // population to the individual fleets This is to pass catch at age
-                    // from population to fleets?
-                    // any shared member in p (population is pushed into fleets)
-                    p->fleets.push_back(f);
-                }
 
+                typename std::set<uint32_t>::iterator fleet_ids_it;
+
+                for (fleet_ids_it = p->fleet_ids.begin();
+                     fleet_ids_it != p->fleet_ids.end(); ++fleet_ids_it)
+                {
+                    // error check and set population elements
+                    // check me - add another fleet iterator to push information from
+                    //  for (fleet_iterator it = this->fleets.begin(); it != this->fleets.end();
+                    //        ++it) {
+
+                    fleet_iterator it = this->fleets.find(*fleet_ids_it);
+
+                    if (it != this->fleets.end())
+                    {
+
+                        // Initialize fleet object
+                        std::shared_ptr<fims_popdy::Fleet<Type>> f = (*it).second;
+                        // population to the individual fleets This is to pass catch at age
+                        // from population to fleets?
+                        // any shared member in p (population is pushed into fleets)
+                        p->fleets.push_back(f);
+                    }
+                    else
+                    {
+                        valid_model = false;
+                        FIMS_ERROR_LOG("Fleet \"" + fims::to_string(*fleet_ids_it )+"\" undefined, not found for Population \"" + fims::to_string(p->id) + "\". ");
+                    }
+                }
                 p->Initialize(p->nyears, p->nseasons, p->nages);
 
                 //set information dimensions 
@@ -616,6 +679,8 @@ namespace fims_info {
             SetDataObjects(valid_model);
 
             CreatePopulationObjects(valid_model);
+
+            CreateModelingObjects(valid_model);
 
             //setup priors, random effect, and data density components
             SetupPriors();

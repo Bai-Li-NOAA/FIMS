@@ -54,6 +54,14 @@ namespace fims_model_object {
 
             return true;
         }
+        
+        virtual void Evaluate(){
+            
+        }
+        
+        void operator ()(){
+            this->Evaluate();
+        }
 
     };
 

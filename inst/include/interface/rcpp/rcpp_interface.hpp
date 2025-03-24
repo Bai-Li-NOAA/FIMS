@@ -770,7 +770,7 @@ RCPP_MODULE(fims) {
     Rcpp::class_<CatchAtAgeInterface>("CatchAtAge")
             .constructor()
             .method("AddPopulation", &CatchAtAgeInterface::AddPopulation)
-            .method("Show", &CatchAtAgeInterface::Show);
+            .method("get_output", &CatchAtAgeInterface::to_json);
 }
 
 #endif /* RCPP_INTERFACE_HPP */

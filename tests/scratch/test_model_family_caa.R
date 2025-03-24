@@ -1,6 +1,6 @@
 library(FIMS)
 library(minimizR)
-setwd("/Users/matthew.supernaw/FIMS-Testing/dev-model-families/FIMS/tests/scratch")
+setwd("/Users/matthew.supernaw/FIMS-Testing/dev-model-families/3_21_25/FIMS/tests/scratch")
 set_log_throw_on_error(TRUE)
 # Load operating model data for the current iteration
 load("../testthat/fixtures/integration_test_data.RData")
@@ -296,6 +296,8 @@ opt <- minimizR(obj[["par"]], # initial parameters values
 #     control = list(eval.max = 10000, iter.max = 10000, trace = 0)
 #   )
 
+global_ouput<-finalize(opt$par, obj$fn, obj$gr)
 # loop throught the derived quantities in population and print
-caa$Show()
+cat(caa$get_output())
+write(caa$get_output(), "caa.json")
 print(opt)

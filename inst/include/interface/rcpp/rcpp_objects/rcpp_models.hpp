@@ -123,6 +123,8 @@ public:
             pit = PopulationInterfaceBase::live_objects.find(pop_ids[p]);
             if (pit != PopulationInterfaceBase::live_objects.end())
             {
+                PopulationInterface* pop = (PopulationInterface*) (*pit).second.get();
+                fleet_ids.insert(pop->fleet_ids->begin(), pop->fleet_ids->end());
                 if (p == pop_ids.size() - 1)
                 {
                     ss << (*pit).second->to_json();

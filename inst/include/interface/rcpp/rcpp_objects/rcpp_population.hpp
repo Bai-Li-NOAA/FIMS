@@ -31,7 +31,7 @@ class PopulationInterfaceBase : public FIMSRcppInterfaceBase {
    * This is a live object, which is an object that has been created and lives
    * in memory.
    */
-  static std::map<uint32_t, PopulationInterfaceBase*> live_objects;
+  static std::map<uint32_t, std::shared_ptr<PopulationInterfaceBase> > live_objects;
 
   /**
    * @brief The constructor.
@@ -40,7 +40,7 @@ class PopulationInterfaceBase : public FIMSRcppInterfaceBase {
     this->id = PopulationInterfaceBase::id_g++;
     /* Create instance of map: key is id and value is pointer to
     PopulationInterfaceBase */
-    PopulationInterfaceBase::live_objects[this->id] = this;
+    
   }
 
   /**
@@ -65,7 +65,7 @@ class PopulationInterfaceBase : public FIMSRcppInterfaceBase {
 uint32_t PopulationInterfaceBase::id_g = 1;
 // local id of the PopulationInterfaceBase object map relating the ID of the
 // PopulationInterfaceBase to the PopulationInterfaceBase objects
-std::map<uint32_t, PopulationInterfaceBase*>
+std::map<uint32_t, std::shared_ptr<PopulationInterfaceBase> >
   PopulationInterfaceBase::live_objects;
 
 /**
@@ -169,7 +169,10 @@ class PopulationInterface : public PopulationInterfaceBase {
    * @brief The constructor.
    */
   PopulationInterface() : PopulationInterfaceBase() {
-    FIMSRcppInterfaceBase::fims_interface_objects.push_back(std::make_shared<PopulationInterface>(*this));
+
+    std::shared_ptr<PopulationInterface> population = std::make_shared<PopulationInterface>(*this);
+    FIMSRcppInterfaceBase::fims_interface_objects.push_back(population);
+    PopulationInterfaceBase::live_objects[this->id] = population;
   }
 
   /**

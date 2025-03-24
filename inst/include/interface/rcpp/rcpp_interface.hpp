@@ -447,7 +447,6 @@ RCPP_EXPOSED_CLASS(RealVector)
 RCPP_EXPOSED_CLASS(SharedInt)
 RCPP_EXPOSED_CLASS(SharedReal)
 RCPP_EXPOSED_CLASS(SharedBoolean)
-
 /**
  * @brief The `fims` Rcpp module construct, providing declarative code of what
  * the module exposes to R.

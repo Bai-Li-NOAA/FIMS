@@ -43,8 +43,8 @@ public:
      *
      * @param other
      */
-    FisheryModelInterfaceBase(const FisheryModelInterfaceBase& other) :
-    id(other.id) {
+    FisheryModelInterfaceBase(const FisheryModelInterfaceBase &other) : id(other.id)
+    {
     }
 
     /**
@@ -92,10 +92,10 @@ public:
 
         fims_popdy::CatchAtAge<double> *model = (fims_popdy::CatchAtAge<double> *)info->models_map[this->get_id()].get();
         //        model->Show();
-        std::cout << model->ToJSON(); // fims::JsonParser::PrettyFormatJSON(model->ToJSON());
+        std::cout << this->to_json(); // fims::JsonParser::PrettyFormatJSON(model->ToJSON());
 
         std::ofstream o("test.json");
-        o << model->ToJSON();
+        o << this->to_json();
         o.close();
     }
 
@@ -106,7 +106,7 @@ public:
     std::string to_json()
     {
 
-        // typename std::map<uint32_t, PopulationInterfaceBase *>::iterator pit;
+        typename std::map<uint32_t, std::shared_ptr<PopulationInterfaceBase>>::iterator pit;
         std::vector<uint32_t> pop_ids(this->population_ids.begin(), this->population_ids.end());
 
         std::stringstream ss;
@@ -120,22 +120,42 @@ public:
         for (size_t p = 0; p < pop_ids.size(); p++)
         {
 
-            // pit = PopulationInterfaceBase::live_objects.find(pop_ids[p]);
-            // if (pit != PopulationInterfaceBase::live_objects.end())
-            // {
-            //     // std::shared_ptr<PopulationInterfaceBase> pop =(*pit).second;
-            //     // fleet_ids.insert(pop->fleet_ids.begin(), pop->fleet_ids.end()); //insert ids into global list
-            // }
+            pit = PopulationInterfaceBase::live_objects.find(pop_ids[p]);
+            if (pit != PopulationInterfaceBase::live_objects.end())
+            {
+                if (p == pop_ids.size() - 1)
+                {
+                    ss << (*pit).second->to_json();
+                }
+                else
+                {
+                    ss << (*pit).second->to_json() << ",\n";
+                }
+            }
         }
 
         ss << "],\n";
         ss << "\"fleets\" : [\n";
-        // std::vector<uint32_t> fids(fleet_ids->fleet_ids.begin(); fleet_ids->fleets.end());
+        typename std::map<uint32_t, std::shared_ptr<FleetInterfaceBase>>::iterator fit;
+        // all fleets encapuslated in this model run
+        std::vector<uint32_t> fids(fleet_ids.begin(), fleet_ids.end());
         // // loop through fleets for this model
-        // for (size_t f = 0; f < fids.size(); f++)
-        // {
-        // }
-        
+        for (size_t f = 0; f < fids.size(); f++)
+        {
+            fit = FleetInterfaceBase::live_objects.find(fids[f]);
+            if (fit != FleetInterfaceBase::live_objects.end())
+            {
+                if (f == fids.size() - 1)
+                {
+                    ss << (*fit).second->to_json();
+                }
+                else
+                {
+                    ss << (*fit).second->to_json() << ",\n";
+                }
+            }
+        }
+
         ss << "]\n}";
 
         return fims::JsonParser::PrettyFormatJSON(ss.str());

@@ -1,4 +1,5 @@
 ## usethis namespace: start
+#' @export CatchAtAge
 #' @export AgeComp
 #' @export BevertonHoltRecruitment
 #' @export clear

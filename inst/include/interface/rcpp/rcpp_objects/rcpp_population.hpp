@@ -418,7 +418,8 @@ public:
 
     ss << "{\n";
     ss << "   \"name\": \"naa\",\n";
-    ss<<" \"dimensions\" : [["<<this->make_dimensions(1,this->nyears)<<"],["<<this->make_dimensions(this->ages[0],this->ages[this->ages.size()-1])<<"]],";
+    ss<<" \"dimensions\" : [["<<this->make_dimensions(1,this->nyears)<<"],["<<
+    this->make_dimensions(this->ages[0],this->ages[this->ages.size()-1], this->nyears)<<"]],";
     ss << "   \"values\":[";
     if (this->derived_naa.size() == 0)
     {

@@ -116,26 +116,34 @@ public:
         ss << "\"id\" : " << this->get_id() << ",\n";
         ss << "\"populations\" : [\n";
         // loop through populations for this model
-
+        std::vector<std::string> pop_strings;
         for (size_t p = 0; p < pop_ids.size(); p++)
         {
 
             pit = PopulationInterfaceBase::live_objects.find(pop_ids[p]);
             if (pit != PopulationInterfaceBase::live_objects.end())
             {
-                PopulationInterface* pop = (PopulationInterface*) (*pit).second.get();
+                PopulationInterface *pop = (PopulationInterface *)(*pit).second.get();
                 fleet_ids.insert(pop->fleet_ids->begin(), pop->fleet_ids->end());
-                if (p == pop_ids.size() - 1)
-                {
-                    ss << (*pit).second->to_json();
-                }
-                else
-                {
-                    ss << (*pit).second->to_json() << ",\n";
-                }
+                pop_strings.push_back((*pit).second->to_json());
+                // if (p == pop_ids.size() - 1)
+                // {
+                //     ss << (*pit).second->to_json();
+                // }
+                // else
+                // {
+                //     ss << (*pit).second->to_json() << ",\n";
+                // }
             }
         }
-
+        if (pop_strings.size() > 0)
+        {
+            for (size_t i = 0; i < pop_strings.size() - 1; i++)
+            {
+                ss << pop_strings[i] << ",\n";
+            }
+            ss << pop_strings[pop_strings.size() - 1] << "\n";
+        }
         ss << "],\n";
         ss << "\"fleets\" : [\n";
         typename std::map<uint32_t, std::shared_ptr<FleetInterfaceBase>>::iterator fit;

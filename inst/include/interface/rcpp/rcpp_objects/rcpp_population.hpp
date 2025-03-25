@@ -74,6 +74,26 @@ std::map<uint32_t, std::shared_ptr<PopulationInterfaceBase>>
  */
 class PopulationInterface : public PopulationInterfaceBase
 {
+
+  std::string make_dimensions(uint32_t start, uint32_t end, uint32_t rep = 1)
+  {
+    std::stringstream ss;
+  
+    for (size_t i = 0; i < rep; i++)
+    {
+      for (size_t j = start; j < end; j++)
+      {
+        ss<<j<<", ";
+      }
+      if(i<(rep-1)){
+        ss<<end<<", ";
+      }else{
+        ss<<end;
+      }
+    }
+    return ss.str();
+  }
+
 public:
   /**
    * @brief The number of age bins.
@@ -182,22 +202,21 @@ public:
    *
    * @param other
    */
-  PopulationInterface(const PopulationInterface &other) : 
-  PopulationInterfaceBase(other), nages(other.nages), 
-  nfleets(other.nfleets), nseasons(other.nseasons), 
-  nyears(other.nyears), nlengths(other.nlengths),
-  fleet_ids(other.fleet_ids),
-   maturity_id(other.maturity_id), 
-   growth_id(other.growth_id), 
-   recruitment_id(other.recruitment_id), 
-   log_M(other.log_M), log_init_naa(other.log_init_naa), 
-   numbers_at_age(other.numbers_at_age), ages(other.ages), 
-   derived_ssb(other.derived_ssb), derived_naa(other.derived_naa), 
-   derived_biomass(other.derived_biomass), 
-   derived_recruitment(other.derived_recruitment), 
-   estimated_log_M(other.estimated_log_M), 
-   estimated_log_init_naa(other.estimated_log_init_naa), 
-   name(other.name) {}
+  PopulationInterface(const PopulationInterface &other) : PopulationInterfaceBase(other), nages(other.nages),
+                                                          nfleets(other.nfleets), nseasons(other.nseasons),
+                                                          nyears(other.nyears), nlengths(other.nlengths),
+                                                          fleet_ids(other.fleet_ids),
+                                                          maturity_id(other.maturity_id),
+                                                          growth_id(other.growth_id),
+                                                          recruitment_id(other.recruitment_id),
+                                                          log_M(other.log_M), log_init_naa(other.log_init_naa),
+                                                          numbers_at_age(other.numbers_at_age), ages(other.ages),
+                                                          derived_ssb(other.derived_ssb), derived_naa(other.derived_naa),
+                                                          derived_biomass(other.derived_biomass),
+                                                          derived_recruitment(other.derived_recruitment),
+                                                          estimated_log_M(other.estimated_log_M),
+                                                          estimated_log_init_naa(other.estimated_log_init_naa),
+                                                          name(other.name) {}
 
   /**
    * @brief The destructor.
@@ -381,6 +400,7 @@ public:
 
     ss << " \"derived_quantities\": [{\n";
     ss << "  \"name\": \"ssb\",\n";
+    ss<<" \"dimensions\" : ["<<this->make_dimensions(1,this->nyears)<<"],";
     ss << "  \"values\":[";
     if (this->derived_ssb.size() == 0)
     {
@@ -398,6 +418,7 @@ public:
 
     ss << "{\n";
     ss << "   \"name\": \"naa\",\n";
+    ss<<" \"dimensions\" : [["<<this->make_dimensions(1,this->nyears)<<"],["<<this->make_dimensions(this->ages[0],this->ages[this->ages.size()-1])<<"]],";
     ss << "   \"values\":[";
     if (this->derived_naa.size() == 0)
     {
@@ -415,6 +436,7 @@ public:
 
     ss << "{\n";
     ss << "   \"name\": \"biomass\",\n";
+    ss<<" \"dimensions\" : ["<<this->make_dimensions(1,this->nyears)<<"],";
     ss << "   \"values\":[";
     if (this->derived_biomass.size() == 0)
     {
@@ -432,6 +454,7 @@ public:
 
     ss << "{\n";
     ss << "   \"name\": \"recruitment\",\n";
+    ss<<" \"dimensions\" : ["<<this->make_dimensions(1,this->nyears)<<"],";
     ss << "   \"values\":[";
     if (this->derived_recruitment.size() == 0)
     {

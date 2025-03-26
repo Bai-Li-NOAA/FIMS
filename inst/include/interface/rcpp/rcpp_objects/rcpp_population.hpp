@@ -400,7 +400,7 @@ public:
 
     ss << " \"derived_quantities\": [{\n";
     ss << "  \"name\": \"ssb\",\n";
-    ss<<" \"dimensions\" : ["<<this->make_dimensions(1,this->nyears)<<"],";
+    ss<<" \"dimensions\" : ["<<this->make_dimensions(1,this->nyears+1)<<"],";
     ss << "  \"values\":[";
     if (this->derived_ssb.size() == 0)
     {
@@ -419,7 +419,7 @@ public:
     ss << "{\n";
     ss << "   \"name\": \"naa\",\n";
     ss<<" \"dimensions\" : [["<<this->make_dimensions(1,this->nyears)<<"],["<<
-    this->make_dimensions(this->ages[0],this->ages[this->ages.size()-1], this->nyears)<<"]],";
+    this->make_dimensions(this->ages[0],this->ages[this->ages.size()-1], this->nyears+1)<<"]],";
     ss << "   \"values\":[";
     if (this->derived_naa.size() == 0)
     {
@@ -437,7 +437,7 @@ public:
 
     ss << "{\n";
     ss << "   \"name\": \"biomass\",\n";
-    ss<<" \"dimensions\" : ["<<this->make_dimensions(1,this->nyears)<<"],";
+    ss<<" \"dimensions\" : ["<<this->make_dimensions(1,this->nyears+1)<<"],";
     ss << "   \"values\":[";
     if (this->derived_biomass.size() == 0)
     {
@@ -455,7 +455,7 @@ public:
 
     ss << "{\n";
     ss << "   \"name\": \"recruitment\",\n";
-    ss<<" \"dimensions\" : ["<<this->make_dimensions(1,this->nyears)<<"],";
+    ss<<" \"dimensions\" : ["<<this->make_dimensions(1,this->nyears+1)<<"],";
     ss << "   \"values\":[";
     if (this->derived_recruitment.size() == 0)
     {

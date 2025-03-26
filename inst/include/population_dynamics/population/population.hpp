@@ -71,7 +71,9 @@ namespace fims_popdy {
         fims::Vector<Type> expected_numbers_at_age; /*!< Expected values: Numbers at
                                                 age (thousands?? millions??) */
         fims::Vector<Type> expected_catch; /*!< Expected values: Catch*/
+        fims::Vector<Type> observed_catch; /*!< Observed values: Catch*/
         fims::Vector<Type> expected_recruitment; /*!< Expected recruitment */
+        fims::Vector<Type> expected_depletion; /*!< Expected depletion */
         /// recruitment
         int recruitment_id = -999; /*!< id of recruitment model object*/
         std::shared_ptr<fims_popdy::RecruitmentBase<Type>>
@@ -92,6 +94,11 @@ namespace fims_popdy {
         std::set<uint32_t> fleet_ids;
         std::vector<std::shared_ptr<fims_popdy::Fleet<Type>>>
         fleets; /*!< shared pointer to fleet module */
+
+        // depletion
+        int depletion_id = -999; /*!< id of depletion model object*/
+        std::vector<std::shared_ptr<fims_popdy::DepletionBase<Type>>>
+        depletion; /*!< shared pointer to depletion module */
 
         // Define objective function object to be able to REPORT and ADREPORT
 

@@ -54,6 +54,11 @@ public:
     {
     }
 
+    virtual std::string to_json()
+    {
+        return "std::string to_json() not yet implemented.";
+    }
+
     /**
      * @brief Get the ID for the child fleet interface objects to inherit.
      */
@@ -103,7 +108,149 @@ public:
     {
     }
 
-    std::string to_json()
+    std::string population_to_json(const std::shared_ptr<PopulationInterface> &population_interface)
+    {
+
+        std::stringstream ss;
+
+        std::shared_ptr<fims_info::Information<double>> info =
+            fims_info::Information<double>::GetInstance();
+
+        typename fims_info::Information<double>::population_iterator pit;
+        pit = info->populations.find(population_interface->get_id());
+
+        if (pit != info->populations.end())
+        {
+
+            if (pit->second->derived_quantities.size() == 0)
+            {
+                std::cout << "something is wrong!";
+                exit(0);
+            }
+
+            fims::Vector<double> &derived_ssb = pit->second->derived_quantities["spawning_biomass"];
+            fims::Vector<double> &derived_naa = pit->second->derived_quantities["numbers_at_age"];
+            fims::Vector<double> &derived_biomass = pit->second->derived_quantities["biomass"];
+            fims::Vector<double> &derived_recruitment = pit->second->derived_quantities["recruitment"];
+
+           
+
+            // ToDo: add list of fleet ids operating on this population
+            ss << "{\n";
+            ss << " \"name\" : \"Population\",\n";
+
+            ss << " \"type\" : \"population\",\n";
+            ss << " \"tag\" : \"" << population_interface->name << "\",\n";
+            ss << " \"id\": " << population_interface->id << ",\n";
+            ss << " \"recruitment_id\": " << population_interface->recruitment_id << ",\n";
+            ss << " \"growth_id\": " << population_interface->growth_id << ",\n";
+            ss << " \"maturity_id\": " << population_interface->maturity_id << ",\n";
+
+            ss << " \"parameters\": [\n{\n";
+            ss << " \"name\": \"log_M\",\n";
+            ss << " \"id\":" << population_interface->log_M.id_m << ",\n";
+            ss << " \"type\": \"vector\",\n";
+            ss << " \"values\": " << population_interface->log_M << "\n},\n";
+
+            ss << "{\n";
+            ss << "  \"name\": \"log_init_naa\",\n";
+            ss << "  \"id\":" << population_interface->log_init_naa.id_m << ",\n";
+            ss << "  \"type\": \"vector\",\n";
+            ss << "  \"values\":" << population_interface->log_init_naa << " \n}],\n";
+
+            ss << " \"derived_quantities\": [{\n";
+            ss << "  \"name\": \"ssb\",\n";
+            ss << " \"dimensions\" : [" << this->make_dimensions(1, population_interface->nyears + 1) << "],";
+            ss << "  \"values\":[";
+            if (derived_ssb.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_ssb.size() - 1; i++)
+                {
+                    ss << derived_ssb[i] << ", ";
+                }
+                ss << derived_ssb[derived_ssb.size() - 1] << "]\n";
+            }
+            ss << " },\n";
+
+            ss << "{\n";
+            ss << "   \"name\": \"naa\",\n";
+            ss << " \"dimensions\" : [[" << this->make_dimensions(1, population_interface->nyears) << "],[" << this->make_dimensions(population_interface->ages[0], population_interface->ages[population_interface->ages.size() - 1], population_interface->nyears + 1) << "]],";
+            ss << "   \"values\":[";
+            if (derived_naa.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_naa.size() - 1; i++)
+                {
+                    ss << derived_naa[i] << ", ";
+                }
+                ss << derived_naa[derived_naa.size() - 1] << "]\n";
+            }
+            ss << " },\n";
+
+            ss << "{\n";
+            ss << "   \"name\": \"biomass\",\n";
+            ss << " \"dimensions\" : [" << population_interface->make_dimensions(1, population_interface->nyears + 1) << "],";
+            ss << "   \"values\":[";
+            if (derived_biomass.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_biomass.size() - 1; i++)
+                {
+                    ss << derived_biomass[i] << ", ";
+                }
+                ss << derived_biomass[derived_biomass.size() - 1] << "]\n";
+            }
+            ss << " },\n";
+
+            ss << "{\n";
+            ss << "   \"name\": \"recruitment\",\n";
+            ss << " \"dimensions\" : [" << this->make_dimensions(1, population_interface->nyears + 1) << "],";
+            ss << "   \"values\":[";
+            if (derived_recruitment.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_recruitment.size() - 1; i++)
+                {
+                    ss << derived_recruitment[i] << ", ";
+                }
+                ss << derived_recruitment[derived_recruitment.size() - 1] << "]\n";
+            }
+            ss << " }\n]\n";
+
+            ss << "}";
+        }
+        else
+        {
+            ss << "{\n";
+            ss << " \"name\" : \"Population\",\n";
+
+            ss << " \"type\" : \"population\",\n";
+            ss << " \"tag\" : \"" << population_interface->get_id() << " not found in Information.\",\n}";
+
+#warning Add error log here
+        }
+        return ss.str();
+    }
+
+    std::string fleets_to_json(FleetInterface *fleet)
+    {
+        std::stringstream ss;
+    }
+
+    virtual std::string to_json()
     {
 
         typename std::map<uint32_t, std::shared_ptr<PopulationInterfaceBase>>::iterator pit;
@@ -125,15 +272,8 @@ public:
             {
                 PopulationInterface *pop = (PopulationInterface *)(*pit).second.get();
                 fleet_ids.insert(pop->fleet_ids->begin(), pop->fleet_ids->end());
-                pop_strings.push_back((*pit).second->to_json());
-                // if (p == pop_ids.size() - 1)
-                // {
-                //     ss << (*pit).second->to_json();
-                // }
-                // else
-                // {
-                //     ss << (*pit).second->to_json() << ",\n";
-                // }
+                pop_strings.push_back(this->population_to_json(
+                    std::static_pointer_cast<PopulationInterface>((*pit).second)));
             }
         }
         if (pop_strings.size() > 0)

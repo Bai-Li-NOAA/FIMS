@@ -75,24 +75,6 @@ std::map<uint32_t, std::shared_ptr<PopulationInterfaceBase>>
 class PopulationInterface : public PopulationInterfaceBase
 {
 
-  std::string make_dimensions(uint32_t start, uint32_t end, uint32_t rep = 1)
-  {
-    std::stringstream ss;
-  
-    for (size_t i = 0; i < rep; i++)
-    {
-      for (size_t j = start; j < end; j++)
-      {
-        ss<<j<<", ";
-      }
-      if(i<(rep-1)){
-        ss<<end<<", ";
-      }else{
-        ss<<end;
-      }
-    }
-    return ss.str();
-  }
 
 public:
   /**
@@ -333,7 +315,7 @@ public:
           this->estimated_log_init_naa[i] = pop->log_init_naa[i];
         }
       }
-
+#warning Matthew: extraction should come from derived_quantities map
       this->derived_naa = Rcpp::NumericVector(pop->numbers_at_age.size());
       this->derived_ssb = Rcpp::NumericVector(pop->spawning_biomass.size());
       this->derived_biomass = Rcpp::NumericVector(pop->biomass.size());
@@ -374,7 +356,9 @@ public:
    */
   virtual std::string to_json()
   {
-    std::stringstream ss;
+ 
+
+        std::stringstream ss;
     // ToDo: add list of fleet ids operating on this population
     ss << "{\n";
     ss << " \"name\" : \"Population\",\n";
@@ -400,7 +384,7 @@ public:
 
     ss << " \"derived_quantities\": [{\n";
     ss << "  \"name\": \"ssb\",\n";
-    ss<<" \"dimensions\" : ["<<this->make_dimensions(1,this->nyears+1)<<"],";
+    ss << " \"dimensions\" : [" << this->make_dimensions(1, this->nyears + 1) << "],";
     ss << "  \"values\":[";
     if (this->derived_ssb.size() == 0)
     {
@@ -418,8 +402,7 @@ public:
 
     ss << "{\n";
     ss << "   \"name\": \"naa\",\n";
-    ss<<" \"dimensions\" : [["<<this->make_dimensions(1,this->nyears)<<"],["<<
-    this->make_dimensions(this->ages[0],this->ages[this->ages.size()-1], this->nyears+1)<<"]],";
+    ss << " \"dimensions\" : [[" << this->make_dimensions(1, this->nyears) << "],[" << this->make_dimensions(this->ages[0], this->ages[this->ages.size() - 1], this->nyears + 1) << "]],";
     ss << "   \"values\":[";
     if (this->derived_naa.size() == 0)
     {
@@ -437,7 +420,7 @@ public:
 
     ss << "{\n";
     ss << "   \"name\": \"biomass\",\n";
-    ss<<" \"dimensions\" : ["<<this->make_dimensions(1,this->nyears+1)<<"],";
+    ss << " \"dimensions\" : [" << this->make_dimensions(1, this->nyears + 1) << "],";
     ss << "   \"values\":[";
     if (this->derived_biomass.size() == 0)
     {
@@ -455,7 +438,7 @@ public:
 
     ss << "{\n";
     ss << "   \"name\": \"recruitment\",\n";
-    ss<<" \"dimensions\" : ["<<this->make_dimensions(1,this->nyears+1)<<"],";
+    ss << " \"dimensions\" : [" << this->make_dimensions(1, this->nyears + 1) << "],";
     ss << "   \"values\":[";
     if (this->derived_recruitment.size() == 0)
     {

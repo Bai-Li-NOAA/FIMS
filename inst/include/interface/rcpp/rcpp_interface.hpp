@@ -735,6 +735,14 @@ RCPP_MODULE(fims) {
             .field("weights", &EWAAGrowthInterface::weights, "Weights for each age class.")
             .method("get_id", &EWAAGrowthInterface::get_id)
             .method("evaluate", &EWAAGrowthInterface::evaluate);
+    
+       Rcpp::class_<PellaTomlinsonInterface>("PTDepletion")
+        .constructor()
+        .field("log_r", &PellaTomlinsonInterface::log_r)
+        .field("log_K", &PellaTomlinsonInterface::logK)
+        .field("log_m", &PellaTomlinsonInterface::logm)
+        .method("get_id", &PellaTomlinsonInterface::get_id)
+        .method("evaluate_mean", &PellaTomlinsonInterface::evaluate)_mean;
 
     Rcpp::class_<DnormDistributionsInterface>("DnormDistribution")
         .constructor()

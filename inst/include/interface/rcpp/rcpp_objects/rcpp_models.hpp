@@ -138,13 +138,6 @@ public:
         {
             std::shared_ptr<fims_popdy::Population<double>> &pop = (*pit).second;
 
-            if (pit->second->derived_quantities.size() == 0)
-            {
-                std::cout << "something is wrong!\n\n";
-                std::cout << pit->second->derived_quantities.size() << "\n";
-                exit(0);
-            }
-
             fims::Vector<double> &derived_ssb = pop->derived_quantities["spawning_biomass"];
             fims::Vector<double> &derived_naa = pop->derived_quantities["numbers_at_age"];
             fims::Vector<double> &derived_biomass = pop->derived_quantities["biomass"];
@@ -273,164 +266,173 @@ public:
 
         if (fit != info->fleets.end())
         {
-        
-        std::shared_ptr<fims_popdy::Fleet<double>> &fleet = (*fit).second;
 
-        ss << "{\n";
-        ss << " \"name\" : \"Fleet\",\n";
+            std::shared_ptr<fims_popdy::Fleet<double>> &fleet = (*fit).second;
 
-        ss << " \"type\" : \"fleet\",\n";
-        ss << " \"tag\" : \"" << fleet_interface->name << "\",\n";
-        ss << " \"id\": " << fleet_interface->id << ",\n";
+            fims::Vector<double> &derived_caa = fleet->derived_quantities["catch_numbers_at_age"];
+            fims::Vector<double> &derived_cal = fleet->derived_quantities["catch_numbers_at_length"];
+            fims::Vector<double> &derived_proportion_cnaa = fleet->derived_quantities["proportion_catch_numbers_at_age"];
+            fims::Vector<double> &derived_proportion_cnal = fleet->derived_quantities["proportion_catch_numbers_at_length"];
+            fims::Vector<double> &derived_index = fleet->derived_quantities["expected_index"];
+            fims::Vector<double> &derived_catch = fleet->derived_quantities["expected_catch"];
+            fims::Vector<double> &derived_cwaa = fleet->derived_quantities["catch_weight_at_age"];
+            fims::Vector<double> &derived_age_comp = fleet->derived_quantities["age_composition"];
+            fims::Vector<double> &derived_length_comp = fleet->derived_quantities["length_composition"];
 
-        ss << " \"parameters\": [\n{\n";
-        ss << " \"name\": \"log_q\",\n";
-        ss << " \"id\":" << fleet_interface->log_q.id_m << ",\n";
-        ss << " \"type\": \"vector\",\n";
-        ss << " \"values\": " << fleet_interface->log_q << "\n},\n";
+            ss << "{\n";
+            ss << " \"name\" : \"Fleet\",\n";
 
-        ss << "{\n";
-        ss << "  \"name\": \"log_init_f\",\n";
-        ss << "  \"id\":" << fleet_interface->log_Fmort.id_m << ",\n";
-        ss << "  \"type\": \"vector\",\n";
-        ss << "  \"values\":" << fleet_interface->log_Fmort << " \n}],\n";
+            ss << " \"type\" : \"fleet\",\n";
+            ss << " \"tag\" : \"" << fleet_interface->name << "\",\n";
+            ss << " \"id\": " << fleet_interface->id << ",\n";
 
-        ss << " \"derived_quantities\": [{\n";
-        ss << "  \"name\": \"catch\",\n";
-        ss << " \"dimensions\" : [" << this->make_dimensions(1, fleet->nyears + 1) << "],";
-        ss << "  \"values\":[";
-        ss << fleet->derived_quantities["catch"] << "]\n";
-        ss << " },\n";
-        ss << "{\n";
-        ss << "   \"name\": \"effort\",\n";
-        ss << " \"dimensions\" : [" << this->make_dimensions(1, fleet->nyears + 1) << "],";
-        ss << "   \"values\":[";
-        ss << fleet->derived_quantities["effort"] << "]\n";
-        ss << " },\n";
-        ss << "{\n";
-        ss << "   \"name\": \"catch_at_age\",\n";
-        // ss << " \"dimensions\" : [[" << this->make_dimensions(1, fleet->nyears) << "],[" << this->make_dimensions(fleet->ages[0], fleet->ages[fleet->ages.size() - 1], fleet->nyears + 1) << "]],";
-        ss << "   \"values\":[";
-        ss << fleet->derived_quantities["catch_at_age"] << "]\n";
-        ss << " },\n";
-        ss << "{\n";
-        ss << "   \"name\": \"catch_at_length\",\n";
-        // ss << " \"dimensions\" : [[" << this->make_dimensions(1, fleet->nyears) << "],[" << this->make_dimensions(fleet->lengths[0], fleet->lengths[fleet->lengths.size() - 1], fleet->nyears + 1) << "]],";
-        ss << "   \"values\":[";
-        ss << fleet->derived_quantities["catch_at_length"] << "]\n";
-        ss << " }\n]\n";
-        ss << "}";
-        ss << "\n";
-    }
-    else
-    {
-        ss << "{\n";
-        ss << " \"name\" : \"Fleet\",\n";
+            ss << " \"parameters\": [\n{\n";
+            ss << " \"name\": \"log_q\",\n";
+            ss << " \"id\":" << fleet_interface->log_q.id_m << ",\n";
+            ss << " \"type\": \"vector\",\n";
+            ss << " \"values\": " << fleet_interface->log_q << "\n},\n";
 
-        ss << " \"type\" : \"fleet\",\n";
-        ss << " \"tag\" : \"" << fleet_interface->get_id() << " not found in Information.\",\n}";
-    }
+            ss << "{\n";
+            ss << "  \"name\": \"log_init_f\",\n";
+            ss << "  \"id\":" << fleet_interface->log_Fmort.id_m << ",\n";
+            ss << "  \"type\": \"vector\",\n";
+            ss << "  \"values\":" << fleet_interface->log_Fmort << " \n}],\n";
 
-}
-
-virtual std::string
-to_json()
-{
-
-    this->Show();
-    typename std::map<uint32_t, std::shared_ptr<PopulationInterfaceBase>>::iterator pit;
-    std::vector<uint32_t> pop_ids(this->population_ids->begin(), this->population_ids->end());
-
-    std::stringstream ss;
-    std::set<uint32_t> fleet_ids; // all fleets in the model
-    ss << "{\n";
-    ss << "\"model\" : \"catch_at_age\",\n";
-    ss << "\"id\" : " << this->get_id() << ",\n";
-    ss << "\"populations\" : [\n";
-    // loop through populations for this model
-    std::vector<std::string> pop_strings;
-    for (size_t p = 0; p < pop_ids.size(); p++)
-    {
-
-        pit = PopulationInterfaceBase::live_objects.find(pop_ids[p]);
-        if (pit != PopulationInterfaceBase::live_objects.end())
-        {
-            PopulationInterface *pop = (PopulationInterface *)(*pit).second.get();
-            fleet_ids.insert(pop->fleet_ids->begin(), pop->fleet_ids->end());
-            pop_strings.push_back(this->population_to_json(pop));
+            ss << " \"derived_quantities\": [{\n";
+            ss << "  \"name\": \"catch\",\n";
+            ss << " \"dimensions\" : [" << this->make_dimensions(1, fleet->nyears + 1) << "],";
+            ss << "  \"values\":[";
+            ss << fleet->derived_quantities["catch"] << "]\n";
+            ss << " },\n";
+            ss << "{\n";
+            ss << "   \"name\": \"effort\",\n";
+            ss << " \"dimensions\" : [" << this->make_dimensions(1, fleet->nyears + 1) << "],";
+            ss << "   \"values\":[";
+            ss << fleet->derived_quantities["effort"] << "]\n";
+            ss << " },\n";
+            ss << "{\n";
+            ss << "   \"name\": \"catch_at_age\",\n";
+            // ss << " \"dimensions\" : [[" << this->make_dimensions(1, fleet->nyears) << "],[" << this->make_dimensions(fleet->ages[0], fleet->ages[fleet->ages.size() - 1], fleet->nyears + 1) << "]],";
+            ss << "   \"values\":[";
+            ss << fleet->derived_quantities["catch_at_age"] << "]\n";
+            ss << " },\n";
+            ss << "{\n";
+            ss << "   \"name\": \"catch_at_length\",\n";
+            // ss << " \"dimensions\" : [[" << this->make_dimensions(1, fleet->nyears) << "],[" << this->make_dimensions(fleet->lengths[0], fleet->lengths[fleet->lengths.size() - 1], fleet->nyears + 1) << "]],";
+            ss << "   \"values\":[";
+            ss << fleet->derived_quantities["catch_at_length"] << "]\n";
+            ss << " }\n]\n";
+            ss << "}";
+            ss << "\n";
         }
-    }
-    if (pop_strings.size() > 0)
-    {
-        for (size_t i = 0; i < pop_strings.size() - 1; i++)
+        else
         {
-            ss << pop_strings[i] << ",\n";
+            ss << "{\n";
+            ss << " \"name\" : \"Fleet\",\n";
+
+            ss << " \"type\" : \"fleet\",\n";
+            ss << " \"tag\" : \"" << fleet_interface->get_id() << " not found in Information.\",\n}";
         }
-        ss << pop_strings[pop_strings.size() - 1] << "\n";
+        return ss.str();
     }
-    ss << "],\n";
-    ss << "\"fleets\" : [\n";
-    typename std::map<uint32_t, std::shared_ptr<FleetInterfaceBase>>::iterator fit;
-    // all fleets encapuslated in this model run
-    std::vector<uint32_t> fids(fleet_ids.begin(), fleet_ids.end());
-    // // loop through fleets for this model
-    for (size_t f = 0; f < fids.size(); f++)
+
+    virtual std::string
+    to_json()
     {
-        fit = FleetInterfaceBase::live_objects.find(fids[f]);
-        if (fit != FleetInterfaceBase::live_objects.end())
+
+        this->Show();
+        typename std::map<uint32_t, std::shared_ptr<PopulationInterfaceBase>>::iterator pit;
+        std::vector<uint32_t> pop_ids(this->population_ids->begin(), this->population_ids->end());
+
+        std::stringstream ss;
+        std::set<uint32_t> fleet_ids; // all fleets in the model
+        ss << "{\n";
+        ss << "\"model\" : \"catch_at_age\",\n";
+        ss << "\"id\" : " << this->get_id() << ",\n";
+        ss << "\"populations\" : [\n";
+        // loop through populations for this model
+        std::vector<std::string> pop_strings;
+        for (size_t p = 0; p < pop_ids.size(); p++)
         {
-            if (f == fids.size() - 1)
+
+            pit = PopulationInterfaceBase::live_objects.find(pop_ids[p]);
+            if (pit != PopulationInterfaceBase::live_objects.end())
             {
-                ss << this->fleets_to_json((FleetInterface *)(*fit).second.get()) << "\n";
-            }
-            else
-            {
-                ss << this->fleets_to_json((FleetInterface *)(*fit).second.get()) << ",\n";
+                PopulationInterface *pop = (PopulationInterface *)(*pit).second.get();
+                fleet_ids.insert(pop->fleet_ids->begin(), pop->fleet_ids->end());
+                pop_strings.push_back(this->population_to_json(pop));
             }
         }
+        if (pop_strings.size() > 0)
+        {
+            for (size_t i = 0; i < pop_strings.size() - 1; i++)
+            {
+                ss << pop_strings[i] << ",\n";
+            }
+            ss << pop_strings[pop_strings.size() - 1] << "\n";
+        }
+        ss << "],\n";
+        ss << "\"fleets\" : [\n";
+        typename std::map<uint32_t, std::shared_ptr<FleetInterfaceBase>>::iterator fit;
+        // all fleets encapuslated in this model run
+        std::vector<uint32_t> fids(fleet_ids.begin(), fleet_ids.end());
+        // // loop through fleets for this model
+        for (size_t f = 0; f < fids.size(); f++)
+        {
+            fit = FleetInterfaceBase::live_objects.find(fids[f]);
+            if (fit != FleetInterfaceBase::live_objects.end())
+            {
+                if (f == fids.size() - 1)
+                {
+                    ss << this->fleets_to_json((FleetInterface *)(*fit).second.get()) << "\n";
+                }
+                else
+                {
+                    ss << this->fleets_to_json((FleetInterface *)(*fit).second.get()) << ",\n";
+                }
+            }
+        }
+
+        ss << "]\n}";
+
+        return fims::JsonParser::PrettyFormatJSON(ss.str());
     }
-
-    ss << "]\n}";
-
-    return fims::JsonParser::PrettyFormatJSON(ss.str());
-}
 
 #ifdef TMB_MODEL
 
-template <typename Type>
-bool add_to_fims_tmb_internal()
-{
-    std::shared_ptr<fims_info::Information<Type>> info =
-        fims_info::Information<Type>::GetInstance();
-
-    std::shared_ptr<fims_popdy::CatchAtAge<Type>> model = std::make_shared<fims_popdy::CatchAtAge<Type>>();
-
-    population_id_iterator it;
-
-    for (it = this->population_ids->begin(); it != this->population_ids->end(); ++it)
+    template <typename Type>
+    bool add_to_fims_tmb_internal()
     {
-        model->AddPopulation((*it));
+        std::shared_ptr<fims_info::Information<Type>> info =
+            fims_info::Information<Type>::GetInstance();
+
+        std::shared_ptr<fims_popdy::CatchAtAge<Type>> model = std::make_shared<fims_popdy::CatchAtAge<Type>>();
+
+        population_id_iterator it;
+
+        for (it = this->population_ids->begin(); it != this->population_ids->end(); ++it)
+        {
+            model->AddPopulation((*it));
+        }
+
+        // add to Information
+        info->models_map[this->get_id()] = model;
+
+        return true;
     }
 
-    // add to Information
-    info->models_map[this->get_id()] = model;
+    virtual bool add_to_fims_tmb()
+    {
+        FIMS_INFO_LOG("adding CAA model object to TMB");
+        this->add_to_fims_tmb_internal<TMB_FIMS_REAL_TYPE>();
+        this->add_to_fims_tmb_internal<TMB_FIMS_FIRST_ORDER>();
+        this->add_to_fims_tmb_internal<TMB_FIMS_SECOND_ORDER>();
+        this->add_to_fims_tmb_internal<TMB_FIMS_THIRD_ORDER>();
 
-    return true;
-}
-
-virtual bool add_to_fims_tmb()
-{
-    FIMS_INFO_LOG("adding CAA model object to TMB");
-    this->add_to_fims_tmb_internal<TMB_FIMS_REAL_TYPE>();
-    this->add_to_fims_tmb_internal<TMB_FIMS_FIRST_ORDER>();
-    this->add_to_fims_tmb_internal<TMB_FIMS_SECOND_ORDER>();
-    this->add_to_fims_tmb_internal<TMB_FIMS_THIRD_ORDER>();
-
-    return true;
-}
+        return true;
+    }
 
 #endif
-}
-;
+};
 
 #endif

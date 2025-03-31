@@ -51,7 +51,7 @@ struct PellaTomlinsonDepletion : public DepletionBase<Type> {
         m = fims_math::exp(this->log_m[0]);
 
         return depletion_ym1 + (r/(m-1.0)) * depletion_ym1 * 
-          (1.0-std::pow( depletion_ym1, m - 1.0)) - catch_ym1 / K;
+          (1.0-fims_math::pow( depletion_ym1, m - 1.0)) - catch_ym1 / K;
     }
 };
 } // namespace fims_popdy

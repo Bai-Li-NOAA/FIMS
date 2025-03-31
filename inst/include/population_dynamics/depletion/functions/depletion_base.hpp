@@ -42,8 +42,11 @@ struct DepletionBase : public fims_model_object::FIMSObject<Type> {
 
   /**
    * @brief Calculates the depletion.
+   * 
+   * @param depletion_ym1 Expected depletion from previous time step.
+   * @param catch_ym1 Catch from previous time step.
    */
-  virtual const Type evaluate_mean() = 0;
+  virtual const Type evaluate_mean(const Type& depletion_ym1, const Type& catch_ym1) = 0;
 
   
 };

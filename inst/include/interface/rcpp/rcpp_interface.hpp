@@ -739,10 +739,10 @@ RCPP_MODULE(fims) {
        Rcpp::class_<PellaTomlinsonInterface>("PTDepletion")
         .constructor()
         .field("log_r", &PellaTomlinsonInterface::log_r)
-        .field("log_K", &PellaTomlinsonInterface::logK)
-        .field("log_m", &PellaTomlinsonInterface::logm)
+        .field("log_K", &PellaTomlinsonInterface::log_K)
+        .field("log_m", &PellaTomlinsonInterface::log_m)
         .method("get_id", &PellaTomlinsonInterface::get_id)
-        .method("evaluate_mean", &PellaTomlinsonInterface::evaluate)_mean;
+        .method("evaluate_mean", &PellaTomlinsonInterface::evaluate_mean);
 
     Rcpp::class_<DnormDistributionsInterface>("DnormDistribution")
         .constructor()

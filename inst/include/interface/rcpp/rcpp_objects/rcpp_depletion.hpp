@@ -65,8 +65,11 @@ class DepletionInterfaceBase : public FIMSRcppInterfaceBase {
      /**
       * @brief A method for each child depletion interface object to inherit so
       * each depletion option can have an evaluate_mean() function.
+      * 
+      * @param depletion_ym1 The depletion value from the previous time step.
+      * @param catch_yml The observed catch from the previous time step.
       */
-     virtual double evaluate_mean(double x) = 0;
+     virtual double evaluate_mean(double depletion_ym1, double catch_ym1) = 0;
    };
    // static id of the DepletionInterfaceBase object
 uint32_t DepletionInterfaceBase::id_g = 1;

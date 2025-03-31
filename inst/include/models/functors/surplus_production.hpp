@@ -67,7 +67,8 @@ namespace fims_popdy {
                         size_t index_yf = year * this->populations[p]->nfleets +
                                 fleet_; // index by fleet and years to dimension fold
 
-                                //where does catch get calculated? this should be in the derived quantities map
+                                //MS: where does catch get calculated? this should be in the derived quantities map
+                                //AMH: catch is data in a SP model. After cpue branch is merged in, there will be a catch object in fleet for catch data 
                         // this->populations[p]->derived_quantities["observed_catch"][year] +=
                         //         this->populations[p]->fleets[fleet_]->catch[year];
 
@@ -98,9 +99,9 @@ namespace fims_popdy {
                     // log_depletion ~ LN(log_expected_depletion, sigma)
                     index_ = fims_math::exp(this->populations[p]->depletion->log_depletion[i_year] + 
                         this->populations[p]->fleets[fleet_]->log_q.get_force_scalar(i_year) );
+                
+                    this->populations[p]->fleets[fleet_]->expected_index[i_year] += index_;
                 }
-                this->populations[p]->fleets[fleet_]->expected_index[i_year] += index_;
-
             }
         }
 
@@ -108,12 +109,13 @@ namespace fims_popdy {
             for (size_t p = 0; p < this->populations.size(); p++) {  
                 this->populations[p]->derived_quantities["biomass"][i_year] =
                     this->populations[p]->derived_quantities["expected_depletion"][i_year] *
-                    this->populations[p]->depletion-K;
+                    this->populations[p]->depletion->K;
+            }
 
         }
 
         virtual void Evaluate() {
-            Prepare()
+            Prepare();
             for (size_t y = 0; y <= this->nyears; y++) {
                 CalculateCatch(y);
             }

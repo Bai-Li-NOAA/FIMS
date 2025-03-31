@@ -95,6 +95,14 @@ namespace fims_info {
         maturity_models_iterator;
         /**< iterator for maturity objects>*/
 
+        std::map<uint32_t, std::shared_ptr<fims_popdy::DepletionBase<Type> > >
+        depletion_models; /**<hash map to link each object to its shared location
+                          in memory*/
+        typedef typename std::map<
+        uint32_t, std::shared_ptr<fims_popdy::DepletionBase<Type> > >::iterator
+        depletion_models_iterator;
+        /**< iterator for depletion objects>*/
+
         // fleet modules
         std::map<uint32_t, std::shared_ptr<fims_popdy::Fleet<Type> > >
         fleets; /**<hash map to link each object to its shared location in

@@ -85,7 +85,7 @@ public:
   /**
    * list of fleets that operate on this population.
    */
-  std::shared_ptr<std::set<uint32_t>> fleet_ids;
+  std::shared_ptr<std::set<uint32_t> > fleet_ids;
   /**
    * Iterator for fleet ids.
    */

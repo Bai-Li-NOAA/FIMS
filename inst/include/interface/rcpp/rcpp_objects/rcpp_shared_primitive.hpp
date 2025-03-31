@@ -1532,6 +1532,66 @@ bool operator>=(const bool& lhs, const SharedBoolean& rhs) {
 }
 
 
+class SharedSet {
+    public:
+        using value_type = uint32_t;
+        using set_type = std::set<value_type>;
+        using iterator = set_type::iterator;
+        using const_iterator = set_type::const_iterator;
+    
+        SharedSet() : data_(std::make_shared<set_type>()) {}
+    
+        // Insert element
+        bool insert(value_type value) {
+            return data_->insert(value).second;
+        }
+    
+        // Erase element
+        size_t erase(value_type value) {
+            return data_->erase(value);
+        }
+    
+        // Check if element exists
+        bool contains(value_type value) const {
+            return data_->find(value) != data_->end();
+        }
+    
+        // Size of the set
+        size_t size() const {
+            return data_->size();
+        }
+    
+        // Empty check
+        bool empty() const {
+            return data_->empty();
+        }
+    
+        // Clear the set
+        void clear() {
+            data_->clear();
+        }
+    
+        // Get const reference to the set
+        const set_type& get() const {
+            return *data_;
+        }
+    
+        // Get shared_ptr (if you need to pass it around)
+        std::shared_ptr<set_type> get_shared() const {
+            return data_;
+        }
+        iterator begin() { return data_->begin(); }
+        iterator end()   { return data_->end(); }
+        const_iterator begin() const { return data_->begin(); }
+        const_iterator end() const   { return data_->end(); }
+        const_iterator cbegin() const { return data_->cbegin(); }
+        const_iterator cend() const   { return data_->cend(); }
+    
+    private:
+        std::shared_ptr<set_type> data_;
+    };
+
+
 typedef SharedInt fims_int;
 typedef SharedReal fims_double;
 typedef SharedString fims_string;

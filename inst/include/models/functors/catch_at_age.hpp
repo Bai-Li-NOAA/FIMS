@@ -24,6 +24,7 @@ namespace fims_popdy
             std::stringstream ss;
             ss << "caa_" << this->GetId() << "_";
             this->name_m = ss.str();
+  
         }
 
         virtual void Initialize()
@@ -156,6 +157,8 @@ namespace fims_popdy
             return ss.str();
         }
 
+        
+
         std::string ToJSON()
         {
             std::stringstream ss;
@@ -165,6 +168,7 @@ namespace fims_popdy
             {
                 ss << "{\n";
                 ss << "\"id\": " << this->populations[p]->id << ",\n";
+                std::cout << "populatiopn ptr -> " << this->populations[p].get() << "\n";
 
                 ss << "\"derived_quantities\": [\n";
                 if (this->populations[p]->derived_quantities.size() > 0)
@@ -568,6 +572,10 @@ namespace fims_popdy
 
         virtual void Evaluate()
         {
+
+
+            std::cout<<"evaluating caa\n";
+            std::cout<<this->population_ids.size()<<"\n";
             /*
                        Sets derived vectors to zero
                        Performs parameters transformations

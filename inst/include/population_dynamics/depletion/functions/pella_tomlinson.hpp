@@ -53,7 +53,7 @@ struct PellaTomlinsonDepletion : public DepletionBase<Type> {
         return depletion_ym1 + (r/(m-1.0)) * depletion_ym1 * 
           (1.0-std::pow( depletion_ym1, m - 1.0)) - catch_ym1 / K;
     }
-
+};
 } // namespace fims_popdy
 
 #endif /* POPULATION_DYNAMICS_DEPLETION_PELLA_TOMLINSON_HPP */

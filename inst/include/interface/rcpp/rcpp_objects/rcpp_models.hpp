@@ -285,45 +285,174 @@ public:
             ss << " \"type\" : \"fleet\",\n";
             ss << " \"tag\" : \"" << fleet_interface->name << "\",\n";
             ss << " \"id\": " << fleet_interface->id << ",\n";
-
-            ss << " \"parameters\": [\n{\n";
+            ss << " \"is_survey\": " << fleet_interface->is_survey << ",\n";
+            ss << " \"nlengths\": " << fleet_interface->nlengths.get() << ",\n";
+            ss << "\"parameters\": [\n";
+            ss << "{\n";
+            ss << " \"name\": \"log_Fmort\",\n";
+            ss << " \"id\":" << fleet_interface->log_Fmort.id_m << ",\n";
+            ss << " \"type\": \"vector\",\n";
+            ss << " \"values\": " << fleet_interface->log_Fmort << "\n},\n";
+        
+            ss << " {\n";
             ss << " \"name\": \"log_q\",\n";
             ss << " \"id\":" << fleet_interface->log_q.id_m << ",\n";
             ss << " \"type\": \"vector\",\n";
             ss << " \"values\": " << fleet_interface->log_q << "\n},\n";
-
-            ss << "{\n";
-            ss << "  \"name\": \"log_init_f\",\n";
-            ss << "  \"id\":" << fleet_interface->log_Fmort.id_m << ",\n";
-            ss << "  \"type\": \"vector\",\n";
-            ss << "  \"values\":" << fleet_interface->log_Fmort << " \n}],\n";
-
+            if (fleet_interface->nlengths > 0) {
+              ss << " {\n";
+              ss << " \"name\": \"age_length_conversion_matrix\",\n";
+              ss << " \"id\":" << fleet_interface->age_length_conversion_matrix.id_m << ",\n";
+              ss << " \"type\": \"vector\",\n";
+              ss << " \"values\": " << fleet_interface->age_length_conversion_matrix << "\n}\n";
+            }
             ss << " \"derived_quantities\": [{\n";
-            ss << "  \"name\": \"catch\",\n";
+            ss << "  \"name\": \"cnaa\",\n";
             ss << " \"dimensions\" : [" << this->make_dimensions(1, fleet->nyears + 1) << "],";
             ss << "  \"values\":[";
-            ss << fleet->derived_quantities["catch"] << "]\n";
+            if(derived_caa.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_caa.size() - 1; i++)
+                {
+                    ss << derived_caa[i] << ", ";
+                }
+                ss << derived_caa[derived_caa.size() - 1] << "]\n";
+            }
             ss << " },\n";
-            ss << "{\n";
-            ss << "   \"name\": \"effort\",\n";
-            ss << " \"dimensions\" : [" << this->make_dimensions(1, fleet->nyears + 1) << "],";
-            ss << "   \"values\":[";
-            ss << fleet->derived_quantities["effort"] << "]\n";
+            ss << " {\n";   
+            ss << "  \"name\": \"cnal\",\n";
+            ss << "  \"values\":[";
+            if (derived_cal.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_cal.size() - 1; i++)
+                {
+                    ss << derived_cal[i] << ", ";
+                }
+                ss << derived_cal[derived_cal.size() - 1] << "]\n";
+            }
             ss << " },\n";
-            ss << "{\n";
-            ss << "   \"name\": \"catch_at_age\",\n";
-            // ss << " \"dimensions\" : [[" << this->make_dimensions(1, fleet->nyears) << "],[" << this->make_dimensions(fleet->ages[0], fleet->ages[fleet->ages.size() - 1], fleet->nyears + 1) << "]],";
-            ss << "   \"values\":[";
-            ss << fleet->derived_quantities["catch_at_age"] << "]\n";
+            ss << " {\n";
+            ss << "  \"name\": \"cwaa\",\n";
+            ss << "  \"values\":[";
+            if (derived_cwaa.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_cwaa.size() - 1; i++)
+                {
+                    ss << derived_cwaa[i] << ", ";
+                }
+                ss << derived_cwaa[derived_cwaa.size() - 1] << "]\n";
+            }
             ss << " },\n";
-            ss << "{\n";
-            ss << "   \"name\": \"catch_at_length\",\n";
-            // ss << " \"dimensions\" : [[" << this->make_dimensions(1, fleet->nyears) << "],[" << this->make_dimensions(fleet->lengths[0], fleet->lengths[fleet->lengths.size() - 1], fleet->nyears + 1) << "]],";
-            ss << "   \"values\":[";
-            ss << fleet->derived_quantities["catch_at_length"] << "]\n";
+            ss << " {\n";
+            ss << "  \"name\": \"proportion_catch_numbers_at_age\",\n";
+            ss << "  \"values\":[";
+            if (derived_proportion_cnaa.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_proportion_cnaa.size() - 1; i++)
+                {
+                    ss << derived_proportion_cnaa[i] << ", ";
+                }
+                ss << derived_proportion_cnaa[derived_proportion_cnaa.size() - 1] << "]\n";
+            }
+            ss << " },\n";
+            ss << " {\n";
+            ss << "  \"name\": \"proportion_catch_numbers_at_length\",\n";
+            ss << "  \"values\":[";
+            if (derived_proportion_cnal.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_proportion_cnal.size() - 1; i++)
+                {
+                    ss << derived_proportion_cnal[i] << ", ";
+                }
+                ss << derived_proportion_cnal[derived_proportion_cnal.size() - 1] << "]\n";
+            }
+            ss << " },\n";
+            ss << " {\n";
+            ss << "  \"name\": \"expected_index\",\n";
+            ss << "  \"values\":[";
+            if (derived_index.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_index.size() - 1; i++)
+                {
+                    ss << derived_index[i] << ", ";
+                }
+                ss << derived_index[derived_index.size() - 1] << "]\n";
+            }
+            ss << " },\n";
+            ss << " {\n";
+            ss << "  \"name\": \"expected_catch\",\n";
+            ss << "  \"values\":[";
+            if (derived_catch.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_catch.size() - 1; i++)
+                {
+                    ss << derived_catch[i] << ", ";
+                }
+                ss << derived_catch[derived_catch.size() - 1] << "]\n";
+            }
+            ss << " },\n";
+            ss << " {\n";
+            ss << "  \"name\": \"age_composition \",\n";
+            ss << "  \"values\":[";
+            if (derived_age_comp.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_age_comp.size() - 1; i++)
+                {
+                    ss << derived_age_comp[i] << ", ";
+                }
+                ss << derived_age_comp[derived_age_comp.size() - 1] << "]\n";
+            }
+            ss << " },\n";
+            ss << " {\n";
+            ss << "  \"name\": \"length_composition \",\n";
+            ss << "  \"values\":[";
+            if (derived_length_comp.size() == 0)
+            {
+                ss << "]\n";
+            }
+            else
+            {
+                for (size_t i = 0; i < derived_length_comp.size() - 1; i++)
+                {
+                    ss << derived_length_comp[i] << ", ";
+                }
+                ss << derived_length_comp[derived_length_comp.size() - 1] << "]\n";
+            }
             ss << " }\n]\n";
             ss << "}";
-            ss << "\n";
+            
         }
         else
         {

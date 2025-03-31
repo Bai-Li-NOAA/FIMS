@@ -14,6 +14,8 @@
 #include "../recruitment/recruitment.hpp"
 #include "../../interface/interface.hpp"
 #include "../maturity/maturity.hpp"
+#include "../depletion/depletion.hpp"
+
 
 namespace fims_popdy {
     /*TODO:

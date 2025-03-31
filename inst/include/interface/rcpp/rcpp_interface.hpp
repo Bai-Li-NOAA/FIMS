@@ -22,7 +22,7 @@
 #include "rcpp_objects/rcpp_models.hpp"
 #include "../../utilities/fims_json.hpp"
 #include "../rcpp/rcpp_objects/rcpp_interface_base.hpp"
-
+#include "rcpp_objects/rcpp_depletion.hpp"
 /**
  * Initializes the logging system, setting all signal handling.
  */

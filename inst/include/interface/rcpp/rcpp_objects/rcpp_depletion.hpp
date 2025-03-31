@@ -74,7 +74,7 @@ uint32_t DepletionInterfaceBase::id_g = 1;
 // DepletionInterfaceBase to the DepletionInterfaceBase objects
 std::map<uint32_t, DepletionInterfaceBase*> DepletionInterfaceBase::live_objects;
 
-**
+/**
  * @brief Rcpp interface for pella-tomlinson depletion to instantiate the object from R:
  * pt_depletion <- methods::new(PTDepletion).
  */

@@ -306,7 +306,7 @@ public:
               ss << " \"type\": \"vector\",\n";
               ss << " \"values\": " << fleet_interface->age_length_conversion_matrix << "\n}\n";
             }
-            ss << " \"derived_quantities\": [{\n";
+            ss << "], \"derived_quantities\": [{\n";
             ss << "  \"name\": \"cnaa\",\n";
             ss << " \"dimensions\" : [" << this->make_dimensions(1, fleet->nyears + 1) << "],";
             ss << "  \"values\":[";

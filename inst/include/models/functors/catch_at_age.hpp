@@ -8,7 +8,7 @@
 
 namespace fims_popdy
 {
-
+//TODO: add a function to compute length composition
     template <typename Type>
     class CatchAtAge : public FisheryModelBase<Type>
     {
@@ -24,7 +24,6 @@ namespace fims_popdy
             std::stringstream ss;
             ss << "caa_" << this->GetId() << "_";
             this->name_m = ss.str();
-  
         }
 
         virtual void Initialize()
@@ -156,8 +155,6 @@ namespace fims_popdy
             ss << "}";
             return ss.str();
         }
-
-        
 
         std::string ToJSON()
         {
@@ -570,8 +567,8 @@ namespace fims_popdy
                 population->maturity->evaluate(population->ages[age]);
         }
 
-
-        void ComputeProportions(){
+        void ComputeProportions()
+        {
             for (size_t p = 0; p < this->populations.size(); p++)
             {
                 std::shared_ptr<fims_popdy::Population<Type>> &population =
@@ -583,24 +580,36 @@ namespace fims_popdy
                     {
                         size_t index_yf = year * population->nfleets + fleet_;
                         Type sum_age = 0.0;
-                        //Type sum_length = 0.0;
+                        Type sum_length = 0.0;
                         for (size_t age = 0; age < population->nages; age++)
                         {
                             size_t i_age_year = year * population->nages + age;
                             sum_age += population->fleets[fleet_]->derived_quantities["catch_numbers_at_age"][i_age_year];
-                            // sum_length += population->fleets[fleet_]->derived_quantities["catch_numbers_at_length"][i_age_year];
                         }
-                      
+
                         for (size_t age = 0; age < population->nages; age++)
                         {
                             size_t i_age_year = year * population->nages + age;
                             population->fleets[fleet_]->derived_quantities["proportion_catch_numbers_at_age"][i_age_year] =
                                 population->fleets[fleet_]->derived_quantities["catch_numbers_at_age"][i_age_year] /
                                 sum_age;
+                        }
 
-                            // population->derived_quantities["proportion_catch_numbers_at_length"][i_age_year] = 
-                            //     population->fleets[fleet_]->derived_quantities["catch_numbers_at_length"][i_age_year] /
-                            //     sum_length; 
+                        if (population->fleets[fleet_]->nlengths > 0)
+                        {
+                            for (size_t l = 0; l < population->fleets[fleet_]->nlengths; l++)
+                            {
+                                size_t i_length_year = year * population->fleets[fleet_]->nlengths + l;
+                                sum_length += population->fleets[fleet_]->derived_quantities["catch_numbers_at_length"][i_length_year];
+                            }
+
+                            for (size_t l = 0; l < population->fleets[fleet_]->nlengths; l++)
+                            {
+                                size_t i_length_year = year * population->fleets[fleet_]->nlengths + l;
+                                population->fleets[fleet_]->derived_quantities["proportion_catch_numbers_at_length"][i_length_year] =
+                                    population->fleets[fleet_]->derived_quantities["catch_numbers_at_length"][i_length_year] /
+                                    sum_length;
+                            }
                         }
                     }
                 }
@@ -610,9 +619,8 @@ namespace fims_popdy
         virtual void Evaluate()
         {
 
-
-            std::cout<<"evaluating caa\n";
-            std::cout<<this->population_ids.size()<<"\n";
+            std::cout << "evaluating caa\n";
+            std::cout << this->population_ids.size() << "\n";
             /*
                        Sets derived vectors to zero
                        Performs parameters transformations

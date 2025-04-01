@@ -570,6 +570,43 @@ namespace fims_popdy
                 population->maturity->evaluate(population->ages[age]);
         }
 
+
+        void ComputeProportions(){
+            for (size_t p = 0; p < this->populations.size(); p++)
+            {
+                std::shared_ptr<fims_popdy::Population<Type>> &population =
+                    this->populations[p];
+
+                for (size_t year = 0; year < population->nyears; year++)
+                {
+                    for (size_t fleet_ = 0; fleet_ < population->nfleets; fleet_++)
+                    {
+                        size_t index_yf = year * population->nfleets + fleet_;
+                        Type sum_age = 0.0;
+                        //Type sum_length = 0.0;
+                        for (size_t age = 0; age < population->nages; age++)
+                        {
+                            size_t i_age_year = year * population->nages + age;
+                            sum_age += population->fleets[fleet_]->derived_quantities["catch_numbers_at_age"][i_age_year];
+                            // sum_length += population->fleets[fleet_]->derived_quantities["catch_numbers_at_length"][i_age_year];
+                        }
+                      
+                        for (size_t age = 0; age < population->nages; age++)
+                        {
+                            size_t i_age_year = year * population->nages + age;
+                            population->fleets[fleet_]->derived_quantities["proportion_catch_numbers_at_age"][i_age_year] =
+                                population->fleets[fleet_]->derived_quantities["catch_numbers_at_age"][i_age_year] /
+                                sum_age;
+
+                            // population->derived_quantities["proportion_catch_numbers_at_length"][i_age_year] = 
+                            //     population->fleets[fleet_]->derived_quantities["catch_numbers_at_length"][i_age_year] /
+                            //     sum_length; 
+                        }
+                    }
+                }
+            }
+        }
+
         virtual void Evaluate()
         {
 
@@ -717,6 +754,7 @@ namespace fims_popdy
                             CalculateCatch(population, y, a);
                             CalculateIndex(population, i_age_year, y, a);
                         }
+                        ComputeProportions();
                     }
                 }
             }

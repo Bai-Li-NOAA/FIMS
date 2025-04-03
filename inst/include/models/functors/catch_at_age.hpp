@@ -8,7 +8,7 @@
 
 namespace fims_popdy
 {
-//TODO: add a function to compute length composition
+    // TODO: add a function to compute length composition
     template <typename Type>
     class CatchAtAge : public FisheryModelBase<Type>
     {
@@ -249,6 +249,7 @@ namespace fims_popdy
                 for (size_t age = 0; age < population->nages; age++)
                 {
                     population->derived_quantities["weight_at_age"][age] = population->growth->evaluate(population->ages[age]);
+                    std::cout << "weight_at_age[" << age << "] = " << population->derived_quantities["weight_at_age"][age] << "\n";
                     for (size_t year = 0; year < population->nyears; year++)
                     {
                         size_t i_age_year = age * population->nyears + year;
@@ -473,7 +474,7 @@ namespace fims_popdy
                     size_t i_age_year = year * population->nages + age;
 
                     population->derived_quantities["expected_catch"][index_yf] +=
-                        population->fleets[fleet_]->catch_weight_at_age[i_age_year];
+                        population->fleets[fleet_]->derived_quantities["catch_weight_at_age"][i_age_year];
 
                     population->fleets[fleet_]->derived_quantities["expected_catch"][year] +=
                         population->fleets[fleet_]->derived_quantities["catch_weight_at_age"][i_age_year];
@@ -597,18 +598,36 @@ namespace fims_popdy
 
                         if (population->fleets[fleet_]->nlengths > 0)
                         {
-                            for (size_t l = 0; l < population->fleets[fleet_]->nlengths; l++)
-                            {
-                                size_t i_length_year = year * population->fleets[fleet_]->nlengths + l;
-                                sum_length += population->fleets[fleet_]->derived_quantities["catch_numbers_at_length"][i_length_year];
-                            }
 
-                            for (size_t l = 0; l < population->fleets[fleet_]->nlengths; l++)
+                            for (size_t y = 0; y < population->fleets[fleet_]->nyears; y++)
                             {
-                                size_t i_length_year = year * population->fleets[fleet_]->nlengths + l;
-                                population->fleets[fleet_]->derived_quantities["proportion_catch_numbers_at_length"][i_length_year] =
-                                    population->fleets[fleet_]->derived_quantities["catch_numbers_at_length"][i_length_year] /
-                                    sum_length;
+                                fims::Vector<Type> &catch_numbers_at_length =
+                                    population->fleets[fleet_]->derived_quantities["catch_numbers_at_length"];
+                                fims::Vector<Type> &catch_numbers_at_age =
+                                    population->fleets[fleet_]->derived_quantities["catch_numbers_at_age"];
+                                    fims::Vector<Type>& proportion_catch_numbers_at_length  =
+                                    population->fleets[fleet_]->derived_quantities["proportion_catch_numbers_at_length"];
+                                
+                                sum_length = 0.0;
+                                for (size_t l = 0; l < population->fleets[fleet_]->nlengths; l++)
+                                {
+                                    size_t i_length_year = y * population->fleets[fleet_]->nlengths + l;
+                                    for (size_t a = 0; a < population->fleets[fleet_]->nages; a++)
+                                    {
+                                        size_t i_age_year = y * population->fleets[fleet_]->nages + a;
+                                        size_t i_length_age = a * population->fleets[fleet_]->nlengths + l;
+                                        catch_numbers_at_length[i_length_year] +=
+                                        catch_numbers_at_age[i_age_year] *
+                                        population->fleets[fleet_]->age_length_conversion_matrix[i_length_age];
+                                    }
+                                    sum_length +=catch_numbers_at_length[i_length_year];
+                                }
+                                for (size_t l = 0; l < population->fleets[fleet_]->nlengths; l++)
+                                {
+                                    size_t i_length_year = y * population->fleets[fleet_]->nlengths + l;
+                                    proportion_catch_numbers_at_length[i_length_year] =
+                                    catch_numbers_at_length[i_length_year] / sum_length;
+                                }
                             }
                         }
                     }

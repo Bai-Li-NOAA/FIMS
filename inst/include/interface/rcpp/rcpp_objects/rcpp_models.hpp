@@ -386,72 +386,72 @@ public:
                 }
                 ss << derived_proportion_cnal[derived_proportion_cnal.size() - 1] << "]\n";
             }
-            ss << " },\n";
-            ss << " {\n";
-            ss << "  \"name\": \"expected_index\",\n";
-            ss << "  \"values\":[";
-            if (derived_index.size() == 0)
-            {
-                ss << "]\n";
-            }
-            else
-            {
-                for (size_t i = 0; i < derived_index.size() - 1; i++)
-                {
-                    ss << derived_index[i] << ", ";
-                }
-                ss << derived_index[derived_index.size() - 1] << "]\n";
-            }
-            ss << " },\n";
-            ss << " {\n";
-            ss << "  \"name\": \"expected_catch\",\n";
-            ss << "  \"values\":[";
-            if (derived_catch.size() == 0)
-            {
-                ss << "]\n";
-            }
-            else
-            {
-                for (size_t i = 0; i < derived_catch.size() - 1; i++)
-                {
-                    ss << derived_catch[i] << ", ";
-                }
-                ss << derived_catch[derived_catch.size() - 1] << "]\n";
-            }
-            ss << " },\n";
-            ss << " {\n";
-            ss << "  \"name\": \"age_composition \",\n";
-            ss << "  \"values\":[";
-            if (derived_age_comp.size() == 0)
-            {
-                ss << "]\n";
-            }
-            else
-            {
-                for (size_t i = 0; i < derived_age_comp.size() - 1; i++)
-                {
-                    ss << derived_age_comp[i] << ", ";
-                }
-                ss << derived_age_comp[derived_age_comp.size() - 1] << "]\n";
-            }
-            ss << " },\n";
-            ss << " {\n";
-            ss << "  \"name\": \"length_composition \",\n";
-            ss << "  \"values\":[";
-            if (derived_length_comp.size() == 0)
-            {
-                ss << "]\n";
-            }
-            else
-            {
-                for (size_t i = 0; i < derived_length_comp.size() - 1; i++)
-                {
-                    ss << derived_length_comp[i] << ", ";
-                }
-                ss << derived_length_comp[derived_length_comp.size() - 1] << "]\n";
-            }
-            ss << " }\n]\n";
-            ss << "}";
+            ss << " }\n";
+            // ss << " {\n";
+            // ss << "  \"name\": \"expected_index\",\n";
+            // ss << "  \"values\":[";
+            // if (derived_index.size() == 0)
+            // {
+            //     ss << "]\n";
+            // }
+            // else
+            // {
+            //     for (size_t i = 0; i < derived_index.size() - 1; i++)
+            //     {
+            //         ss << derived_index[i] << ", ";
+            //     }
+            //     ss << derived_index[derived_index.size() - 1] << "]\n";
+            // }
+            // ss << " }\n";
+            // ss << " {\n";
+            // ss << "  \"name\": \"expected_catch\",\n";
+            // ss << "  \"values\":[";
+            // if (derived_catch.size() == 0)
+            // {
+            //     ss << "]\n";
+            // }
+            // else
+            // {
+            //     for (size_t i = 0; i < derived_catch.size() - 1; i++)
+            //     {
+            //         ss << derived_catch[i] << ", ";
+            //     }
+            //     ss << derived_catch[derived_catch.size() - 1] << "]\n";
+            // }
+            // ss << " },\n";
+            // ss << " {\n";
+            // ss << "  \"name\": \"age_composition \",\n";
+            // ss << "  \"values\":[";
+            // if (derived_age_comp.size() == 0)
+            // {
+            //     ss << "]\n";
+            // }
+            // else
+            // {
+            //     for (size_t i = 0; i < derived_age_comp.size() - 1; i++)
+            //     {
+            //         ss << derived_age_comp[i] << ", ";
+            //     }
+            //     ss << derived_age_comp[derived_age_comp.size() - 1] << "]\n";
+            // }
+            // ss << " },\n";
+            // ss << " {\n";
+            // ss << "  \"name\": \"length_composition \",\n";
+            // ss << "  \"values\":[";
+            // if (derived_length_comp.size() == 0)
+            // {
+            //     ss << "]\n";
+            // }
+            // else
+            // {
+            //     for (size_t i = 0; i < derived_length_comp.size() - 1; i++)
+            //     {
+            //         ss << derived_length_comp[i] << ", ";
+            //     }
+            //     ss << derived_length_comp[derived_length_comp.size() - 1] << "]\n";
+            // }
+            // ss << " }\n]\n";
+            ss << "]}";
             
         }
         else

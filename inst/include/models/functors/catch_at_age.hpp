@@ -41,7 +41,7 @@ namespace fims_popdy
                                        this->populations[i]->nages);
 
                 this->populations[i]->derived_quantities["weight_at_age"] =
-                    fims::Vector<Type>(this->populations[i]->nages);
+                    fims::Vector<Type>(this->populations[i]->nyears * this->populations[i]->nages);
 
                 this->populations[i]->derived_quantities["numbers_at_age"] =
                     fims::Vector<Type>((this->populations[i]->nyears + 1) *
@@ -258,6 +258,7 @@ namespace fims_popdy
                         // mortality_F is a fims::Vector and therefore needs to be filled
                         // within a loop
                         population->derived_quantities["mortality_F"][i_age_year] = 0.0;
+                        population->derived_quantities["weight_at_age"][i_age_year] = population->growth->evaluate(population->ages[age]);
                     }
                 }
             }

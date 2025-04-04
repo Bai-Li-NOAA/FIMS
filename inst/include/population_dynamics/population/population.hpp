@@ -40,7 +40,7 @@ namespace fims_popdy {
         fims::Vector<Type>
         log_init_naa; /*!< estimated parameter: natural log of numbers at age*/
         fims::Vector<Type> log_M; /*!< estimated parameter: natural log of Natural Mortality*/
-        fims::Vector<Type>proportion_female = fims::Vector<Type>(1, Type(0.5)); /*!< proportion female by age */
+        fims::Vector<Type> proportion_female = fims::Vector<Type>(1, Type(0.5)); /*!< proportion female by age */
 
         // Transformed values
         fims::Vector<Type> M; /*!< transformed parameter: natural mortality*/

@@ -73,6 +73,9 @@ namespace fims_popdy
                 this->populations[i]->derived_quantities["expected_recruitment"] =
                     fims::Vector<Type>((this->populations[i]->nyears + 1));
 
+                this->populations[i]->derived_quantities["sum_selectivity"] =
+                    fims::Vector<Type>(this->populations[i]->nyears * this->populations[i]->nages);
+
                 for (size_t j = 0; j < this->populations[i]->fleets.size(); j++)
                 {
 
@@ -339,10 +342,13 @@ namespace fims_popdy
             {
                 if (population->fleets[fleet_]->is_survey == false)
                 {
+                    // evaluate is a member function of the selectivity class
+                    Type s = population->fleets[fleet_]->selectivity->evaluate(population->ages[age]);
+
                     population->derived_quantities["mortality_F"][i_age_year] +=
-                        population->fleets[fleet_]->Fmort[year] *
-                        // evaluate is a member function of the selectivity class
-                        population->fleets[fleet_]->selectivity->evaluate(population->ages[age]);
+                        population->fleets[fleet_]->Fmort[year] * s;
+
+                    population->derived_quantities["sum_selectivity"][i_age_year] += s;
                 }
             }
             population->derived_quantities["mortality_Z"][i_age_year] =

@@ -769,11 +769,14 @@ public:
                 }
             }
 
-            std::cout << std::scientific;
+            std::cout << std::fixed;
             //
             std::cout << "\n\nFmax: " << maxF << "\n";
             std::cout << "Step: " << step << "\n";
             std::cout << "\n\nF_msy: " << F[max_index] << "\n";
+            std::cout<< "spr_30: "<< spr_ratio[F30_out] << "\n";
+            std::cout << "spr_35: " << spr_ratio[F35_out] << "\n";
+            std::cout << "spr_40: " << spr_ratio[F40_out] << "\n";
             std::cout << "F30: " << F[F30_out] << "\n";
             std::cout << "F35: " << F[F35_out] << "\n";
             std::cout << "F40: " << F[F40_out] << "\n";

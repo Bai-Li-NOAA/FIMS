@@ -9,14 +9,14 @@
 namespace fims_popdy
 {
 
-
     /**
      * A proxy class for fleet objects. This class is used to access the derived quantities of
      * the fleet object from a population object. This is used to reduce the
-     * overhead of hashing for the derived quantities map. 
+     * overhead of hashing for the derived quantities map.
      */
     template <typename Type>
-    class CAAFleetProxy{
+    class CAAFleetProxy
+    {
         std::shared_ptr<fims_popdy::Fleet<Type>> fleet;
         fims::Vector<Type> &catch_at_age;
         fims::Vector<Type> &catch_numbers_at_age;
@@ -26,7 +26,8 @@ namespace fims_popdy
         fims::Vector<Type> &age_length_conversion_matrix;
         fims::Vector<Type> &catch_weight_at_age;
 
-        CAAFleetProxy(std::shared_ptr<fims_popdy::Fleet<Type>> fleet){
+        CAAFleetProxy(std::shared_ptr<fims_popdy::Fleet<Type>> fleet)
+        {
             this->fleet = fleet;
             this->catch_at_age = fleet->derived_quantities["catch_at_age"];
             this->catch_numbers_at_age = fleet->derived_quantities["catch_numbers_at_age"];
@@ -43,57 +44,59 @@ namespace fims_popdy
      *  the population object from the CatachAtAge object. This is used to reduce the
      *  overhead of hashing for the derived quantities map.
      */
-template <typename Type>
-struct CAAPopulationProxy{
+    template <typename Type>
+    struct CAAPopulationProxy
+    {
 
-    std::shared_ptr<fims_popdy::Population<Type>> population;
-    std::vector<CAAFleetProxy<Type>> fleets;
-    fims::Vector<Type> &mortality_F;
-    fims::Vector<Type> &mortality_Z;
-    fims::Vector<Type> &weight_at_age;
-    fims::Vector<Type> &numbers_at_age;
-    fims::Vector<Type> &unfished_numbers_at_age;
-    fims::Vector<Type> &biomass;
-    fims::Vector<Type> &spawning_biomass;
-    fims::Vector<Type> &unfished_biomass;
-    fims::Vector<Type> &unfished_spawning_biomass;
-    fims::Vector<Type> &proportion_mature_at_age;
-    fims::Vector<Type> &expected_catch;
-    fims::Vector<Type> &expected_recruitment;
-    fims::Vector<Type> &sum_selectivity;
+        std::shared_ptr<fims_popdy::Population<Type>> population;
+        std::vector<CAAFleetProxy<Type>> fleets;
+        fims::Vector<Type> &mortality_F;
+        fims::Vector<Type> &mortality_Z;
+        fims::Vector<Type> &weight_at_age;
+        fims::Vector<Type> &numbers_at_age;
+        fims::Vector<Type> &unfished_numbers_at_age;
+        fims::Vector<Type> &biomass;
+        fims::Vector<Type> &spawning_biomass;
+        fims::Vector<Type> &unfished_biomass;
+        fims::Vector<Type> &unfished_spawning_biomass;
+        fims::Vector<Type> &proportion_mature_at_age;
+        fims::Vector<Type> &expected_catch;
+        fims::Vector<Type> &expected_recruitment;
+        fims::Vector<Type> &sum_selectivity;
 
-    CAAPopulationProxy(std::shared_ptr<fims_popdy::Population<Type>> population){
-        this->population = population;
-        this->mortality_F = population->derived_quantities["mortality_F"];
-        this->mortality_Z = population->derived_quantities["mortality_Z"];
-        this->weight_at_age = population->derived_quantities["weight_at_age"];
-        this->numbers_at_age = population->derived_quantities["numbers_at_age"];
-        this->unfished_numbers_at_age = population->derived_quantities["unfished_numbers_at_age"];
-        this->biomass = population->derived_quantities["biomass"];
-        this->spawning_biomass = population->derived_quantities["spawning_biomass"];
-        this->unfished_biomass = population->derived_quantities["unfished_biomass"];
-        this->unfished_spawning_biomass = population->derived_quantities["unfished_spawning_biomass"];
-        this->proportion_mature_at_age = population->derived_quantities["proportion_mature_at_age"];
-        this->expected_catch = population->derived_quantities["expected_catch"];
-        this->expected_recruitment = population->derived_quantities["expected_recruitment"];
-        this->sum_selectivity = population->derived_quantities["sum_selectivity"];
+        CAAPopulationProxy(std::shared_ptr<fims_popdy::Population<Type>> population)
+        {
+            this->population = population;
+            this->mortality_F = population->derived_quantities["mortality_F"];
+            this->mortality_Z = population->derived_quantities["mortality_Z"];
+            this->weight_at_age = population->derived_quantities["weight_at_age"];
+            this->numbers_at_age = population->derived_quantities["numbers_at_age"];
+            this->unfished_numbers_at_age = population->derived_quantities["unfished_numbers_at_age"];
+            this->biomass = population->derived_quantities["biomass"];
+            this->spawning_biomass = population->derived_quantities["spawning_biomass"];
+            this->unfished_biomass = population->derived_quantities["unfished_biomass"];
+            this->unfished_spawning_biomass = population->derived_quantities["unfished_spawning_biomass"];
+            this->proportion_mature_at_age = population->derived_quantities["proportion_mature_at_age"];
+            this->expected_catch = population->derived_quantities["expected_catch"];
+            this->expected_recruitment = population->derived_quantities["expected_recruitment"];
+            this->sum_selectivity = population->derived_quantities["sum_selectivity"];
 
-        //fill the fleets vector with fleet proxies
-        for(size_t i = 0; i < population->fleets.size(); i++){
-            this->fleets.push_back(CAAFleetProxy<Type>(population->fleets[i]));
+            // fill the fleets vector with fleet proxies
+            for (size_t i = 0; i < population->fleets.size(); i++)
+            {
+                this->fleets.push_back(CAAFleetProxy<Type>(population->fleets[i]));
+            }
         }
- 
+
     }
-
-}
-
 
     // TODO: add a function to compute length composition
     template <typename Type>
     class CatchAtAge : public FisheryModelBase<Type>
     {
     public:
-    std::vector<CAAPopulationProxy<Type>> populations_proxies;
+        std::vector<CAAPopulationProxy<Type>> populations_proxies;
+        std::vector<CAAFleetProxy<Type>> fleets_proxies;
         std::string name_m;
         std::map<uint32_t, std::shared_ptr<fims_popdy::Fleet<Type>>> fleets; // unique instances to eliminate duplicate initialization
         typedef typename std::map<uint32_t, std::shared_ptr<fims_popdy::Fleet<Type>>>::iterator fleet_iterator;
@@ -162,7 +165,7 @@ struct CAAPopulationProxy{
 
                     this->fleets[this->populations[i]->fleets[j]->id] = this->populations[i]->fleets[j];
                 }
-                //push back the population proxy
+                // push back the population proxy
                 this->populations_proxies.push_back(CAAPopulationProxy<Type>(this->populations[i]));
             }
 

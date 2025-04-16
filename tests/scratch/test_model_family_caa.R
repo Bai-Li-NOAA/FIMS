@@ -1,6 +1,6 @@
 library(FIMS)
 library(minimizR)
-setwd("/Users/matthew.supernaw/FIMS-Testing/dev-model-families/3_21_25/FIMS/tests/scratch")
+#setwd("//Users/matthew.supernaw/FIMS-Testing/dev-model-families/3_21_25/4_1_25/FIMS/tests/scratch")
 set_log_throw_on_error(TRUE)
 # Load operating model data for the current iteration
 load("../testthat/fixtures/integration_test_data.RData")
@@ -240,34 +240,57 @@ maturity$slope[1]$value <- om_input[["slope.mat"]]
 maturity$slope[1]$is_random_effect <- FALSE
 maturity$slope[1]$estimated <- FALSE
 
-# Population
-population <- methods::new(Population)
-population$log_M$resize(om_input[["nyr"]] * om_input[["nages"]])
+# Population 1
+population1 <- methods::new(Population)
+population1$log_M$resize(om_input[["nyr"]] * om_input[["nages"]])
 for (i in 1:(om_input[["nyr"]] * om_input[["nages"]])) {
-  population$log_M[i]$value <- log(om_input[["M.age"]][1])
+  population1$log_M[i]$value <- log(om_input[["M.age"]][1])
 }
-population$log_M$set_all_estimable(FALSE)
-population$log_init_naa$resize(om_input[["nages"]])
+population1$log_M$set_all_estimable(FALSE)
+population1$log_init_naa$resize(om_input[["nages"]])
 for (i in 1:om_input$nages) {
-  population$log_init_naa[i]$value <- log(om_output[["N.age"]][1, i])
+  population1$log_init_naa[i]$value <- log(om_output[["N.age"]][1, i])
 }
-population$log_init_naa$set_all_estimable(TRUE)
-population$nages$set(om_input[["nages"]])
-population$ages$fromRVector(om_input[["ages"]])
-population$nfleets$set(sum(om_input[["fleet_num"]], om_input[["survey_num"]]))
-population$nseasons$set(1)
-population$nyears$set(om_input[["nyr"]])
-population$SetRecruitment(recruitment$get_id())
-population$SetGrowth(ewaa_growth$get_id())
-population$SetMaturity(maturity$get_id())
-population$AddFleet(fishing_fleet$get_id())
-population$AddFleet(survey_fleet$get_id())
-# population$AddFleet(1000000)
+population1$log_init_naa$set_all_estimable(TRUE)
+population1$nages$set(om_input[["nages"]])
+population1$ages$fromRVector(om_input[["ages"]])
+population1$nfleets$set(sum(om_input[["fleet_num"]], om_input[["survey_num"]]))
+population1$nseasons$set(1)
+population1$nyears$set(om_input[["nyr"]])
+population1$SetRecruitment(recruitment$get_id())
+population1$SetGrowth(ewaa_growth$get_id())
+population1$SetMaturity(maturity$get_id())
+population1$AddFleet(fishing_fleet$get_id())
+population1$AddFleet(survey_fleet$get_id())
+
+# Population 2
+population2 <- methods::new(Population)
+population2$log_M$resize(om_input[["nyr"]] * om_input[["nages"]])
+for (i in 1:(om_input[["nyr"]] * om_input[["nages"]])) {
+  population2$log_M[i]$value <- log(om_input[["M.age"]][1])
+}
+population2$log_M$set_all_estimable(FALSE)
+population2$log_init_naa$resize(om_input[["nages"]])
+for (i in 1:om_input$nages) {
+  population2$log_init_naa[i]$value <- log(om_output[["N.age"]][1, i])
+}
+population2$log_init_naa$set_all_estimable(TRUE)
+population2$nages$set(om_input[["nages"]])
+population2$ages$fromRVector(om_input[["ages"]])
+population2$nfleets$set(sum(om_input[["fleet_num"]], om_input[["survey_num"]]))
+population2$nseasons$set(1)
+population2$nyears$set(om_input[["nyr"]])
+population2$SetRecruitment(recruitment$get_id())
+population2$SetGrowth(ewaa_growth$get_id())
+population2$SetMaturity(maturity$get_id())
+population2$AddFleet(fishing_fleet$get_id())
+population2$AddFleet(survey_fleet$get_id())
+
 
 
 caa <- methods::new(CatchAtAge)
-caa$AddPopulation(population$get_id())
-
+caa$AddPopulation(population1$get_id())
+caa$AddPopulation(population2$get_id())
 # Set-up TMB
 CreateTMBModel()
 
@@ -298,7 +321,7 @@ opt <- minimizR(obj[["par"]], # initial parameters values
 
 global_ouput<-finalize(opt$par, obj$fn, obj$gr)
 # loop throught the derived quantities in population and print
-cat(caa$get_output())
+
 write(caa$get_output(), "caa.json")
-print(opt)
+# print(opt)
 caa$calculate_reference_points()

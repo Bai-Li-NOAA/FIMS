@@ -150,7 +150,7 @@ namespace fims_model {
                 p->of = this->of;
 #endif
                 // Evaluate population
-                p->Evaluate();
+             //   p->Evaluate();
             }
 
             typename fims_info::Information<Type>::model_map_iterator m_it;

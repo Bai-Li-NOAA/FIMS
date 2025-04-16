@@ -138,6 +138,8 @@ public:
         std::shared_ptr<fims_info::Information<double>> info =
             fims_info::Information<double>::GetInstance();
 
+
+
         typename fims_info::Information<double>::population_iterator pit;
 
         pit = info->populations.find(population_interface->get_id());
@@ -577,7 +579,7 @@ public:
     }
 
     Rcpp::List calculate_reference_points_population(PopulationInterface *population_interface,
-                                          double maxF = 1.0, double step = 0.01)
+                                                     double maxF = 1.0, double step = 0.01)
     {
 
         Rcpp::List result;
@@ -625,6 +627,7 @@ public:
             std::valarray<double> reprod(nages);
             std::valarray<double> selL(nages);
             std::valarray<double> selZ(nages);
+            std::valarray<double> selD(nages);
             std::valarray<double> M_age(nages);
             std::valarray<double> wgt(nages);
 
@@ -678,7 +681,7 @@ public:
 
                 spr[i] = sum(N_age * reprod);
 #warning This is propbably not correct
-                R_eq[i] = pop->recruitment->evaluate(spr[i],spr_F0);
+                R_eq[i] = pop->recruitment->evaluate(spr[i], spr_F0);
                 // R_eq[i] = (R0 / ((5.0 * steep - 1.0) * spr[i])) *
                 //           (BC * 4.0 * steep * spr[i] - spr_F0 * (1.0 - steep));
                 // R_eq[i] = this->recruitment_model->CalculateEquilibriumRecruitment(
@@ -774,7 +777,7 @@ public:
             std::cout << "\n\nFmax: " << maxF << "\n";
             std::cout << "Step: " << step << "\n";
             std::cout << "\n\nF_msy: " << F[max_index] << "\n";
-            std::cout<< "spr_30: "<< spr_ratio[F30_out] << "\n";
+            std::cout << "spr_30: " << spr_ratio[F30_out] << "\n";
             std::cout << "spr_35: " << spr_ratio[F35_out] << "\n";
             std::cout << "spr_40: " << spr_ratio[F40_out] << "\n";
             std::cout << "F30: " << F[F30_out] << "\n";

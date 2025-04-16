@@ -93,6 +93,7 @@ struct CAAPopulationProxy{
     class CatchAtAge : public FisheryModelBase<Type>
     {
     public:
+    std::vector<CAAPopulationProxy<Type>> populations_proxies;
         std::string name_m;
         std::map<uint32_t, std::shared_ptr<fims_popdy::Fleet<Type>>> fleets; // unique instances to eliminate duplicate initialization
         typedef typename std::map<uint32_t, std::shared_ptr<fims_popdy::Fleet<Type>>>::iterator fleet_iterator;
@@ -161,6 +162,8 @@ struct CAAPopulationProxy{
 
                     this->fleets[this->populations[i]->fleets[j]->id] = this->populations[i]->fleets[j];
                 }
+                //push back the population proxy
+                this->populations_proxies.push_back(CAAPopulationProxy<Type>(this->populations[i]));
             }
 
             for (fleet_iterator it = this->fleets.begin(); it != this->fleets.end(); ++it)

@@ -15,7 +15,7 @@ namespace fims_popdy
      * overhead of hashing for the derived quantities map.
      */
     template <typename Type>
-    class CAAFleetProxy
+    struct CAAFleetProxy
     {
         std::shared_ptr<fims_popdy::Fleet<Type>> fleet;
         fims::Vector<Type> &catch_at_age;
@@ -26,18 +26,25 @@ namespace fims_popdy
         fims::Vector<Type> &age_length_conversion_matrix;
         fims::Vector<Type> &catch_weight_at_age;
 
-        CAAFleetProxy(std::shared_ptr<fims_popdy::Fleet<Type>> fleet)
+        CAAFleetProxy(std::shared_ptr<fims_popdy::Fleet<Type>> fleet):fleet(fleet),
+        catch_at_age(fleet->derived_quantities["catch_at_age"]),
+        catch_numbers_at_age(fleet->derived_quantities["catch_numbers_at_age"]),
+        catch_numbers_at_length(fleet->derived_quantities["catch_numbers_at_length"]),
+        proportion_catch_numbers_at_age(fleet->derived_quantities["proportion_catch_numbers_at_age"]),
+        proportion_catch_numbers_at_length(fleet->derived_quantities["proportion_catch_numbers_at_length"]),
+        age_length_conversion_matrix(fleet->derived_quantities["age_length_conversion_matrix"]),
+        catch_weight_at_age(fleet->derived_quantities["catch_weight_at_age"])
         {
-            this->fleet = fleet;
-            this->catch_at_age = fleet->derived_quantities["catch_at_age"];
-            this->catch_numbers_at_age = fleet->derived_quantities["catch_numbers_at_age"];
-            this->catch_numbers_at_length = fleet->derived_quantities["catch_numbers_at_length"];
-            this->proportion_catch_numbers_at_age = fleet->derived_quantities["proportion_catch_numbers_at_age"];
-            this->proportion_catch_numbers_at_length = fleet->derived_quantities["proportion_catch_numbers_at_length"];
-            this->age_length_conversion_matrix = fleet->derived_quantities["age_length_conversion_matrix"];
-            this->catch_weight_at_age = fleet->derived_quantities["catch_weight_at_age"];
+            // this->fleet = fleet;
+            // this->catch_at_age = fleet->derived_quantities["catch_at_age"];
+            // this->catch_numbers_at_age = fleet->derived_quantities["catch_numbers_at_age"];
+            // this->catch_numbers_at_length = fleet->derived_quantities["catch_numbers_at_length"];
+            // this->proportion_catch_numbers_at_age = fleet->derived_quantities["proportion_catch_numbers_at_age"];
+            // this->proportion_catch_numbers_at_length = fleet->derived_quantities["proportion_catch_numbers_at_length"];
+            // this->age_length_conversion_matrix = fleet->derived_quantities["age_length_conversion_matrix"];
+            // this->catch_weight_at_age = fleet->derived_quantities["catch_weight_at_age"];
         }
-    }
+    };
 
     /**
      *  A proxy class for population objects. This class is used to access the derived quantities of
@@ -64,22 +71,36 @@ namespace fims_popdy
         fims::Vector<Type> &expected_recruitment;
         fims::Vector<Type> &sum_selectivity;
 
-        CAAPopulationProxy(std::shared_ptr<fims_popdy::Population<Type>> population)
+        CAAPopulationProxy(std::shared_ptr<fims_popdy::Population<Type>> population):population(population),
+        mortality_F(population->derived_quantities["mortality_F"]),
+        mortality_Z(population->derived_quantities["mortality_Z"]),
+        weight_at_age(population->derived_quantities["weight_at_age"]),
+        numbers_at_age(population->derived_quantities["numbers_at_age"]),
+        unfished_numbers_at_age(population->derived_quantities["unfished_numbers_at_age"]),
+        biomass(population->derived_quantities["biomass"]),
+        spawning_biomass(population->derived_quantities["spawning_biomass"]),
+        unfished_biomass(population->derived_quantities["unfished_biomass"]),
+        unfished_spawning_biomass(population->derived_quantities["unfished_spawning_biomass"]),
+        proportion_mature_at_age(population->derived_quantities["proportion_mature_at_age"]),
+        expected_catch(population->derived_quantities["expected_catch"]),
+        expected_recruitment(population->derived_quantities["expected_recruitment"]),
+        sum_selectivity(population->derived_quantities["sum_selectivity"])
+
         {
-            this->population = population;
-            this->mortality_F = population->derived_quantities["mortality_F"];
-            this->mortality_Z = population->derived_quantities["mortality_Z"];
-            this->weight_at_age = population->derived_quantities["weight_at_age"];
-            this->numbers_at_age = population->derived_quantities["numbers_at_age"];
-            this->unfished_numbers_at_age = population->derived_quantities["unfished_numbers_at_age"];
-            this->biomass = population->derived_quantities["biomass"];
-            this->spawning_biomass = population->derived_quantities["spawning_biomass"];
-            this->unfished_biomass = population->derived_quantities["unfished_biomass"];
-            this->unfished_spawning_biomass = population->derived_quantities["unfished_spawning_biomass"];
-            this->proportion_mature_at_age = population->derived_quantities["proportion_mature_at_age"];
-            this->expected_catch = population->derived_quantities["expected_catch"];
-            this->expected_recruitment = population->derived_quantities["expected_recruitment"];
-            this->sum_selectivity = population->derived_quantities["sum_selectivity"];
+            // this->population = population;
+            // this->mortality_F = population->derived_quantities["mortality_F"];
+            // this->mortality_Z = population->derived_quantities["mortality_Z"];
+            // this->weight_at_age = population->derived_quantities["weight_at_age"];
+            // this->numbers_at_age = population->derived_quantities["numbers_at_age"];
+            // this->unfished_numbers_at_age = population->derived_quantities["unfished_numbers_at_age"];
+            // this->biomass = population->derived_quantities["biomass"];
+            // this->spawning_biomass = population->derived_quantities["spawning_biomass"];
+            // this->unfished_biomass = population->derived_quantities["unfished_biomass"];
+            // this->unfished_spawning_biomass = population->derived_quantities["unfished_spawning_biomass"];
+            // this->proportion_mature_at_age = population->derived_quantities["proportion_mature_at_age"];
+            // this->expected_catch = population->derived_quantities["expected_catch"];
+            // this->expected_recruitment = population->derived_quantities["expected_recruitment"];
+            // this->sum_selectivity = population->derived_quantities["sum_selectivity"];
 
             // fill the fleets vector with fleet proxies
             for (size_t i = 0; i < population->fleets.size(); i++)
@@ -88,7 +109,7 @@ namespace fims_popdy
             }
         }
 
-    }
+    };
 
     // TODO: add a function to compute length composition
     template <typename Type>
@@ -216,6 +237,8 @@ namespace fims_popdy
                 (*it).second->derived_quantities["length_composition"] =
                     fims::Vector<Type>((*it).second->nyears *
                                        (*it).second->nlengths);
+                // add fleet proxy
+                this->fleets_proxies.push_back(CAAFleetProxy<Type>((*it).second));
             }
         }
 
@@ -374,6 +397,15 @@ namespace fims_popdy
                 fims_math::exp(population->log_init_naa[a]);
         }
 
+        void CalculateInitialNumbersAA(
+            CAAPopulationProxy<Type>& population,
+            size_t i_age_year, size_t a)
+        {
+
+            population.numbers_at_age[i_age_year] =
+                fims_math::exp(population->population->log_init_naa[a]);
+        }
+
         void CalculateNumbersAA(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -393,6 +425,28 @@ namespace fims_popdy
                     population->derived_quantities["numbers_at_age"][i_age_year] +
                     population->derived_quantities["numbers_at_age"][i_agem1_yearm1 + 1] *
                         (fims_math::exp(-population->derived_quantities["mortality_Z"][i_agem1_yearm1 + 1]));
+            }
+        }
+
+        void CalculateNumbersAA(
+            CAAPopulationProxy<Type>& population,
+            size_t i_age_year,
+            size_t i_agem1_yearm1,
+            size_t age)
+        {
+            // using Z from previous age/year
+
+            population.numbers_at_age[i_age_year] =
+                population.numbers_at_age[i_agem1_yearm1] *
+                (fims_math::exp(-population.mortality_Z[i_agem1_yearm1]));
+
+            // Plus group calculation
+            if (age == (population->nages - 1))
+            {
+                population.numbers_at_age[i_age_year] =
+                    population.numbers_at_age[i_age_year] +
+                    population.numbers_at_age[i_agem1_yearm1 + 1] *
+                        (fims_math::exp(-population.mortality_Z[i_agem1_yearm1 + 1]));
             }
         }
 

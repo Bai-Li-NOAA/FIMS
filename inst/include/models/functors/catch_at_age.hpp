@@ -8,6 +8,86 @@
 
 namespace fims_popdy
 {
+
+
+    /**
+     * A proxy class for fleet objects. This class is used to access the derived quantities of
+     * the fleet object from a population object. This is used to reduce the
+     * overhead of hashing for the derived quantities map. 
+     */
+    template <typename Type>
+    class CAAFleetProxy{
+        std::shared_ptr<fims_popdy::Fleet<Type>> fleet;
+        fims::Vector<Type> &catch_at_age;
+        fims::Vector<Type> &catch_numbers_at_age;
+        fims::Vector<Type> &catch_numbers_at_length;
+        fims::Vector<Type> &proportion_catch_numbers_at_age;
+        fims::Vector<Type> &proportion_catch_numbers_at_length;
+        fims::Vector<Type> &age_length_conversion_matrix;
+        fims::Vector<Type> &catch_weight_at_age;
+
+        CAAFleetProxy(std::shared_ptr<fims_popdy::Fleet<Type>> fleet){
+            this->fleet = fleet;
+            this->catch_at_age = fleet->derived_quantities["catch_at_age"];
+            this->catch_numbers_at_age = fleet->derived_quantities["catch_numbers_at_age"];
+            this->catch_numbers_at_length = fleet->derived_quantities["catch_numbers_at_length"];
+            this->proportion_catch_numbers_at_age = fleet->derived_quantities["proportion_catch_numbers_at_age"];
+            this->proportion_catch_numbers_at_length = fleet->derived_quantities["proportion_catch_numbers_at_length"];
+            this->age_length_conversion_matrix = fleet->derived_quantities["age_length_conversion_matrix"];
+            this->catch_weight_at_age = fleet->derived_quantities["catch_weight_at_age"];
+        }
+    }
+
+    /**
+     *  A proxy class for population objects. This class is used to access the derived quantities of
+     *  the population object from the CatachAtAge object. This is used to reduce the
+     *  overhead of hashing for the derived quantities map.
+     */
+template <typename Type>
+struct CAAPopulationProxy{
+
+    std::shared_ptr<fims_popdy::Population<Type>> population;
+    std::vector<CAAFleetProxy<Type>> fleets;
+    fims::Vector<Type> &mortality_F;
+    fims::Vector<Type> &mortality_Z;
+    fims::Vector<Type> &weight_at_age;
+    fims::Vector<Type> &numbers_at_age;
+    fims::Vector<Type> &unfished_numbers_at_age;
+    fims::Vector<Type> &biomass;
+    fims::Vector<Type> &spawning_biomass;
+    fims::Vector<Type> &unfished_biomass;
+    fims::Vector<Type> &unfished_spawning_biomass;
+    fims::Vector<Type> &proportion_mature_at_age;
+    fims::Vector<Type> &expected_catch;
+    fims::Vector<Type> &expected_recruitment;
+    fims::Vector<Type> &sum_selectivity;
+
+    CAAPopulationProxy(std::shared_ptr<fims_popdy::Population<Type>> population){
+        this->population = population;
+        this->mortality_F = population->derived_quantities["mortality_F"];
+        this->mortality_Z = population->derived_quantities["mortality_Z"];
+        this->weight_at_age = population->derived_quantities["weight_at_age"];
+        this->numbers_at_age = population->derived_quantities["numbers_at_age"];
+        this->unfished_numbers_at_age = population->derived_quantities["unfished_numbers_at_age"];
+        this->biomass = population->derived_quantities["biomass"];
+        this->spawning_biomass = population->derived_quantities["spawning_biomass"];
+        this->unfished_biomass = population->derived_quantities["unfished_biomass"];
+        this->unfished_spawning_biomass = population->derived_quantities["unfished_spawning_biomass"];
+        this->proportion_mature_at_age = population->derived_quantities["proportion_mature_at_age"];
+        this->expected_catch = population->derived_quantities["expected_catch"];
+        this->expected_recruitment = population->derived_quantities["expected_recruitment"];
+        this->sum_selectivity = population->derived_quantities["sum_selectivity"];
+
+        //fill the fleets vector with fleet proxies
+        for(size_t i = 0; i < population->fleets.size(); i++){
+            this->fleets.push_back(CAAFleetProxy<Type>(population->fleets[i]));
+        }
+ 
+    }
+
+}
+
+
     // TODO: add a function to compute length composition
     template <typename Type>
     class CatchAtAge : public FisheryModelBase<Type>
@@ -584,6 +664,7 @@ namespace fims_popdy
                 {
                     for (size_t fleet_ = 0; fleet_ < population->nfleets; fleet_++)
                     {
+
                         size_t index_yf = year * population->nfleets + fleet_;
                         Type sum_age = 0.0;
                         Type sum_length = 0.0;

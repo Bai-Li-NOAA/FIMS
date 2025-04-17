@@ -510,13 +510,13 @@ namespace fims_popdy
                     Type s = population_proxy.population->fleets[fleet_]->selectivity->evaluate(population_proxy.population->ages[age]);
 
                     population_proxy.mortality_F[i_age_year] +=
-                    population_proxy.population->fleets[fleet_]->Fmort[year] * s;
+                        population_proxy.population->fleets[fleet_]->Fmort[year] * s;
 
                     population_proxy.sum_selectivity[i_age_year] += s;
                 }
             }
             population_proxy.mortality_Z[i_age_year] =
-            population_proxy.population->M[i_age_year] + population_proxy.mortality_F[i_age_year];
+                population_proxy.population->M[i_age_year] + population_proxy.mortality_F[i_age_year];
         }
 
         void CalculateBiomass(
@@ -717,14 +717,14 @@ namespace fims_popdy
             if (i_dev == population_proxy.population->nyears)
             {
                 population_proxy.numbers_at_age[i_age_year] =
-                population_proxy.population->recruitment->evaluate(population_proxy.spawning_biomass[year - 1], phi0);
+                    population_proxy.population->recruitment->evaluate(population_proxy.spawning_biomass[year - 1], phi0);
                 /*the final year of the time series has no data to inform recruitment
                 devs, so this value is set to the mean recruitment.*/
             }
             else
             {
                 population_proxy.numbers_at_age[i_age_year] =
-                population_proxy.population->recruitment->evaluate(population_proxy.spawning_biomass[year - 1], phi0) *
+                    population_proxy.population->recruitment->evaluate(population_proxy.spawning_biomass[year - 1], phi0) *
                     /*the log_recruit_dev vector does not include a value for year == 0
                     and is of length nyears - 1 where the first position of the vector
                     corresponds to the second year of the time series.*/
@@ -781,7 +781,6 @@ namespace fims_popdy
             }
         }
 
-
         void CalculateIndex(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -823,12 +822,12 @@ namespace fims_popdy
                 if (population_proxy.population->fleets[fleet_]->is_survey == false)
                 {
                     index_ = population_proxy.fleets[fleet_].catch_numbers_at_age[i_age_year] *
-                    population_proxy.weight_at_age[age];
+                             population_proxy.weight_at_age[age];
                 }
                 else
                 {
                     index_ = population_proxy.fleets[fleet_].fleet->q.get_force_scalar(year) *
-                    population_proxy.fleets[fleet_].fleet->selectivity->evaluate(population_proxy.population->ages[age]) *
+                             population_proxy.fleets[fleet_].fleet->selectivity->evaluate(population_proxy.population->ages[age]) *
                              population_proxy.numbers_at_age[i_age_year] *
                              population_proxy.weight_at_age[age]; // this->weight_at_age[age];
                 }

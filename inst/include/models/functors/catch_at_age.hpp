@@ -809,6 +809,33 @@ namespace fims_popdy
             }
         }
 
+        void CalculateIndex(
+            CAAPopulationProxy<Type> &population_proxy,
+            size_t i_age_year,
+            size_t year,
+            size_t age)
+        {
+
+            for (size_t fleet_ = 0; fleet_ < population_proxy.population->nfleets; fleet_++)
+            {
+                Type index_;
+                // I = qN (N is total numbers), I is an index in numbers
+                if (population_proxy.population->fleets[fleet_]->is_survey == false)
+                {
+                    index_ = population_proxy.fleets[fleet_].catch_numbers_at_age[i_age_year] *
+                    population_proxy.weight_at_age[age];
+                }
+                else
+                {
+                    index_ = population_proxy.fleets[fleet_].fleet->q.get_force_scalar(year) *
+                    population_proxy.fleets[fleet_].fleet->selectivity->evaluate(population_proxy.population->ages[age]) *
+                             population_proxy.numbers_at_age[i_age_year] *
+                             population_proxy.weight_at_age[age]; // this->weight_at_age[age];
+                }
+                population_proxy.fleets[fleet_].expected_index[year] += index_;
+            }
+        }
+
         void CalculateCatchNumbersAA(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,

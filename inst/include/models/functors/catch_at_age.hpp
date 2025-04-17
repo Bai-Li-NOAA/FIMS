@@ -25,15 +25,27 @@ namespace fims_popdy
         fims::Vector<Type> &proportion_catch_numbers_at_length;
         fims::Vector<Type> &age_length_conversion_matrix;
         fims::Vector<Type> &catch_weight_at_age;
-
+fims::Vector<Type> &catch_index;
+        fims::Vector<Type> &age_composition;
+        fims::Vector<Type> &length_composition;
+        fims::Vector<Type> &expected_catch;
+        fims::Vector<Type> &expected_index;
+        fims::Vector<Type> &log_expected_index;
+        
         CAAFleetProxy(std::shared_ptr<fims_popdy::Fleet<Type>> fleet) : fleet(fleet),
-                                                                        catch_at_age(fleet->derived_quantities["catch_at_age"]),
-                                                                        catch_numbers_at_age(fleet->derived_quantities["catch_numbers_at_age"]),
-                                                                        catch_numbers_at_length(fleet->derived_quantities["catch_numbers_at_length"]),
-                                                                        proportion_catch_numbers_at_age(fleet->derived_quantities["proportion_catch_numbers_at_age"]),
-                                                                        proportion_catch_numbers_at_length(fleet->derived_quantities["proportion_catch_numbers_at_length"]),
-                                                                        age_length_conversion_matrix(fleet->derived_quantities["age_length_conversion_matrix"]),
-                                                                        catch_weight_at_age(fleet->derived_quantities["catch_weight_at_age"])
+                                                                           catch_at_age(fleet->derived_quantities["catch_at_age"]),
+                                                                           catch_numbers_at_age(fleet->derived_quantities["catch_numbers_at_age"]),
+                                                                           catch_numbers_at_length(fleet->derived_quantities["catch_numbers_at_length"]),
+                                                                           proportion_catch_numbers_at_age(fleet->derived_quantities["proportion_catch_numbers_at_age"]),
+                                                                           proportion_catch_numbers_at_length(fleet->derived_quantities["proportion_catch_numbers_at_length"]),
+                                                                           age_length_conversion_matrix(fleet->derived_quantities["age_length_conversion_matrix"]),
+                                                                           catch_weight_at_age(fleet->derived_quantities["catch_weight_at_age"]),
+                                                                           catch_index(fleet->derived_quantities["catch_index"]),
+                                                                           age_composition(fleet->derived_quantities["age_composition"]),
+                                                                           length_composition(fleet->derived_quantities["length_composition"]),
+                                                                           expected_catch(fleet->derived_quantities["expected_catch"]),
+                                                                           expected_index(fleet->derived_quantities["expected_index"]),
+                                                                           log_expected_index(fleet->derived_quantities["log_expected_index"])
         {
         }
     };
@@ -380,7 +392,7 @@ namespace fims_popdy
         {
 
             population_proxy.numbers_at_age[i_age_year] =
-                fims_math::exp(population_proxy->population->log_init_naa[a]);
+                fims_math::exp(population_proxy.population->log_init_naa[a]);
         }
 
         void CalculateNumbersAA(
@@ -418,7 +430,7 @@ namespace fims_popdy
                 (fims_math::exp(-population_proxy.mortality_Z[i_agem1_yearm1]));
 
             // Plus group calculation
-            if (age == (population_proxy->nages - 1))
+            if (age == (population_proxy.population->nages - 1))
             {
                 population_proxy.numbers_at_age[i_age_year] =
                     population_proxy.numbers_at_age[i_age_year] +
@@ -504,7 +516,7 @@ namespace fims_popdy
 
             for (size_t fleet_ = 0; fleet_ < population_proxy.population->nfleets; fleet_++)
             {
-                if (population_proxy->fleets[fleet_]->is_survey == false)
+                if (population_proxy.fleets[fleet_].fleet->is_survey == false)
                 {
                     // evaluate is a member function of the selectivity class
                     Type s = population_proxy.population->fleets[fleet_]->selectivity->evaluate(population_proxy.population->ages[age]);
@@ -655,21 +667,21 @@ namespace fims_popdy
             Type phi_0 = 0.0;
             phi_0 += numbers_spr[0] * population_proxy.population->proportion_female[0] *
                      population_proxy.proportion_mature_at_age[0] *
-                     population_proxy.population->growth->evaluate(population_proxy->ages[0]);
-            for (size_t a = 1; a < (population_proxy->nages - 1); a++)
+                     population_proxy.population->growth->evaluate(population_proxy.population->ages[0]);
+            for (size_t a = 1; a < (population_proxy.population->nages - 1); a++)
             {
                 numbers_spr[a] = numbers_spr[a - 1] * fims_math::exp(-population_proxy.population->M[a]);
                 phi_0 += numbers_spr[a] * population_proxy.population->proportion_female[a] *
                          population_proxy.proportion_mature_at_age[a] *
-                         population_proxy.population->growth->evaluate(population_proxy->ages[a]);
+                         population_proxy.population->growth->evaluate(population_proxy.population->ages[a]);
             }
 
             numbers_spr[population_proxy.population->nages - 1] =
-                (numbers_spr[population_proxy.population->nages - 2] * fims_math::exp(-population_proxy.population->M[population_proxy->nages - 2])) /
+                (numbers_spr[population_proxy.population->nages - 2] * fims_math::exp(-population_proxy.population->M[population_proxy.population->nages - 2])) /
                 (1 - fims_math::exp(-population_proxy.population->M[population_proxy.population->nages - 1]));
             phi_0 += numbers_spr[population_proxy.population->nages - 1] *
                      population_proxy.population->proportion_female[population_proxy.population->nages - 1] *
-                     population_proxy.proportion_mature_at_age[population_proxy->nages - 1] *
+                     population_proxy.proportion_mature_at_age[population_proxy.population->nages - 1] *
                      population_proxy.population->growth->evaluate(population_proxy.population->ages[population_proxy.population->nages - 1]);
 
             return phi_0;
@@ -712,7 +724,7 @@ namespace fims_popdy
             size_t i_dev)
         {
 
-            Type phi0 = CalculateSBPR0(population_proxy);
+            Type phi0 = CalculateSBPR0(population_proxy.population);
 
             if (i_dev == population_proxy.population->nyears)
             {
@@ -869,6 +881,40 @@ namespace fims_popdy
             }
         }
 
+        void CalculateCatchNumbersAA(
+            CAAPopulationProxy<Type>& population_proxy,
+            size_t i_age_year,
+            size_t year,
+            size_t age)
+        {
+
+            for (size_t fleet_ = 0; fleet_ < population_proxy.population->nfleets; fleet_++)
+            {
+                // make an intermediate value in order to set multiple members (of
+                // current and fleet objects) to that value.
+                Type catch_; // catch_ is used to avoid using the c++ keyword catch
+                // Baranov Catch Equation
+                if (population_proxy.fleets[fleet_].fleet->is_survey == false)
+                {
+                    catch_ = (population_proxy.fleets[fleet_].fleet->Fmort[year] *
+                              population_proxy.fleets[fleet_].fleet->selectivity->evaluate(population_proxy.population->ages[age])) /
+                             population_proxy.mortality_Z[i_age_year] *
+                             population_proxy.numbers_at_age[i_age_year] *
+                             (1 - fims_math::exp(-(population_proxy.mortality_Z[i_age_year])));
+                }
+                else
+                {
+                    catch_ = (population_proxy.fleets[fleet_].fleet->selectivity->evaluate(population_proxy.population->ages[age])) *
+                             population_proxy.numbers_at_age[i_age_year];
+                }
+
+                // this->catch_numbers_at_age[i_age_yearf] += catch_;
+                // catch_numbers_at_age for the fleet module has different
+                // dimensions (year/age, not year/fleet/age)
+                population_proxy.fleets[fleet_].catch_numbers_at_age[i_age_year] += catch_;
+            }
+        }
+
         void CalculateCatchWeightAA(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t year,
@@ -885,6 +931,22 @@ namespace fims_popdy
             }
         }
 
+        void CalculateCatchWeightAA(
+            CAAPopulationProxy<Type>& population_proxy,
+            size_t year,
+            size_t age)
+        {
+
+            int i_age_year = year * population_proxy.population->nages + age;
+            for (size_t fleet_ = 0; fleet_ < population_proxy.population->nfleets; fleet_++)
+            {
+
+                population_proxy.fleets[fleet_].catch_weight_at_age[i_age_year] =
+                    population_proxy.fleets[fleet_].catch_numbers_at_age[i_age_year] *
+                    population_proxy.weight_at_age[age];
+            }
+        }
+
         void CalculateMaturityAA(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -892,6 +954,15 @@ namespace fims_popdy
         {
             population->derived_quantities["proportion_mature_at_age"][i_age_year] =
                 population->maturity->evaluate(population->ages[age]);
+        }
+
+        void CalculateMaturityAA(
+            CAAPopulationProxy<Type>& population_proxy,
+            size_t i_age_year,
+            size_t age)
+        {
+            population_proxy.proportion_mature_at_age[i_age_year] =
+                population_proxy.population->maturity->evaluate(population_proxy.population->ages[age]);
         }
 
         void ComputeProportions()
@@ -990,18 +1061,20 @@ namespace fims_popdy
              */
             for (size_t p = 0; p < this->populations.size(); p++)
             {
-                std::shared_ptr<fims_popdy::Population<Type>> &population =
-                    this->populations[p];
+                // std::shared_ptr<fims_popdy::Population<Type>> &population =
+                //     this->populations[p];
 
-                for (size_t y = 0; y <= population->nyears; y++)
+                    CAAPopulationProxy<Type>& population = this->populations_proxies[p];
+
+                for (size_t y = 0; y <= population.population->nyears; y++)
                 {
-                    for (size_t a = 0; a < population->nages; a++)
+                    for (size_t a = 0; a < population.population->nages; a++)
                     {
                         /*
                          index naming defines the dimensional folding structure
                          i.e. i_age_year is referencing folding over years and ages.
                          */
-                        size_t i_age_year = y * population->nages + a;
+                        size_t i_age_year = y * population.population->nages + a;
                         /*
                          Mortality rates are not estimated in the final year which is
                          used to show expected population structure at the end of the model period.
@@ -1012,7 +1085,7 @@ namespace fims_popdy
                          the previous year? Referenced above, this is probably not worth
                          exploring as later milestone changes will eliminate this confusion.
                          */
-                        if (y < population->nyears)
+                        if (y < population.population->nyears)
                         {
                             /*
                              First thing we need is total mortality aggregated across all fleets
@@ -1036,8 +1109,8 @@ namespace fims_popdy
 
                             if (a == 0)
                             {
-                                population->derived_quantities["unfished_numbers_at_age"][i_age_year] =
-                                    fims_math::exp(population->recruitment->log_rzero[0]);
+                                population.unfished_numbers_at_age[i_age_year] =
+                                    fims_math::exp(population.population->recruitment->log_rzero[0]);
                             }
                             else
                             {
@@ -1066,8 +1139,8 @@ namespace fims_popdy
                              Expected recruitment in year 0 is numbers at age 0 in year 0.
                              */
 
-                            population->derived_quantities["expected_recruitment"][i_age_year] =
-                                population->derived_quantities["numbers_at_age"][i_age_year];
+                            population.expected_recruitment[i_age_year] =
+                                population.numbers_at_age[i_age_year];
                         }
                         else
                         {
@@ -1076,12 +1149,12 @@ namespace fims_popdy
                                 // Set the nrecruits for age a=0 year y (use pointers instead of
                                 // functional returns) assuming fecundity = 1 and 50:50 sex ratio
                                 CalculateRecruitment(population, i_age_year, y, y);
-                                population->derived_quantities["unfished_numbers_at_age"][i_age_year] =
-                                    fims_math::exp(population->recruitment->log_rzero[0]);
+                                population.unfished_numbers_at_age[i_age_year] =
+                                    fims_math::exp(population.population->recruitment->log_rzero[0]);
                             }
                             else
                             {
-                                size_t i_agem1_yearm1 = (y - 1) * population->nages + (a - 1);
+                                size_t i_agem1_yearm1 = (y - 1) * population.population->nages + (a - 1);
                                 CalculateNumbersAA(population, i_age_year, i_agem1_yearm1, a);
                                 CalculateUnfishedNumbersAA(population, i_age_year, i_agem1_yearm1, a);
                             }
@@ -1098,7 +1171,7 @@ namespace fims_popdy
                         is this is just to get final population structure at the end of the
                         terminal year.
                          */
-                        if (y < population->nyears)
+                        if (y < population.population->nyears)
                         {
                             CalculateCatchNumbersAA(population, i_age_year, y, a);
 

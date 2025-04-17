@@ -375,12 +375,12 @@ namespace fims_popdy
         }
 
         void CalculateInitialNumbersAA(
-            CAAPopulationProxy<Type> &population,
+            CAAPopulationProxy<Type> &population_proxy,
             size_t i_age_year, size_t a)
         {
 
-            population.numbers_at_age[i_age_year] =
-                fims_math::exp(population->population->log_init_naa[a]);
+            population_proxy.numbers_at_age[i_age_year] =
+                fims_math::exp(population_proxy->population->log_init_naa[a]);
         }
 
         void CalculateNumbersAA(
@@ -406,24 +406,24 @@ namespace fims_popdy
         }
 
         void CalculateNumbersAA(
-            CAAPopulationProxy<Type> &population,
+            CAAPopulationProxy<Type> &population_proxy,
             size_t i_age_year,
             size_t i_agem1_yearm1,
             size_t age)
         {
             // using Z from previous age/year
 
-            population.numbers_at_age[i_age_year] =
-                population.numbers_at_age[i_agem1_yearm1] *
-                (fims_math::exp(-population.mortality_Z[i_agem1_yearm1]));
+            population_proxy.numbers_at_age[i_age_year] =
+                population_proxy.numbers_at_age[i_agem1_yearm1] *
+                (fims_math::exp(-population_proxy.mortality_Z[i_agem1_yearm1]));
 
             // Plus group calculation
-            if (age == (population->nages - 1))
+            if (age == (population_proxy->nages - 1))
             {
-                population.numbers_at_age[i_age_year] =
-                    population.numbers_at_age[i_age_year] +
-                    population.numbers_at_age[i_agem1_yearm1 + 1] *
-                        (fims_math::exp(-population.mortality_Z[i_agem1_yearm1 + 1]));
+                population_proxy.numbers_at_age[i_age_year] =
+                    population_proxy.numbers_at_age[i_age_year] +
+                    population_proxy.numbers_at_age[i_agem1_yearm1 + 1] *
+                        (fims_math::exp(-population_proxy.mortality_Z[i_agem1_yearm1 + 1]));
             }
         }
 
@@ -450,24 +450,24 @@ namespace fims_popdy
         }
 
         void CalculateUnfishedNumbersAA(
-            CAAPopulationProxy<Type> &population,
+            CAAPopulationProxy<Type> &population_proxy,
             size_t i_age_year,
             size_t i_agem1_yearm1,
             size_t age)
         {
 
             // using M from previous age/year
-            population.unfished_numbers_at_age[i_age_year] =
-                population.unfished_numbers_at_age[i_agem1_yearm1] *
-                (fims_math::exp(-population.population->M[i_agem1_yearm1]));
+            population_proxy.unfished_numbers_at_age[i_age_year] =
+                population_proxy.unfished_numbers_at_age[i_agem1_yearm1] *
+                (fims_math::exp(-population_proxy.population->M[i_agem1_yearm1]));
 
             // Plus group calculation
-            if (age == (population.population->nages - 1))
+            if (age == (population_proxy.population->nages - 1))
             {
-                population.unfished_numbers_at_age[i_age_year] =
-                    population.unfished_numbers_at_age[i_age_year] +
-                    population.unfished_numbers_at_age[i_agem1_yearm1 + 1] *
-                        (fims_math::exp(-population.population->M[i_agem1_yearm1 + 1]));
+                population_proxy.unfished_numbers_at_age[i_age_year] =
+                    population_proxy.unfished_numbers_at_age[i_age_year] +
+                    population_proxy.unfished_numbers_at_age[i_agem1_yearm1 + 1] *
+                        (fims_math::exp(-population_proxy.population->M[i_agem1_yearm1 + 1]));
             }
         }
 
@@ -496,27 +496,27 @@ namespace fims_popdy
         }
 
         void CalculateMortality(
-            CAAPopulationProxy<Type> &population,
+            CAAPopulationProxy<Type> &population_proxy,
             size_t i_age_year,
             size_t year,
             size_t age)
         {
 
-            for (size_t fleet_ = 0; fleet_ < population.population->nfleets; fleet_++)
+            for (size_t fleet_ = 0; fleet_ < population_proxy.population->nfleets; fleet_++)
             {
-                if (population->fleets[fleet_]->is_survey == false)
+                if (population_proxy->fleets[fleet_]->is_survey == false)
                 {
                     // evaluate is a member function of the selectivity class
-                    Type s = population.population->fleets[fleet_]->selectivity->evaluate(population.population->ages[age]);
+                    Type s = population_proxy.population->fleets[fleet_]->selectivity->evaluate(population_proxy.population->ages[age]);
 
-                    population.mortality_F[i_age_year] +=
-                    population.population->fleets[fleet_]->Fmort[year] * s;
+                    population_proxy.mortality_F[i_age_year] +=
+                    population_proxy.population->fleets[fleet_]->Fmort[year] * s;
 
-                    population.sum_selectivity[i_age_year] += s;
+                    population_proxy.sum_selectivity[i_age_year] += s;
                 }
             }
-            population.mortality_Z[i_age_year] =
-            population.population->M[i_age_year] + population.mortality_F[i_age_year];
+            population_proxy.mortality_Z[i_age_year] =
+            population_proxy.population->M[i_age_year] + population_proxy.mortality_F[i_age_year];
         }
 
         void CalculateBiomass(
@@ -530,17 +530,17 @@ namespace fims_popdy
                 population->derived_quantities["numbers_at_age"][i_age_year] *
                 population->derived_quantities["weight_at_age"][age];
         }
-        
+
         void CalculateBiomass(
-            CAAPopulationProxy<Type> &population,
+            CAAPopulationProxy<Type> &population_proxy,
             size_t i_age_year,
             size_t year,
             size_t age)
         {
 
-            population.biomass[year] +=
-                population.numbers_at_age[i_age_year] *
-                population.weight_at_age[age];
+            population_proxy.biomass[year] +=
+                population_proxy.numbers_at_age[i_age_year] *
+                population_proxy.weight_at_age[age];
         }
 
         void CalculateUnfishedBiomass(
@@ -556,15 +556,15 @@ namespace fims_popdy
         }
 
         void CalculateUnfishedBiomass(
-            CAAPopulationProxy<Type> &population,
+            CAAPopulationProxy<Type> &population_proxy,
             size_t i_age_year,
             size_t year,
             size_t age)
         {
 
-            population.unfished_biomass[year] +=
-                population.unfished_numbers_at_age[i_age_year] *
-                population.weight_at_age[age];
+            population_proxy.unfished_biomass[year] +=
+                population_proxy.unfished_numbers_at_age[i_age_year] *
+                population_proxy.weight_at_age[age];
         }
 
         void CalculateSpawningBiomass(
@@ -582,17 +582,17 @@ namespace fims_popdy
         }
 
         void CalculateSpawningBiomass(
-            CAAPopulationProxy<Type> &population,
+            CAAPopulationProxy<Type> &population_proxy,
             size_t i_age_year,
             size_t year,
             size_t age)
         {
 
-            population.spawning_biomass[year] +=
-                population.population->proportion_female[age] *
-                population.numbers_at_age[i_age_year] *
-                population.proportion_mature_at_age[i_age_year] *
-                population.weight_at_age[age];
+            population_proxy.spawning_biomass[year] +=
+                population_proxy.population->proportion_female[age] *
+                population_proxy.numbers_at_age[i_age_year] *
+                population_proxy.proportion_mature_at_age[i_age_year] *
+                population_proxy.weight_at_age[age];
         }
 
         void CalculateUnfishedSpawningBiomass(
@@ -609,16 +609,16 @@ namespace fims_popdy
         }
 
         void CalculateUnfishedSpawningBiomass(
-            CAAPopulationProxy<Type> &population,
+            CAAPopulationProxy<Type> &population_proxy,
             size_t i_age_year,
             size_t year,
             size_t age)
         {
-            population.unfished_spawning_biomass[year] +=
-                population.population->proportion_female[age] *
-                population.unfished_numbers_at_age[i_age_year] *
-                population.proportion_mature_at_age[i_age_year] *
-                population.weight_at_age[age];
+            population_proxy.unfished_spawning_biomass[year] +=
+                population_proxy.population->proportion_female[age] *
+                population_proxy.unfished_numbers_at_age[i_age_year] *
+                population_proxy.proportion_mature_at_age[i_age_year] *
+                population_proxy.weight_at_age[age];
         }
 
         Type CalculateSBPR0(
@@ -649,28 +649,28 @@ namespace fims_popdy
         }
 
         Type CalculateSBPR0(
-            CAAPopulationProxy<Type> &population)
+            CAAPopulationProxy<Type> &population_proxy)
         {
-            std::vector<Type> numbers_spr(population.population->nages, 1.0);
+            std::vector<Type> numbers_spr(population_proxy.population->nages, 1.0);
             Type phi_0 = 0.0;
-            phi_0 += numbers_spr[0] * population.population->proportion_female[0] *
-                     population.proportion_mature_at_age[0] *
-                     population.population->growth->evaluate(population->ages[0]);
-            for (size_t a = 1; a < (population->nages - 1); a++)
+            phi_0 += numbers_spr[0] * population_proxy.population->proportion_female[0] *
+                     population_proxy.proportion_mature_at_age[0] *
+                     population_proxy.population->growth->evaluate(population_proxy->ages[0]);
+            for (size_t a = 1; a < (population_proxy->nages - 1); a++)
             {
-                numbers_spr[a] = numbers_spr[a - 1] * fims_math::exp(-population.population->M[a]);
-                phi_0 += numbers_spr[a] * population.population->proportion_female[a] *
-                         population.proportion_mature_at_age[a] *
-                         population.population->growth->evaluate(population->ages[a]);
+                numbers_spr[a] = numbers_spr[a - 1] * fims_math::exp(-population_proxy.population->M[a]);
+                phi_0 += numbers_spr[a] * population_proxy.population->proportion_female[a] *
+                         population_proxy.proportion_mature_at_age[a] *
+                         population_proxy.population->growth->evaluate(population_proxy->ages[a]);
             }
 
-            numbers_spr[population.population->nages - 1] =
-                (numbers_spr[population.population->nages - 2] * fims_math::exp(-population.population->M[population->nages - 2])) /
-                (1 - fims_math::exp(-population.population->M[population.population->nages - 1]));
-            phi_0 += numbers_spr[population.population->nages - 1] *
-                     population.population->proportion_female[population.population->nages - 1] *
-                     population.proportion_mature_at_age[population->nages - 1] *
-                     population.population->growth->evaluate(population.population->ages[population.population->nages - 1]);
+            numbers_spr[population_proxy.population->nages - 1] =
+                (numbers_spr[population_proxy.population->nages - 2] * fims_math::exp(-population_proxy.population->M[population_proxy->nages - 2])) /
+                (1 - fims_math::exp(-population_proxy.population->M[population_proxy.population->nages - 1]));
+            phi_0 += numbers_spr[population_proxy.population->nages - 1] *
+                     population_proxy.population->proportion_female[population_proxy.population->nages - 1] *
+                     population_proxy.proportion_mature_at_age[population_proxy->nages - 1] *
+                     population_proxy.population->growth->evaluate(population_proxy.population->ages[population_proxy.population->nages - 1]);
 
             return phi_0;
         }
@@ -706,32 +706,32 @@ namespace fims_popdy
         }
 
         void CalculateRecruitment(
-            CAAPopulationProxy<Type> &population,
+            CAAPopulationProxy<Type> &population_proxy,
             size_t i_age_year,
             size_t year,
             size_t i_dev)
         {
 
-            Type phi0 = CalculateSBPR0(population);
+            Type phi0 = CalculateSBPR0(population_proxy);
 
-            if (i_dev == population.population->nyears)
+            if (i_dev == population_proxy.population->nyears)
             {
-                population.numbers_at_age[i_age_year] =
-                population.population->recruitment->evaluate(population.spawning_biomass[year - 1], phi0);
+                population_proxy.numbers_at_age[i_age_year] =
+                population_proxy.population->recruitment->evaluate(population_proxy.spawning_biomass[year - 1], phi0);
                 /*the final year of the time series has no data to inform recruitment
                 devs, so this value is set to the mean recruitment.*/
             }
             else
             {
-                population.numbers_at_age[i_age_year] =
-                population.population->recruitment->evaluate(population.spawning_biomass[year - 1], phi0) *
+                population_proxy.numbers_at_age[i_age_year] =
+                population_proxy.population->recruitment->evaluate(population_proxy.spawning_biomass[year - 1], phi0) *
                     /*the log_recruit_dev vector does not include a value for year == 0
                     and is of length nyears - 1 where the first position of the vector
                     corresponds to the second year of the time series.*/
-                    fims_math::exp(population.population->recruitment->log_recruit_devs[i_dev - 1]);
+                    fims_math::exp(population_proxy.population->recruitment->log_recruit_devs[i_dev - 1]);
 
-                population.expected_recruitment[year] =
-                    population.numbers_at_age[i_age_year];
+                population_proxy.expected_recruitment[year] =
+                    population_proxy.numbers_at_age[i_age_year];
             }
         }
 

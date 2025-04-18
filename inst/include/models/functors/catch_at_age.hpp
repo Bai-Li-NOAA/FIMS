@@ -266,7 +266,6 @@ fims::Vector<Type> &catch_index;
             {
                 ss << "{\n";
                 ss << "\"id\": " << this->populations[p]->id << ",\n";
-                std::cout << "populatiopn ptr -> " << this->populations[p].get() << "\n";
 
                 ss << "\"derived_quantities\": [\n";
                 if (this->populations[p]->derived_quantities.size() > 0)
@@ -724,7 +723,7 @@ fims::Vector<Type> &catch_index;
             size_t i_dev)
         {
 
-            Type phi0 = CalculateSBPR0(population_proxy.population);
+            Type phi0 = CalculateSBPR0(population_proxy);
 
             if (i_dev == population_proxy.population->nyears)
             {
@@ -1061,20 +1060,20 @@ fims::Vector<Type> &catch_index;
              */
             for (size_t p = 0; p < this->populations.size(); p++)
             {
-                // std::shared_ptr<fims_popdy::Population<Type>> &population =
-                //     this->populations[p];
+                 std::shared_ptr<fims_popdy::Population<Type>> &population =
+                     this->populations[p];
 
-                    CAAPopulationProxy<Type>& population = this->populations_proxies[p];
+                    // CAAPopulationProxy<Type>& population = this->populations_proxies[p];
 
-                for (size_t y = 0; y <= population.population->nyears; y++)
+                for (size_t y = 0; y <= population->nyears; y++)
                 {
-                    for (size_t a = 0; a < population.population->nages; a++)
+                    for (size_t a = 0; a < population->nages; a++)
                     {
                         /*
                          index naming defines the dimensional folding structure
                          i.e. i_age_year is referencing folding over years and ages.
                          */
-                        size_t i_age_year = y * population.population->nages + a;
+                        size_t i_age_year = y * population->nages + a;
                         /*
                          Mortality rates are not estimated in the final year which is
                          used to show expected population structure at the end of the model period.
@@ -1085,7 +1084,7 @@ fims::Vector<Type> &catch_index;
                          the previous year? Referenced above, this is probably not worth
                          exploring as later milestone changes will eliminate this confusion.
                          */
-                        if (y < population.population->nyears)
+                        if (y < population->nyears)
                         {
                             /*
                              First thing we need is total mortality aggregated across all fleets
@@ -1109,8 +1108,8 @@ fims::Vector<Type> &catch_index;
 
                             if (a == 0)
                             {
-                                population.unfished_numbers_at_age[i_age_year] =
-                                    fims_math::exp(population.population->recruitment->log_rzero[0]);
+                                population->derived_quantities["unfished_numbers_at_age"][i_age_year] =
+                                    fims_math::exp(population->recruitment->log_rzero[0]);
                             }
                             else
                             {
@@ -1139,8 +1138,8 @@ fims::Vector<Type> &catch_index;
                              Expected recruitment in year 0 is numbers at age 0 in year 0.
                              */
 
-                            population.expected_recruitment[i_age_year] =
-                                population.numbers_at_age[i_age_year];
+                            population->derived_quantities["expected_recruitment"][i_age_year] =
+                                population->derived_quantities["numbers_at_age"][i_age_year];
                         }
                         else
                         {
@@ -1149,12 +1148,12 @@ fims::Vector<Type> &catch_index;
                                 // Set the nrecruits for age a=0 year y (use pointers instead of
                                 // functional returns) assuming fecundity = 1 and 50:50 sex ratio
                                 CalculateRecruitment(population, i_age_year, y, y);
-                                population.unfished_numbers_at_age[i_age_year] =
-                                    fims_math::exp(population.population->recruitment->log_rzero[0]);
+                                population->derived_quantities["unfished_numbers_at_age"][i_age_year] =
+                                    fims_math::exp(population->recruitment->log_rzero[0]);
                             }
                             else
                             {
-                                size_t i_agem1_yearm1 = (y - 1) * population.population->nages + (a - 1);
+                                size_t i_agem1_yearm1 = (y - 1) * population->nages + (a - 1);
                                 CalculateNumbersAA(population, i_age_year, i_agem1_yearm1, a);
                                 CalculateUnfishedNumbersAA(population, i_age_year, i_agem1_yearm1, a);
                             }
@@ -1171,7 +1170,7 @@ fims::Vector<Type> &catch_index;
                         is this is just to get final population structure at the end of the
                         terminal year.
                          */
-                        if (y < population.population->nyears)
+                        if (y < population->nyears)
                         {
                             CalculateCatchNumbersAA(population, i_age_year, y, a);
 
@@ -1179,10 +1178,11 @@ fims::Vector<Type> &catch_index;
                             CalculateCatch(population, y, a);
                             CalculateIndex(population, i_age_year, y, a);
                         }
-                        ComputeProportions();
+                       
                     }
                 }
             }
+            ComputeProportions();
         }
     };
 

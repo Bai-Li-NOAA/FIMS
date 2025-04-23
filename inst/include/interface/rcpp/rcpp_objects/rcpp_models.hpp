@@ -192,6 +192,7 @@ public:
                 }
                 ss << derived_ssb[derived_ssb.size() - 1] << "]\n";
             }
+            ss<<",stdev: [";fims::Vector<double>(derived_ssb.size(),-999)<<"]\n";
             ss << " },\n";
 
             ss << "{\n";
@@ -210,6 +211,7 @@ public:
                 }
                 ss << derived_naa[derived_naa.size() - 1] << "]\n";
             }
+            ss<<",stdev: [";fims::Vector<double>(derived_naa.size(),-999)<<"]\n";
             ss << " },\n";
 
             ss << "{\n";
@@ -228,6 +230,7 @@ public:
                 }
                 ss << derived_biomass[derived_biomass.size() - 1] << "]\n";
             }
+            ss<<",stdev: [";fims::Vector<double>(derived_biomass.size(),-999)<<"]\n";
             ss << " },\n";
 
             ss << "{\n";
@@ -246,6 +249,7 @@ public:
                 }
                 ss << derived_recruitment[derived_recruitment.size() - 1] << "]\n";
             }
+            ss<<",stdev: [";fims::Vector<double>(derived_recruitment.size(),-999)<<"]\n";
             ss << " }\n]\n";
 
             ss << "}";
@@ -333,6 +337,7 @@ public:
                 }
                 ss << derived_caa[derived_caa.size() - 1] << "]\n";
             }
+            ss<<",stdev: [";fims::Vector<double>(derived_caa.size(),-999)<<"]\n";
             ss << " },\n";
             ss << " {\n";
             ss << "  \"name\": \"cnal\",\n";
@@ -365,6 +370,7 @@ public:
                 }
                 ss << derived_cwaa[derived_cwaa.size() - 1] << "]\n";
             }
+            ss<<",stdev: [";fims::Vector<double>(derived_cwaa.size(),-999)<<"]\n";
             ss << " },\n";
             ss << " {\n";
             ss << "  \"name\": \"proportion_catch_numbers_at_age\",\n";
@@ -381,6 +387,7 @@ public:
                 }
                 ss << derived_proportion_cnaa[derived_proportion_cnaa.size() - 1] << "]\n";
             }
+            ss<<",stdev: [";fims::Vector<double>(derived_proportion_cnaa.size(),-999)<<"]\n";
             ss << " },\n";
             ss << " {\n";
             ss << "  \"name\": \"proportion_catch_numbers_at_length\",\n";
@@ -388,6 +395,7 @@ public:
             if (derived_proportion_cnal.size() == 0)
             {
                 ss << "]\n";
+                ss<<",stdev: []\n";
             }
             else
             {
@@ -396,7 +404,9 @@ public:
                     ss << derived_proportion_cnal[i] << ", ";
                 }
                 ss << derived_proportion_cnal[derived_proportion_cnal.size() - 1] << "]\n";
+                ss<<",stdev: [";fims::Vector<double>(derived_proportion_cnal.size(),-999)<<"]\n";
             }
+           
             ss << " }\n";
             // ss << " {\n";
             // ss << "  \"name\": \"expected_index\",\n";

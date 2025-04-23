@@ -29,7 +29,7 @@ namespace fims_popdy
         size_t nlikes;
 
         size_t nCatchDF;
-        fims::Vector<int> nCatchRows(1, nCatchDF);
+        fims::Vector<int> nCatchRows;//(1, nCatchDF);
         fims::Vector<fims::Vector<fims::Vector<size_t> > > dCatchData;//(1, nCatchDF, 1, nCatchRows, 1, 11); // array of catch data
      
         fims::Vector<fims::Vector<Type> > obs_catch;//(1, nCatchDF, 1, nCatchRows);

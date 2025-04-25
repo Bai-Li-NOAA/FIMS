@@ -3,7 +3,7 @@ name: Collect contributors
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 8 * * 1'
+    - cron: '0 8 5 * *'
 
 jobs:
     run-r-script:
@@ -16,6 +16,7 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v3
+              ref: 'dev'
             - name: Setup R
               uses: r-lib/actions/setup-r@v2
 

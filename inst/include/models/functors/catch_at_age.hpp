@@ -25,27 +25,27 @@ namespace fims_popdy
         fims::Vector<Type> &proportion_catch_numbers_at_length;
         fims::Vector<Type> &age_length_conversion_matrix;
         fims::Vector<Type> &catch_weight_at_age;
-fims::Vector<Type> &catch_index;
+        fims::Vector<Type> &catch_index;
         fims::Vector<Type> &age_composition;
         fims::Vector<Type> &length_composition;
         fims::Vector<Type> &expected_catch;
         fims::Vector<Type> &expected_index;
         fims::Vector<Type> &log_expected_index;
-        
+
         CAAFleetProxy(std::shared_ptr<fims_popdy::Fleet<Type>> fleet) : fleet(fleet),
-                                                                           catch_at_age(fleet->derived_quantities["catch_at_age"]),
-                                                                           catch_numbers_at_age(fleet->derived_quantities["catch_numbers_at_age"]),
-                                                                           catch_numbers_at_length(fleet->derived_quantities["catch_numbers_at_length"]),
-                                                                           proportion_catch_numbers_at_age(fleet->derived_quantities["proportion_catch_numbers_at_age"]),
-                                                                           proportion_catch_numbers_at_length(fleet->derived_quantities["proportion_catch_numbers_at_length"]),
-                                                                           age_length_conversion_matrix(fleet->derived_quantities["age_length_conversion_matrix"]),
-                                                                           catch_weight_at_age(fleet->derived_quantities["catch_weight_at_age"]),
-                                                                           catch_index(fleet->derived_quantities["catch_index"]),
-                                                                           age_composition(fleet->derived_quantities["age_composition"]),
-                                                                           length_composition(fleet->derived_quantities["length_composition"]),
-                                                                           expected_catch(fleet->derived_quantities["expected_catch"]),
-                                                                           expected_index(fleet->derived_quantities["expected_index"]),
-                                                                           log_expected_index(fleet->derived_quantities["log_expected_index"])
+                                                                        catch_at_age(fleet->derived_quantities["catch_at_age"]),
+                                                                        catch_numbers_at_age(fleet->derived_quantities["catch_numbers_at_age"]),
+                                                                        catch_numbers_at_length(fleet->derived_quantities["catch_numbers_at_length"]),
+                                                                        proportion_catch_numbers_at_age(fleet->derived_quantities["proportion_catch_numbers_at_age"]),
+                                                                        proportion_catch_numbers_at_length(fleet->derived_quantities["proportion_catch_numbers_at_length"]),
+                                                                        age_length_conversion_matrix(fleet->derived_quantities["age_length_conversion_matrix"]),
+                                                                        catch_weight_at_age(fleet->derived_quantities["catch_weight_at_age"]),
+                                                                        catch_index(fleet->derived_quantities["catch_index"]),
+                                                                        age_composition(fleet->derived_quantities["age_composition"]),
+                                                                        length_composition(fleet->derived_quantities["length_composition"]),
+                                                                        expected_catch(fleet->derived_quantities["expected_catch"]),
+                                                                        expected_index(fleet->derived_quantities["expected_index"]),
+                                                                        log_expected_index(fleet->derived_quantities["log_expected_index"])
         {
         }
     };
@@ -113,6 +113,10 @@ fims::Vector<Type> &catch_index;
         typedef typename std::map<std::string, fims::Vector<Type>>::iterator derived_quantities_iterator;
 
     public:
+        /**
+         * Constructor for the CatchAtAge class. This constructor initializes the
+         * name of the model and sets the id of the model.
+         */
         CatchAtAge() : FisheryModelBase<Type>()
         {
             std::stringstream ss;
@@ -120,6 +124,10 @@ fims::Vector<Type> &catch_index;
             this->name_m = ss.str();
         }
 
+        /**
+         * This function is called once at the beginning of the model run. It initializes the derived
+         * quantities for the populations and fleets.
+         */
         virtual void Initialize()
         {
 
@@ -231,6 +239,11 @@ fims::Vector<Type> &catch_index;
             }
         }
 
+        /**
+         * This function is used to convert the derived quantities of a population or fleet
+         * to a JSON string. This function is used to create the JSON output for the
+         * CatchAtAge model.
+         */
         std::string DerivedQuantityToJSON(derived_quantities_iterator it)
         {
             fims::Vector<Type> &dq = (*it).second;
@@ -257,6 +270,10 @@ fims::Vector<Type> &catch_index;
             return ss.str();
         }
 
+        /**
+         * This function is used to convert the derived quantities of a population or fleet
+         * to a JSON string.
+         */
         std::string ToJSON()
         {
             std::stringstream ss;
@@ -326,6 +343,10 @@ fims::Vector<Type> &catch_index;
             return ss.str();
         }
 
+        /**
+         * This function is used to reset the derived quantities of a population or fleet
+         * to a given value.
+         */
         virtual void Prepare()
         {
             for (size_t p = 0; p < this->populations.size(); p++)
@@ -360,22 +381,40 @@ fims::Vector<Type> &catch_index;
                 }
             }
         }
-
+        /**
+         * This function is used to add a population id to the set of population ids.
+         */
         void AddPopulation(uint32_t id)
         {
             this->population_ids.insert(id);
         }
 
+        /**
+         *
+         */
         std::set<uint32_t> &GetPopulationIds()
         {
             return this->population_ids;
         }
 
+        /**
+         * This function is used to get the populations of the model. It returns a
+         * vector of shared pointers to the populations.
+         * @return std::vector<std::shared_ptr<fims_popdy::Population<Type>>>&
+         */
         std::vector<std::shared_ptr<fims_popdy::Population<Type>>> &GetPopulations()
         {
             return this->populations;
         }
 
+        /**
+         * This method is used to calculate the initial numbers at age for a
+         * population. It takes a population object and an age as input and
+         * calculates the initial numbers at age for that population.
+         * @param population
+         * @param i_age_year
+         * @param a
+         */
         void CalculateInitialNumbersAA(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year, size_t a)
@@ -393,7 +432,18 @@ fims::Vector<Type> &catch_index;
             population_proxy.numbers_at_age[i_age_year] =
                 fims_math::exp(population_proxy.population->log_init_naa[a]);
         }
-
+        /**
+         * * This method is used to calculate the numbers at age for a
+         * population. It takes a population object, the index of the age
+         * in the current year, the index of the age in the previous year,
+         * and the age as input and calculates the numbers at age for that
+         * population.
+         * @param population
+         * @param i_age_year
+         * @param i_agem1_yearm1
+         * @param age
+         * @return void
+         */
         void CalculateNumbersAA(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -438,6 +488,18 @@ fims::Vector<Type> &catch_index;
             }
         }
 
+        /**
+         * This method is used to calculate the unfished numbers at age for a
+         * population. It takes a population object, the index of the age
+         * in the current year, the index of the age in the previous year,
+         * and the age as input and calculates the unfished numbers at age
+         * for that population.
+         * @param population
+         * @param i_age_year
+         * @param i_agem1_yearm1
+         * @param age
+         * @return void
+         */
         void CalculateUnfishedNumbersAA(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -481,7 +543,16 @@ fims::Vector<Type> &catch_index;
                         (fims_math::exp(-population_proxy.population->M[i_agem1_yearm1 + 1]));
             }
         }
-
+        /**
+         * * This method is used to calculate the mortality for a population. It takes a
+         * population object, the index of the age in the current year, the year,
+         * and the age as input and calculates the mortality for that population.
+         * @param population
+         * @param i_age_year
+         * @param year
+         * @param age
+         * @return void
+         */
         void CalculateMortality(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -530,6 +601,16 @@ fims::Vector<Type> &catch_index;
                 population_proxy.population->M[i_age_year] + population_proxy.mortality_F[i_age_year];
         }
 
+        /**
+         * * This method is used to calculate the biomass for a population. It takes a
+         * population object, the index of the age in the current year, the year,
+         * and the age as input and calculates the biomass for that population.
+         * @param population
+         * @param i_age_year
+         * @param year
+         * @param age
+         * @return void
+         */
         void CalculateBiomass(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -554,6 +635,16 @@ fims::Vector<Type> &catch_index;
                 population_proxy.weight_at_age[age];
         }
 
+        /**
+         * * This method is used to calculate the unfished biomass for a population. It takes a
+         * population object, the index of the age in the current year, the year,
+         * and the age as input and calculates the unfished biomass for that population.
+         * @param population
+         * @param i_age_year
+         * @param year
+         * @param age
+         * @return void
+         */
         void CalculateUnfishedBiomass(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -578,6 +669,16 @@ fims::Vector<Type> &catch_index;
                 population_proxy.weight_at_age[age];
         }
 
+        /**
+         * * This method is used to calculate the spawning biomass for a population. It takes a
+         * population object, the index of the age in the current year, the year,
+         * and the age as input and calculates the spawning biomass for that population.
+         * @param population
+         * @param i_age_year
+         * @param year
+         * @param age
+         * @return void
+         */
         void CalculateSpawningBiomass(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -591,7 +692,15 @@ fims::Vector<Type> &catch_index;
                 population->derived_quantities["proportion_mature_at_age"][i_age_year] *
                 population->derived_quantities["weight_at_age"][age];
         }
-
+        /**
+         * * This method is used to calculate the spawning biomass for a population. It takes a
+         * population object, the index of the age in the current year, the year,
+         * and the age as input and calculates the spawning biomass for that population.
+         * @param population
+         * @param i_age_year
+         * @param year
+         * @param age
+         */
         void CalculateSpawningBiomass(
             CAAPopulationProxy<Type> &population_proxy,
             size_t i_age_year,
@@ -606,6 +715,16 @@ fims::Vector<Type> &catch_index;
                 population_proxy.weight_at_age[age];
         }
 
+        /**
+         * This method is used to calculate the unfished spawning biomass for a population. It takes a
+         * population object, the index of the age in the current year, the year,
+         * and the age as input and calculates the unfished spawning biomass for that population.
+         * @param population
+         * @param i_age_year
+         * @param year
+         * @param age
+         * @return void
+         */
         void CalculateUnfishedSpawningBiomass(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -632,6 +751,10 @@ fims::Vector<Type> &catch_index;
                 population_proxy.weight_at_age[age];
         }
 
+        /**
+         * This method is used to calculate the spawning biomass per recruit for a population. It takes a
+         * population object.
+         */
         Type CalculateSBPR0(
             std::shared_ptr<fims_popdy::Population<Type>> &population)
         {
@@ -685,7 +808,10 @@ fims::Vector<Type> &catch_index;
 
             return phi_0;
         }
-
+        /**
+         * This method is used to calculate the recruitment for a population. 
+         *
+         */
         void CalculateRecruitment(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -746,6 +872,15 @@ fims::Vector<Type> &catch_index;
             }
         }
 
+        /**
+         * This method is used to calculate the catch for a population. It takes a
+         * population object, the index of the age in the current year, the year,
+         * and the age as input and calculates the catch for that population.
+         * @param population
+         * @param year
+         * @param age
+         * @return void
+         */
         void CalculateCatch(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t year,
@@ -792,6 +927,16 @@ fims::Vector<Type> &catch_index;
             }
         }
 
+        /**
+         * This method is used to calculate the catch index for a population. It takes a
+         * population object, the index of the age in the current year, the year,
+         * and the age as input and calculates the index for that population.
+         * @param population
+         * @param i_age_year
+         * @param year
+         * @param age
+         * @return void
+         */
         void CalculateIndex(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -846,6 +991,16 @@ fims::Vector<Type> &catch_index;
             }
         }
 
+        /**
+         * This method is used to calculate the catch numbers at age for a population. It takes a
+         * population object, the index of the age in the current year, the year,
+         * and the age as input and calculates the numbers at age for that population.
+         * @param population
+         * @param i_age_year
+         * @param year
+         * @param age
+         * @return void
+         */
         void CalculateCatchNumbersAA(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -881,7 +1036,7 @@ fims::Vector<Type> &catch_index;
         }
 
         void CalculateCatchNumbersAA(
-            CAAPopulationProxy<Type>& population_proxy,
+            CAAPopulationProxy<Type> &population_proxy,
             size_t i_age_year,
             size_t year,
             size_t age)
@@ -914,6 +1069,15 @@ fims::Vector<Type> &catch_index;
             }
         }
 
+        /**
+         * This method is used to calculate the catch weight at age for a population. It takes a
+         * population object, the index of the age in the current year, the year,
+         * and the age as input and calculates the weight at age for that population.
+         * @param population
+         * @param year
+         * @param age
+         * @return void
+         */
         void CalculateCatchWeightAA(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t year,
@@ -931,7 +1095,7 @@ fims::Vector<Type> &catch_index;
         }
 
         void CalculateCatchWeightAA(
-            CAAPopulationProxy<Type>& population_proxy,
+            CAAPopulationProxy<Type> &population_proxy,
             size_t year,
             size_t age)
         {
@@ -946,6 +1110,15 @@ fims::Vector<Type> &catch_index;
             }
         }
 
+        /**
+         * This method is used to calculate the maturity at age for a population. It takes a
+         * population object, the index of the age in the current year, the age as input
+         * and calculates the maturity at age for that population.
+         * @param population
+         * @param i_age_year
+         * @param age
+         * @return void
+         */
         void CalculateMaturityAA(
             std::shared_ptr<fims_popdy::Population<Type>> &population,
             size_t i_age_year,
@@ -956,7 +1129,7 @@ fims::Vector<Type> &catch_index;
         }
 
         void CalculateMaturityAA(
-            CAAPopulationProxy<Type>& population_proxy,
+            CAAPopulationProxy<Type> &population_proxy,
             size_t i_age_year,
             size_t age)
         {
@@ -964,6 +1137,15 @@ fims::Vector<Type> &catch_index;
                 population_proxy.population->maturity->evaluate(population_proxy.population->ages[age]);
         }
 
+        /**
+         * This method is used to calculate the proportions for a population. It takes a
+         * population object, the index of the age in the current year, the age as input
+         * and calculates the proportions for that population.
+         * @param population
+         * @param i_age_year
+         * @param age
+         * @return void
+         */
         void ComputeProportions()
         {
             for (size_t p = 0; p < this->populations.size(); p++)
@@ -1032,6 +1214,9 @@ fims::Vector<Type> &catch_index;
             }
         }
 
+        /**
+         * * This method is used to evaluate the population dynamics model. 
+         */
         virtual void Evaluate()
         {
 
@@ -1060,10 +1245,10 @@ fims::Vector<Type> &catch_index;
              */
             for (size_t p = 0; p < this->populations.size(); p++)
             {
-                 std::shared_ptr<fims_popdy::Population<Type>> &population =
-                     this->populations[p];
+                std::shared_ptr<fims_popdy::Population<Type>> &population =
+                    this->populations[p];
 
-                    // CAAPopulationProxy<Type>& population = this->populations_proxies[p];
+                // CAAPopulationProxy<Type>& population = this->populations_proxies[p];
 
                 for (size_t y = 0; y <= population->nyears; y++)
                 {
@@ -1178,7 +1363,6 @@ fims::Vector<Type> &catch_index;
                             CalculateCatch(population, y, a);
                             CalculateIndex(population, i_age_year, y, a);
                         }
-                       
                     }
                 }
             }

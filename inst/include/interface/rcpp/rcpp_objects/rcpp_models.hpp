@@ -78,12 +78,19 @@ uint32_t FisheryModelInterfaceBase::id_g = 1;
 // FleetInterfaceBase to the FleetInterfaceBase objects
 std::map<uint32_t, std::shared_ptr<FisheryModelInterfaceBase>> FisheryModelInterfaceBase::live_objects;
 
+/**
+ * @brief The CatchAtAgeInterface class is used to interface with the
+ * CatchAtAge model. It inherits from the FisheryModelInterfaceBase class.
+ */
 class CatchAtAgeInterface : public FisheryModelInterfaceBase
 {
     std::shared_ptr<std::set<uint32_t>> population_ids;
     typedef typename std::set<uint32_t>::iterator population_id_iterator;
 
 public:
+    /**
+     * @brief The constructor.
+     */
     CatchAtAgeInterface() : FisheryModelInterfaceBase()
     {
         this->population_ids = std::make_shared<std::set<uint32_t>>();
@@ -102,11 +109,17 @@ public:
     {
     }
 
+    /**
+     * Metthod to add a population id to the set of population ids.
+     */
     void AddPopulation(uint32_t id)
     {
         this->population_ids->insert(id);
     }
 
+    /**
+     * @brief Method to get the population id.
+     */
     virtual uint32_t get_id()
     {
         return this->id;
@@ -126,10 +139,16 @@ public:
         // o.close();
     }
 
+    /**
+     * 
+     */
     virtual void finalize()
     {
     }
 
+    /**
+     * @brief Method to convert a population to a JSON string. 
+     */
     std::string population_to_json(PopulationInterface *population_interface)
     {
 
@@ -265,6 +284,9 @@ public:
         return ss.str();
     }
 
+    /**
+     * @brief Method to convert a fleet to a JSON string.
+     */
     std::string fleets_to_json(FleetInterface *fleet_interface)
     {
         std::stringstream ss;
@@ -483,8 +505,10 @@ public:
         return ss.str();
     }
 
-    virtual std::string
-    to_json()
+    /**
+     * @brief Method to convert the model to a JSON string.
+     */
+    virtual std::string to_json()
     {
 
         this->Show();
@@ -586,9 +610,18 @@ public:
         return result;
     }
 
+    /**
+     * @brief Method to calculate reference points for a population.
+     * @param population_interface
+     * @param maxF The maximum fishing mortality to calculate reference points for.
+     * @param step The step size for the fishing mortality.
+     * @return A list of reference points for the population.
+     */
     Rcpp::List calculate_reference_points_population(PopulationInterface *population_interface,
                                                      double maxF = 1.0, double step = 0.01)
     {
+        //note: this algoritm is ported from the Meta-population assessment system project and
+        //needs review
 
         Rcpp::List result;
         double spawning_season_offset = 0.0;
@@ -805,6 +838,9 @@ public:
         return result;
     }
 
+    /**
+     * @brief Method to calculate reference points for the model.
+     */
     virtual Rcpp::List calculate_reference_points()
     {
         Rcpp::List result;

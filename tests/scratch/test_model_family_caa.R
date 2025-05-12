@@ -161,7 +161,8 @@ survey_fleet_index_distribution$set_distribution_links("data", survey_fleet$log_
 # Age composition distribution
 survey_fleet_agecomp_distribution <- methods::new(DmultinomDistribution)
 survey_fleet_agecomp_distribution$set_observed_data(survey_fleet$GetObservedAgeCompDataID())
-survey_fleet_agecomp_distribution$set_distribution_links("data", survey_fleet$proportion_catch_numbers_at_age$get_id())
+survey_fleet_agecomp_distribution$set_distribution_links(
+  "data", survey_fleet$proportion_catch_numbers_at_age$get_id())
 
 # Length composition distribution
 survey_fleet_lengthcomp_distribution <- methods::new(DmultinomDistribution)
@@ -286,20 +287,43 @@ population2$SetMaturity(maturity$get_id())
 population2$AddFleet(fishing_fleet$get_id())
 population2$AddFleet(survey_fleet$get_id())
 
-
+# Population 3
+population3 <- methods::new(Population)
+population3$log_M$resize(om_input[["nyr"]] * om_input[["nages"]])
+for (i in 1:(om_input[["nyr"]] * om_input[["nages"]])) {
+  population3$log_M[i]$value <- log(om_input[["M.age"]][1])
+}
+population3$log_M$set_all_estimable(FALSE)
+population3$log_init_naa$resize(om_input[["nages"]])
+for (i in 1:om_input$nages) {
+  population3$log_init_naa[i]$value <- log(om_output[["N.age"]][1, i])
+}
+population3$log_init_naa$set_all_estimable(TRUE)
+population3$nages$set(om_input[["nages"]])
+population3$ages$fromRVector(om_input[["ages"]])
+population3$nfleets$set(sum(om_input[["fleet_num"]], om_input[["survey_num"]]))
+population3$nseasons$set(1)
+population3$nyears$set(om_input[["nyr"]])
+population3$SetRecruitment(recruitment$get_id())
+population3$SetGrowth(ewaa_growth$get_id())
+population3$SetMaturity(maturity$get_id())
+population3$AddFleet(fishing_fleet$get_id())
+population3$AddFleet(survey_fleet$get_id())
 
 caa <- methods::new(CatchAtAge)
 caa$AddPopulation(population1$get_id())
-caa$AddPopulation(population2$get_id())
+# caa$AddPopulation(population2$get_id())
+# caa$AddPopulation(population3$get_id())
 # Set-up TMB
 CreateTMBModel()
 
 # Create parameter list from Rcpp modules
 parameters <- list(p = get_fixed())
-obj <- TMB::MakeADFun(
+
+system.time( obj <- TMB::MakeADFun(
   data = list(), parameters, DLL = "FIMS",
   silent = TRUE
-)
+))
 
 # minimizR function
 opt <- minimizR(obj[["par"]], # initial parameters values
@@ -311,13 +335,14 @@ opt <- minimizR(obj[["par"]], # initial parameters values
     iprint = 10, # print interval
     hessian = FALSE
   )
-) # include hessian in the output
+ ) # include hessian in the output
 
 # Optimization with nlminb
 # opt <- NULL
 #   opt <- stats::nlminb(obj[["par"]], obj[["fn"]], obj[["gr"]],
 #     control = list(eval.max = 10000, iter.max = 10000, trace = 0)
 #   )
+opt
 
 global_ouput<-finalize(opt$par, obj$fn, obj$gr)
 # loop throught the derived quantities in population and print

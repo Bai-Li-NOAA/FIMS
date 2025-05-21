@@ -180,6 +180,7 @@ public:
    /* Create instance of map: key is id and value is pointer to
     FleetInterfaceBase */
     FleetInterfaceBase::live_objects[this->id] = fleet;
+    this->set_vector_names
   }
 
   /**
@@ -217,6 +218,15 @@ public:
    */
   virtual ~FleetInterface() {}
 
+
+  void set_vector_names() {
+    this->log_q.name_m.set("log_q");
+    this->log_Fmort.name_m.set("log_Fmort");
+    this->log_expected_index.name_m.set("log_expected_index");
+    this->proportion_catch_numbers_at_age.name_m.set("proportion_catch_numbers_at_age");
+    this->proportion_catch_numbers_at_length.name_m.set("proportion_catch_numbers_at_length");
+    this->age_length_conversion_matrix.name_m.set("age_length_conversion_matrix");
+  }
   /**
    * @brief Gets the ID of the interface base object.
    * @return The ID.

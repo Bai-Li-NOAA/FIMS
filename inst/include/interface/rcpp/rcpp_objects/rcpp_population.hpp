@@ -75,7 +75,6 @@ std::map<uint32_t, std::shared_ptr<PopulationInterfaceBase>>
 class PopulationInterface : public PopulationInterfaceBase
 {
 
-
 public:
   /**
    * @brief The number of age bins.
@@ -85,7 +84,7 @@ public:
   /**
    * list of fleets that operate on this population.
    */
-  std::shared_ptr<std::set<uint32_t> > fleet_ids;
+  std::shared_ptr<std::set<uint32_t>> fleet_ids;
   /**
    * Iterator for fleet ids.
    */
@@ -177,6 +176,7 @@ public:
     std::shared_ptr<PopulationInterface> population = std::make_shared<PopulationInterface>(*this);
     FIMSRcppInterfaceBase::fims_interface_objects.push_back(population);
     PopulationInterfaceBase::live_objects[this->id] = population;
+    this->set_vector_names();
   }
 
   /**
@@ -204,6 +204,14 @@ public:
    * @brief The destructor.
    */
   virtual ~PopulationInterface() {}
+
+void set_vector_names()
+  {
+    this->log_M.set_name("log_M");
+    this->log_init_naa.set_name("log_init_naa");
+    this->numbers_at_age.set_name("numbers_at_age");
+  }
+  
 
   /**
    * @brief Gets the ID of the interface base object.
@@ -356,9 +364,8 @@ public:
    */
   virtual std::string to_json()
   {
- 
 
-        std::stringstream ss;
+    std::stringstream ss;
     // ToDo: add list of fleet ids operating on this population
     ss << "{\n";
     ss << " \"name\" : \"Population\",\n";

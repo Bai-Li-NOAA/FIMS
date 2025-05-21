@@ -27,8 +27,9 @@
  * @details An Rcpp interface class that defines the interface between R and
  * C++ for a parameter type.
  */
-class Parameter {
- public:
+class Parameter
+{
+public:
   /**
    * @brief The static ID of the Parameter object.
    */
@@ -68,27 +69,29 @@ class Parameter {
    * @brief The constructor for initializing a parameter.
    */
   Parameter(double value, double min, double max, bool estimated)
-  : id_m(Parameter::id_g++), initial_value_m(value), min_m(min), max_m(max), estimated_m(estimated) {
+      : id_m(Parameter::id_g++), initial_value_m(value), min_m(min), max_m(max), estimated_m(estimated)
+  {
   }
 
   /**
    * @brief The constructor for initializing a parameter.
    */
-  Parameter(const Parameter& other) :
-    id_m(other.id_m), initial_value_m(other.initial_value_m),
-    final_value_m(other.final_value_m),
-    min_m(other.min_m), max_m(other.max_m),
-    is_random_effect_m(other.is_random_effect_m),
-    estimated_m(other.estimated_m) {
+  Parameter(const Parameter &other) : id_m(other.id_m), initial_value_m(other.initial_value_m),
+                                      final_value_m(other.final_value_m),
+                                      min_m(other.min_m), max_m(other.max_m),
+                                      is_random_effect_m(other.is_random_effect_m),
+                                      estimated_m(other.estimated_m)
+  {
   }
 
   /**
    * @brief The constructor for initializing a parameter.
    */
-  Parameter& operator=(const Parameter& right) {
+  Parameter &operator=(const Parameter &right)
+  {
     // Check for self-assignment!
     if (this == &right) // Same object?
-      return *this; // Yes, so skip assignment, and just return *this.
+      return *this;     // Yes, so skip assignment, and just return *this.
     this->id_m = right.id_m;
     this->initial_value_m = right.initial_value_m;
     this->estimated_m = right.estimated_m;
@@ -98,12 +101,11 @@ class Parameter {
     return *this;
   }
 
-   
-
   /**
    * @brief The constructor for initializing a parameter.
    */
-  Parameter(double value) {
+  Parameter(double value)
+  {
     initial_value_m = value;
     id_m = Parameter::id_g++;
   }
@@ -112,35 +114,44 @@ class Parameter {
    * @brief The constructor for initializing a parameter.
    * @details Set value to 0 when there is no input value.
    */
-  Parameter() {
+  Parameter()
+  {
     initial_value_m = 0;
-    id_m = Parameter::id_g++;}
+    id_m = Parameter::id_g++;
+  }
 };
-  /**
-   * @brief The unique ID for the variable map that points to a fims::Vector.
-   */
-  uint32_t Parameter::id_g = 0;
+/**
+ * @brief The unique ID for the variable map that points to a fims::Vector.
+ */
+uint32_t Parameter::id_g = 0;
 
 /**
  * @brief Output for std::ostream& for a parameter.
  *
  * @param out The stream.
  * @param p A parameter.
- * @return std::ostream& 
+ * @return std::ostream&
  */
-std::ostream& operator<<(std::ostream& out, const Parameter& p) {
+std::ostream &operator<<(std::ostream &out, const Parameter &p)
+{
   out << "{\"id\": " << p.id_m << ",\n\"value\": " << p.initial_value_m
-  << ",\n\"estimated_value\": " << p.final_value_m << ",\n\"min\": ";
-  if (p.min_m == -std::numeric_limits<double>::infinity()) {
+      << ",\n\"estimated_value\": " << p.final_value_m << ",\n\"min\": ";
+  if (p.min_m == -std::numeric_limits<double>::infinity())
+  {
     out << "\"-Infinity\"";
-  } else {
-      out << p.min_m;
+  }
+  else
+  {
+    out << p.min_m;
   }
   out << ",\n\"max\": ";
-  if (p.max_m == std::numeric_limits<double>::infinity()) {
-      out <<  "\"Infinity\"";
-  } else {
-      out << p.max_m;
+  if (p.max_m == std::numeric_limits<double>::infinity())
+  {
+    out << "\"Infinity\"";
+  }
+  else
+  {
+    out << p.max_m;
   }
 
   out << ",\n\"estimated\": " << p.estimated_m << "\n}";
@@ -154,7 +165,8 @@ std::ostream& operator<<(std::ostream& out, const Parameter& p) {
  * @details An Rcpp interface class that defines the interface between R and
  * C++ for a parameter vector type.
  */
-class ParameterVector{
+class ParameterVector
+{
 public:
   /**
    * @brief The static ID of the Parameter object.
@@ -163,37 +175,45 @@ public:
   /**
    * @brief Parameter storage.
    */
-  std::shared_ptr<std::vector<Parameter> > storage_m;
+  std::shared_ptr<std::vector<Parameter>> storage_m;
   /**
    * @brief The local ID of the Parameter object.
    */
   uint32_t id_m;
 
   /**
+   * The name of the parameter vector.
+   */
+  SharedString name_m;
+
+  /**
    * @brief The constructor.
    */
-  ParameterVector(){
+  ParameterVector()
+  {
     this->id_m = ParameterVector::id_g++;
-    this->storage_m = std::make_shared<std::vector<Parameter> >();
-    this->storage_m->resize(1); //push_back(Rcpp::wrap(p));
+    this->storage_m = std::make_shared<std::vector<Parameter>>();
+    this->storage_m->resize(1); // push_back(Rcpp::wrap(p));
   }
 
   /**
    * @brief The constructor.
    */
-  ParameterVector(const ParameterVector& other) :
-    storage_m(other.storage_m), id_m(other.id_m) {
+  ParameterVector(const ParameterVector &other) : storage_m(other.storage_m), id_m(other.id_m)
+  {
   }
 
   /**
    * @brief The constructor.
    */
-  ParameterVector(size_t size ){
+  ParameterVector(size_t size)
+  {
     this->id_m = ParameterVector::id_g++;
-    this->storage_m = std::make_shared<std::vector<Parameter> >();
+    this->storage_m = std::make_shared<std::vector<Parameter>>();
     this->storage_m->resize(size);
-    for (size_t i = 0; i < size; i++) {
-      storage_m->at(i) = Parameter(); 
+    for (size_t i = 0; i < size; i++)
+    {
+      storage_m->at(i) = Parameter();
     }
   }
 
@@ -202,11 +222,13 @@ public:
    * @param x A numeric vector.
    * @param size The number of elements to copy over.
    */
-  ParameterVector(Rcpp::NumericVector x, size_t size){
+  ParameterVector(Rcpp::NumericVector x, size_t size)
+  {
     this->id_m = ParameterVector::id_g++;
-    this->storage_m = std::make_shared<std::vector<Parameter> >();
+    this->storage_m = std::make_shared<std::vector<Parameter>>();
     this->resize(size);
-    for (size_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++)
+    {
       storage_m->at(i).initial_value_m = x[i];
     }
   }
@@ -215,20 +237,40 @@ public:
    * @brief The constructor for initializing a parameter vector.
    * @param v A vector of doubles.
    */
-  ParameterVector(const fims::Vector<double>& v) {
+  ParameterVector(const fims::Vector<double> &v)
+  {
     this->id_m = ParameterVector::id_g++;
-    this->storage_m = std::make_shared<std::vector<Parameter> >();
+    this->storage_m = std::make_shared<std::vector<Parameter>>();
     this->storage_m->resize(v.size());
-    for (size_t i = 0; i < v.size(); i++) {
+    for (size_t i = 0; i < v.size(); i++)
+    {
       storage_m->at(i).initial_value_m = v[i];
     }
   }
 
   /**
-   * @brief Destroy the Parameter Vector object.
-   * 
+   * @brief Set the name of the ParameterVector object.
+   * @details This is used to set the name of the ParameterVector object
    */
-  virtual ~ParameterVector(){}
+  void SetName(std::string name)
+  {
+    this->name_m.set(name);
+  }
+
+  /**
+   * @brief Get the name of the ParameterVector object.
+   * @details This is used to get the name of the ParameterVector object
+   */
+  std::string GetName()
+  {
+    return this->name_m.get();
+  }
+
+  /**
+   * @brief Destroy the Parameter Vector object.
+   *
+   */
+  virtual ~ParameterVector() {}
 
   /**
    * @brief Gets the ID of the ParameterVector object.
@@ -239,7 +281,8 @@ public:
    * @brief The accessor where the first index starts is zero.
    * @param pos The position of the ParameterVector that you want returned.
    */
-  inline Parameter& operator[](size_t pos) {
+  inline Parameter &operator[](size_t pos)
+  {
     return this->storage_m->at(pos);
   }
 
@@ -248,9 +291,11 @@ public:
    * for calling accessing from R.
    * @param pos The position of the ParameterVector that you want returned.
    */
-  SEXP at(R_xlen_t pos){
+  SEXP at(R_xlen_t pos)
+  {
     if (static_cast<size_t>(pos) == 0 ||
-      static_cast<size_t>(pos) > this->storage_m->size()) {
+        static_cast<size_t>(pos) > this->storage_m->size())
+    {
       Rcpp::Rcout << "ParameterVector: Index out of range.\n";
       FIMS_ERROR_LOG(fims::to_string(pos) + "!<" + fims::to_string(this->size()));
       return NULL;
@@ -265,8 +310,10 @@ public:
    * you want returned. The first position is one and the last position is
    * the same as the size of the ParameterVector.
    */
-  Parameter& get(size_t pos) {
-    if (pos >= this->storage_m->size()) {
+  Parameter &get(size_t pos)
+  {
+    if (pos >= this->storage_m->size())
+    {
       Rcpp::Rcout << "ParameterVector: Index out of range.\n";
       throw std::invalid_argument("ParameterVector: Index out of range");
     }
@@ -282,14 +329,16 @@ public:
    * @param p A numeric value specifying the value to set position `pos` to
    * in the ParameterVector.
    */
-  void set(size_t pos, const Parameter& p) {
+  void set(size_t pos, const Parameter &p)
+  {
     this->storage_m->at(pos) = p;
   }
 
   /**
    * @brief Returns the size of a ParameterVector.
    */
-  size_t size() {
+  size_t size()
+  {
     return this->storage_m->size();
   }
 
@@ -298,7 +347,8 @@ public:
    * @param size An integer specifying the desired length for the
    * ParameterVector to be resized to.
    */
-  void resize(size_t size) {
+  void resize(size_t size)
+  {
     this->storage_m->resize(size);
   }
 
@@ -309,8 +359,10 @@ public:
    * ParameterVector should be estimated within the model. A value of true
    * leads to all Parameters being estimated.
    */
-  void set_all_estimable(bool estimable){
-    for (size_t i = 0; i < this->storage_m->size(); i++) {
+  void set_all_estimable(bool estimable)
+  {
+    for (size_t i = 0; i < this->storage_m->size(); i++)
+    {
       storage_m->at(i).estimated_m = estimable;
     }
   }
@@ -322,8 +374,10 @@ public:
    * ParameterVector should be designated as random effects. A value of true
    * leads to all Parameters being random effects.
    */
-  void set_all_random(bool random){
-    for (size_t i = 0; i < this->storage_m->size(); i++) {
+  void set_all_random(bool random)
+  {
+    for (size_t i = 0; i < this->storage_m->size(); i++)
+    {
       storage_m->at(i).is_random_effect_m = random;
     }
   }
@@ -335,8 +389,10 @@ public:
    * @param value A double specifying the value to set all Parameters to
    * within the ParameterVector.
    */
-  void fill(double value){
-    for (size_t i = 0; i < this->storage_m->size(); i++) {
+  void fill(double value)
+  {
+    for (size_t i = 0; i < this->storage_m->size(); i++)
+    {
       storage_m->at(i).initial_value_m = value;
     }
   }
@@ -347,8 +403,10 @@ public:
    *
    * @param value The value to be assigned.
    */
-  void fill_min(double value){
-    for (size_t i = 0; i < this->storage_m->size(); i++) {
+  void fill_min(double value)
+  {
+    for (size_t i = 0; i < this->storage_m->size(); i++)
+    {
       storage_m->at(i).min_m = value;
     }
   }
@@ -359,8 +417,10 @@ public:
    *
    * @param value The value to be assigned.
    */
-  void fill_max(double value){
-    for (size_t i = 0; i < this->storage_m->size(); i++) {
+  void fill_max(double value)
+  {
+    for (size_t i = 0; i < this->storage_m->size(); i++)
+    {
       storage_m->at(i).max_m = value;
     }
   }
@@ -369,14 +429,15 @@ public:
    * @brief The printing methods for a ParameterVector.
    *
    */
-  void show() {
+  void show()
+  {
     Rcpp::Rcout << this->storage_m->data() << "\n";
 
-    for (size_t i = 0; i < this->storage_m->size(); i++) {
+    for (size_t i = 0; i < this->storage_m->size(); i++)
+    {
       Rcpp::Rcout << storage_m->at(i) << "  ";
     }
   }
-
 };
 uint32_t ParameterVector::id_g = 0;
 
@@ -385,12 +446,14 @@ uint32_t ParameterVector::id_g = 0;
  *
  * @param out The stream.
  * @param v A ParameterVector.
- * @return std::ostream& 
+ * @return std::ostream&
  */
-std::ostream& operator<<(std::ostream& out, ParameterVector& v) {
+std::ostream &operator<<(std::ostream &out, ParameterVector &v)
+{
   out << "[";
   size_t size = v.size();
-  for (size_t i = 0; i < size - 1; i++) {
+  for (size_t i = 0; i < size - 1; i++)
+  {
     out << v[i] << ", ";
   }
   out << v[size - 1] << "]";
@@ -404,7 +467,8 @@ std::ostream& operator<<(std::ostream& out, ParameterVector& v) {
  * C++ for a real vector type. Underlying values are held in a shared pointer
  * and are carried over to any copies of this vector.
  */
-class RealVector {
+class RealVector
+{
 public:
   /**
    * @brief The static ID of the RealVector object.
@@ -413,7 +477,7 @@ public:
   /**
    * @brief real storage.
    */
-  std::shared_ptr<std::vector<double> > storage_m;
+  std::shared_ptr<std::vector<double>> storage_m;
   /**
    * @brief The local ID of the RealVector object.
    */
@@ -422,26 +486,28 @@ public:
   /**
    * @brief The constructor.
    */
-  RealVector() {
-      this->id_m = RealVector::id_g++;
-      this->storage_m = std::make_shared<std::vector<double> >();
-      this->storage_m->resize(1);
+  RealVector()
+  {
+    this->id_m = RealVector::id_g++;
+    this->storage_m = std::make_shared<std::vector<double>>();
+    this->storage_m->resize(1);
   }
 
   /**
    * @brief The constructor.
    */
-  RealVector(const RealVector& other) :
-  storage_m(other.storage_m), id_m(other.id_m) {
+  RealVector(const RealVector &other) : storage_m(other.storage_m), id_m(other.id_m)
+  {
   }
 
   /**
    * @brief The constructor.
    */
-  RealVector(size_t size) {
-      this->id_m = RealVector::id_g++;
-      this->storage_m = std::make_shared<std::vector<double> >();
-      this->storage_m->resize(size);
+  RealVector(size_t size)
+  {
+    this->id_m = RealVector::id_g++;
+    this->storage_m = std::make_shared<std::vector<double>>();
+    this->storage_m->resize(size);
   }
 
   /**
@@ -449,88 +515,101 @@ public:
    * @param x A numeric vector.
    * @param size The number of elements to copy over.
    */
-  RealVector(Rcpp::NumericVector x, size_t size) {
-      this->id_m = RealVector::id_g++;
-      this->storage_m = std::make_shared<std::vector<double> >();
-      this->resize(x.size());
-      for (size_t i = 0; i < x.size(); i++) {
-          storage_m->at(i) = x[i];
-      }
+  RealVector(Rcpp::NumericVector x, size_t size)
+  {
+    this->id_m = RealVector::id_g++;
+    this->storage_m = std::make_shared<std::vector<double>>();
+    this->resize(x.size());
+    for (size_t i = 0; i < x.size(); i++)
+    {
+      storage_m->at(i) = x[i];
+    }
   }
 
   /**
    * @brief The constructor for initializing a real vector.
    * @param v A vector of doubles.
    */
-  RealVector(const fims::Vector<double>& v) {
-      this->id_m = RealVector::id_g++;
-      this->storage_m = std::make_shared<std::vector<double> >();
-      this->storage_m->resize(v.size());
-      for (size_t i = 0; i < v.size(); i++) {
-          storage_m->at(i) = v[i];
-      }
+  RealVector(const fims::Vector<double> &v)
+  {
+    this->id_m = RealVector::id_g++;
+    this->storage_m = std::make_shared<std::vector<double>>();
+    this->storage_m->resize(v.size());
+    for (size_t i = 0; i < v.size(); i++)
+    {
+      storage_m->at(i) = v[i];
+    }
   }
 
   /**
    * @brief Destroy the real Vector object.
-   * 
+   *
    */
-  virtual ~RealVector() {
+  virtual ~RealVector()
+  {
   }
 
   /**
-   * @brief 
-   * 
-   * @param v 
-   * @return RealVector& 
+   * @brief
+   *
+   * @param v
+   * @return RealVector&
    */
-  RealVector& operator=(const Rcpp::NumericVector& v) {
-      this->storage_m->resize(v.size());
-      for (size_t i = 0; i < v.size(); i++) {
-          storage_m->at(i) = v[i];
-      }
-      return *this;
+  RealVector &operator=(const Rcpp::NumericVector &v)
+  {
+    this->storage_m->resize(v.size());
+    for (size_t i = 0; i < v.size(); i++)
+    {
+      storage_m->at(i) = v[i];
+    }
+    return *this;
   }
 
   /**
    * @brief Gets the ID of the RealVector object.
    */
-  virtual uint32_t get_id() {
-      return this->id_m;
+  virtual uint32_t get_id()
+  {
+    return this->id_m;
   }
 
   /**
-   * @brief 
-   * 
-   * @param orig 
+   * @brief
+   *
+   * @param orig
    */
-  void fromRVector(const Rcpp::NumericVector& orig) {
-      this->storage_m->resize(orig.size());
-      for (size_t i = 0; i < this->storage_m->size(); i++) {
-          this->storage_m->at(i) = orig[i];
-      }
+  void fromRVector(const Rcpp::NumericVector &orig)
+  {
+    this->storage_m->resize(orig.size());
+    for (size_t i = 0; i < this->storage_m->size(); i++)
+    {
+      this->storage_m->at(i) = orig[i];
+    }
   }
-  
+
   /**
-   * @brief 
-   * 
-   * @return Rcpp::NumericVector 
+   * @brief
+   *
+   * @return Rcpp::NumericVector
    */
-  Rcpp::NumericVector toRVector(){
-      Rcpp::NumericVector ret(this->storage_m->size());
-      for(size_t i =0; i < this->size(); i++){
-          ret[i] = this->storage_m->at(i);
-      }
-      
-      return ret;
+  Rcpp::NumericVector toRVector()
+  {
+    Rcpp::NumericVector ret(this->storage_m->size());
+    for (size_t i = 0; i < this->size(); i++)
+    {
+      ret[i] = this->storage_m->at(i);
+    }
+
+    return ret;
   }
 
   /**
    * @brief The accessor where the first index starts is zero.
    * @param pos The position of the RealVector that you want returned.
    */
-  inline double& operator[](size_t pos) {
-      return this->storage_m->at(pos);
+  inline double &operator[](size_t pos)
+  {
+    return this->storage_m->at(pos);
   }
 
   /**
@@ -538,14 +617,16 @@ public:
    * for calling accessing from R.
    * @param pos The position of the ParameterVector that you want returned.
    */
-  SEXP at(R_xlen_t pos) {
-      if (static_cast<size_t> (pos) == 0 ||
-              static_cast<size_t> (pos) > this->storage_m->size()) {
-          Rcpp::Rcout << "RealVector: Index out of range.\n";
-          FIMS_ERROR_LOG(fims::to_string(pos) + "!<" + fims::to_string(this->size()));
-          return NULL;
-      }
-      return Rcpp::wrap(this->storage_m->at(pos - 1));
+  SEXP at(R_xlen_t pos)
+  {
+    if (static_cast<size_t>(pos) == 0 ||
+        static_cast<size_t>(pos) > this->storage_m->size())
+    {
+      Rcpp::Rcout << "RealVector: Index out of range.\n";
+      FIMS_ERROR_LOG(fims::to_string(pos) + "!<" + fims::to_string(this->size()));
+      return NULL;
+    }
+    return Rcpp::wrap(this->storage_m->at(pos - 1));
   }
 
   /**
@@ -555,12 +636,14 @@ public:
    * you want returned. The first position is one and the last position is
    * the same as the size of the RealVector.
    */
-  double& get(size_t pos) {
-      if (pos >= this->storage_m->size()) {
-          Rcpp::Rcout << "RealVector: Index out of range.\n";
-          throw std::invalid_argument("RealVector: Index out of range");
-      }
-      return (this->storage_m->at(pos));
+  double &get(size_t pos)
+  {
+    if (pos >= this->storage_m->size())
+    {
+      Rcpp::Rcout << "RealVector: Index out of range.\n";
+      throw std::invalid_argument("RealVector: Index out of range");
+    }
+    return (this->storage_m->at(pos));
   }
 
   /**
@@ -572,15 +655,17 @@ public:
    * @param p A numeric value specifying the value to set position `pos` to
    * in the RealVector.
    */
-  void set(size_t pos, const double& p) {
-      this->storage_m->at(pos) = p;
+  void set(size_t pos, const double &p)
+  {
+    this->storage_m->at(pos) = p;
   }
 
   /**
    * @brief Returns the size of a RealVector.
    */
-  size_t size() {
-      return this->storage_m->size();
+  size_t size()
+  {
+    return this->storage_m->size();
   }
 
   /**
@@ -588,8 +673,9 @@ public:
    * @param size An integer specifying the desired length for the
    * RealVector to be resized to.
    */
-  void resize(size_t size) {
-      this->storage_m->resize(size);
+  void resize(size_t size)
+  {
+    this->storage_m->resize(size);
   }
 
   /**
@@ -599,31 +685,35 @@ public:
    * @param value A double specifying the value to set all elements to
    * within the RealVector.
    */
-  void fill(double value) {
-      for (size_t i = 0; i < this->storage_m->size(); i++) {
-          storage_m->at(i) = value;
-      }
+  void fill(double value)
+  {
+    for (size_t i = 0; i < this->storage_m->size(); i++)
+    {
+      storage_m->at(i) = value;
+    }
   }
 
   /**
    * @brief The printing methods for a RealVector.
    *
    */
-  void show() {
-      Rcpp::Rcout << this->storage_m->data() << "\n";
+  void show()
+  {
+    Rcpp::Rcout << this->storage_m->data() << "\n";
 
-      for (size_t i = 0; i < this->storage_m->size(); i++) {
-          Rcpp::Rcout << storage_m->at(i) << "  ";
-      }
+    for (size_t i = 0; i < this->storage_m->size(); i++)
+    {
+      Rcpp::Rcout << storage_m->at(i) << "  ";
+    }
   }
-
 };
 uint32_t RealVector::id_g = 0;
 
 /**
  *@brief Base class for all interface objects.
  */
-class FIMSRcppInterfaceBase {
+class FIMSRcppInterfaceBase
+{
 public:
   /**
    * @brief Is the object already finalized? The default is false.
@@ -632,32 +722,34 @@ public:
   /**
    * @brief FIMS interface object vectors.
    */
-  static std::vector<std::shared_ptr<FIMSRcppInterfaceBase> > fims_interface_objects;
+  static std::vector<std::shared_ptr<FIMSRcppInterfaceBase>> fims_interface_objects;
 
   /**
    * @brief A virtual method to inherit to add objects to the TMB model.
    */
-  virtual bool add_to_fims_tmb() {
+  virtual bool add_to_fims_tmb()
+  {
     Rcpp::Rcout << "fims_rcpp_interface_base::add_to_fims_tmb(): Not yet "
-                 "implemented.\n";
+                   "implemented.\n";
     return false;
   }
 
-  /** 
+  /**
    * @brief Extracts derived quantities back to the Rcpp interface object from
-   * the Information object. 
+   * the Information object.
    */
-  virtual void finalize() {
+  virtual void finalize()
+  {
   }
 
   /**
    * @brief Convert the data to json representation for the output.
    */
-  virtual std::string to_json() {
+  virtual std::string to_json()
+  {
     FIMS_WARNING_LOG("Method not yet defined.");
     return "{\"name\" : \"not yet implemented\"}";
   }
-
 
   std::string make_dimensions(uint32_t start, uint32_t end, uint32_t rep = 1)
   {
@@ -680,9 +772,8 @@ public:
     }
     return ss.str();
   }
-  
 };
-std::vector<std::shared_ptr<FIMSRcppInterfaceBase> >
-  FIMSRcppInterfaceBase::fims_interface_objects;
+std::vector<std::shared_ptr<FIMSRcppInterfaceBase>>
+    FIMSRcppInterfaceBase::fims_interface_objects;
 
 #endif

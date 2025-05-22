@@ -28,6 +28,12 @@
 namespace fims_info
 {
 
+    struct VariableMapInfo{
+        uint32_t module_id;/**< parent module id> */
+        uint32_t member_id;/**<member id> */
+        std::string name;/**<object name */
+    }
+
     /**
      * @brief Stores FIMS model information and creates model. Contains all objects
      * and data pre-model construction

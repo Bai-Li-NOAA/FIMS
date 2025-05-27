@@ -78,8 +78,8 @@ class PopulationInterface : public PopulationInterfaceBase
   friend class CatchAtAgeInterface;
   friend class SurplusProductionInterface;
 
-  SharedBoolean initialize_catch_at_age = false;
-  SharedBoolean initialize_surplus_production = false;
+  SharedBoolean initialize_catch_at_age;// = false;
+  SharedBoolean initialize_surplus_production;// = false;
 
   /**
    * @brief The constructor.

@@ -28,10 +28,15 @@
 namespace fims_info
 {
 
-    struct VariableMapInfo{
-        uint32_t module_id;/**< parent module id> */
-        uint32_t member_id;/**<member id> */
-        std::string name;/**<object name */
+    struct VariableMapInfo
+    {
+
+        VariableMapInfo(uint32_t module_id, uint32_t member_id, std::string name)
+            : module_id(module_id), member_id(member_id), name(name) {}
+
+        uint32_t module_id; /**< parent module id> */
+        uint32_t member_id; /**<member id> */
+        std::string name;   /**<object name */
     }
 
     /**
@@ -158,6 +163,11 @@ namespace fims_info
         std::unordered_map<uint32_t, std::string> variable_map_names; /**<hash map to link a parameter id to it's name */
         typedef typename std::unordered_map<uint32_t, std::string>::iterator
             variable_map_names_iterator; /**< iterator for variable map names>*/
+
+        std::unordered_map<uint32_t, VariableMapInfo>
+            variable_map_info; /**<hash map to link a parameter id to its module id, member id, and name */
+        typedef typename std::unordered_map<uint32_t, VariableMapInfo>::iterator
+            variable_map_info_iterator; /**< iterator for variable map info>*/
 
         Information()
         {

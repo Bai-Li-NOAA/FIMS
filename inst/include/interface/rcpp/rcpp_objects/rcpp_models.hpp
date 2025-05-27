@@ -115,6 +115,18 @@ public:
     void AddPopulation(uint32_t id)
     {
         this->population_ids->insert(id);
+
+        std::map<uint32_t, std::shared_ptr<PopulationInterfaceBase>>::iterator pit;
+        pit = PopulationInterfaceBase::live_objects.find(id);
+        if (pit != PopulationInterfaceBase::live_objects.end())
+        {
+            std::shared_ptr<PopulationInterfaceBase> &pop = (*pit).second;
+            pop->initialize_catch_at_age.set(true);
+        }
+        else
+        {
+            FIMS_ERROR_LOG("Population with id " + fims::to_string(id) + " not found.");
+        }
     }
 
     /**
@@ -122,6 +134,7 @@ public:
      */
     virtual uint32_t get_id()
     {
+        typenamestd::map<uint32_t, std::shared_ptr<PopulationInterfaceBase>>::iterator pit;
         return this->id;
     }
 

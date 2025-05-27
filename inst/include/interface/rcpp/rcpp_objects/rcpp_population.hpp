@@ -75,6 +75,22 @@ std::map<uint32_t, std::shared_ptr<PopulationInterfaceBase>>
 class PopulationInterface : public PopulationInterfaceBase
 {
 
+  friend class CatchAtAgeInterface;
+  friend class SurplusProductionInterface;
+
+  SharedBoolean initialize_catch_at_age = false;
+  SharedBoolean initialize_surplus_production = false;
+
+  /**
+   * @brief The constructor.
+   */
+  PopulationInterface(const PopulationInterface &other);
+
+  /**
+   * @brief Sets the vector names for the parameters.
+   */
+  void set_vector_names();
+
 public:
   /**
    * @brief The number of age bins.
@@ -205,13 +221,12 @@ public:
    */
   virtual ~PopulationInterface() {}
 
-void set_vector_names()
+  void set_vector_names()
   {
     this->log_M.set_name("log_M");
     this->log_init_naa.set_name("log_init_naa");
     this->numbers_at_age.set_name("numbers_at_age");
   }
-  
 
   /**
    * @brief Gets the ID of the interface base object.
@@ -507,6 +522,7 @@ void set_vector_names()
       }
     }
     info->variable_map[this->log_M.id_m] = &(population)->log_M;
+    info->variable_map_names[this->log_M.id_m] = this->log_M.id_m.name_m.get();
 
     for (size_t i = 0; i < log_init_naa.size(); i++)
     {

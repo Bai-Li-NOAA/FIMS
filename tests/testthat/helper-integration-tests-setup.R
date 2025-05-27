@@ -518,3 +518,105 @@ setup_and_run_FIMS_with_wrappers <- function(iter_id,
   # Return the results as a list
   return(fit)
 }
+
+setup_and_run_sp <- function(estimation_mode = TRUE,
+                             map = list()) {
+                              
+  # path to download the surplus prooduction test data
+  path_sp_data <- test_path("fixtures", "integration_test_data_sp.RData")
+  download.file(
+    "https://github.com/iagomosqueira/simtest_SP/raw/main/data/sims.RData",
+    path_sp_data
+  )
+  load(path_sp_data)
+
+  # Simulated data and other information (e.g., number of iteration, end year, and start year)
+  args <- list(it = dim(om)[6], ay = 2020, y0 = 1951)
+  nyears <- args$ay - args$y0 + 1
+
+  survey_index <- lapply(FLCore::FLIndices(A = idx), index)
+  # Load om landings data
+  om_landings <- FLCore::catch(om)
+  # HANDLE NAs in catch
+  om_landings[is.na(om_landings)] <- 0
+  empty <- om_landings %=% 0
+  # Extract the 1st iter landings data for the fishing fleet
+  fishing_fleet_landings <- as.data.frame(iter(om_landings, 1), drop = TRUE)
+
+  #create index module
+  survey_fleet_index <- methods::new(Index, om_input[["nyr"]])
+  purrr::walk(
+    1:om_input[["nyr"]],
+    \(x) survey_fleet_index$index_data$set(x - 1, survey_index[x])
+  )
+
+  #create catch module
+  methods::new(Landings, nyears)
+   purrr::walk(
+    1:nyears,
+    \(x) fishing_fleet_landings$landings_data$set(x - 1, fishing_fleet_landings[x])
+  )
+
+  # Survey and Fishery Fleet modules
+  # Initialize the fishing fleet module
+  fishing_fleet <- methods::new(Fleet)
+  # Set number of years
+  fishing_fleet$nyears$set(om_input[["nyr"]])
+  # Set number of age classes
+  fishing_fleet$nages$set(om_input[["nages"]])
+  # Set number of length bins
+  fishing_fleet$nlengths$set(om_input[["nlengths"]])
+  fishing_fleet$log_q[1]$value <- log(1.0)
+  fishing_fleet$log_q[1]$estimation_type <- "constant"
+  fishing_fleet$SetObservedLandingsDataID(fishing_fleet_landings$get_id())
+  survey_fleet <- methods::new(Fleet)
+  survey_fleet$nages$set(om_input[["nages"]])
+  survey_fleet$nyears$set(om_input[["nyr"]])
+  survey_fleet$nlengths$set(om_input[["nlengths"]])
+  survey_fleet$log_q[1]$value <- log(om_output[["survey_q"]][["survey1"]])
+  survey_fleet$log_q[1]$estimation_type <- "fixed_effects"
+  survey_fleet$SetObservedIndexDataID(survey_fleet_index$get_id())
+
+  #setup distributions for fleet and survey
+  # Set up fishery index data using the lognormal
+  fishing_fleet_landings_distribution <- methods::new(DlnormDistribution)
+  # lognormal observation error transformed on the log scale
+  fishing_fleet_landings_distribution$log_sd$resize(om_input[["nyr"]])
+  for (y in 1:om_input[["nyr"]]) {
+    # Compute lognormal SD from OM coefficient of variation (CV)
+    fishing_fleet_landings_distribution$log_sd[y]$value <- log(sqrt(log(em_input[["cv.L"]][["fleet1"]]^2 + 1)))
+  }
+  fishing_fleet_landings_distribution$log_sd$set_all_estimable(FALSE)
+  # Set Data using the IDs from the modules defined above
+  fishing_fleet_landings_distribution$set_observed_data(fishing_fleet$GetObservedLandingsDataID())
+  fishing_fleet_landings_distribution$set_distribution_links("data", fishing_fleet$log_landings_expected$get_id())
+ survey_fleet_index_distribution <- methods::new(DlnormDistribution)
+
+  # lognormal observation error transformed on the log scale
+  # sd = sqrt(log(cv^2 + 1)), sd is log transformed
+  survey_fleet_index_distribution$log_sd$resize(om_input[["nyr"]])
+  for (y in 1:om_input$nyr) {
+    survey_fleet_index_distribution$log_sd[y]$value <- log(sqrt(log(em_input[["cv.survey"]][["survey1"]]^2 + 1)))
+  }
+  survey_fleet_index_distribution$log_sd$set_all_estimable(FALSE)
+  # Set Data using the IDs from the modules defined above
+  survey_fleet_index_distribution$set_observed_data(survey_fleet$GetObservedIndexDataID())
+  survey_fleet_index_distribution$set_distribution_links("data", survey_fleet$log_index_expected$get_id())
+
+  #create depletion module
+  production <- new(PTDepletion) 
+  production$log_r
+  production$log_K
+  production$log_m 
+
+  #create population module
+  population <- new(Population)
+  population$nyears
+  population$nages
+  #TODO: add log_init_depletion to population
+  population$log_init_depletion
+  #TODO: add SetDepletion function to rcpp_population
+  population$SetDepletion(production$get_id())
+
+  #TODO: Set up distributions for Depletion and Bayesian priors 
+}

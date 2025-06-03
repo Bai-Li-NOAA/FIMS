@@ -65,7 +65,6 @@ setup_and_run_FIMS_without_wrappers <- function(iter_id,
                                                 em_input_list,
                                                 estimation_mode = TRUE,
                                                 map = list()) {
-
   # Load operating model data for the current iteration
   om_input <- om_input_list[[iter_id]] # Operating model input for the current iteration
   om_output <- om_output_list[[iter_id]] # Operating model output for the current iteration
@@ -521,38 +520,124 @@ setup_and_run_FIMS_with_wrappers <- function(iter_id,
 
 setup_and_run_sp <- function(estimation_mode = TRUE,
                              map = list()) {
-                              
   # path to download the surplus prooduction test data
   path_sp_data <- test_path("fixtures", "integration_test_data_sp.RData")
   download.file(
-    "https://github.com/iagomosqueira/simtest_SP/raw/main/data/sims.RData",
+    "https://github.com/iagomosqueira/simtest_SP/blob/main/data/sims.RData",
     path_sp_data
   )
   load(path_sp_data)
 
   # Simulated data and other information (e.g., number of iteration, end year, and start year)
   args <- list(it = dim(om)[6], ay = 2020, y0 = 1951)
-  nyears <- args$ay - args$y0 + 1
+  tracking <- FLCore::FLQuant(dimnames = list(
+    metric = "conv.est",
+    year = 1951:2020,
+    iter = seq(args$it)
+  ))
+  # OM
+  rom <- FLCore::FLQuants(
+    B = tsb(om),
+    Bstatus = tsb(om) / refpts(om)$Btgt,
+    Bdepletion = tsb(om) / refpts(om)$B0
+  )
+  res <- lapply(
+    setNames(names(rom), nm = c("B", "B/B[MSY]", "B/B[0]")),
+    function(x) FLCore::FLQuants(lapply(list(rom), "[[", x))
+  )
+  
+  # Life history parameters from FishLife (https://github.com/James-Thorson-NOAA/FishLife)
+  # More examples can be found at https://github.com/iagomosqueira/simtest_SP/blob/main/data.R
+  # remotes::install_github("Henning-Winker/SPMpriors")
+  alb <- SPMpriors::flmvn_traits(
+    Genus="Thunnus", 
+    Species="alalunga",
+    h=c(0.6,0.9), 
+    Plot=FALSE
+  )$traits
 
-  survey_index <- lapply(FLCore::FLIndices(A = idx), index)
+  lh <- list(
+    linf = alb[alb$trait=="Loo","mu.stk"],
+    k =  alb[alb$trait=="K","mu.stk"],
+    t0 = -0.5,
+    tm = alb[alb$trait=="tm","mu.stk"],
+    a = 0.00001,
+    b = 3.04,
+    tmax =  ceiling(alb[alb$trait=="tmax","mu.stk"]),
+    s = alb[alb$trait=="h","mu.stk"]
+  )
+
+  # Load om survey indices
+  om_survey_indices <- lapply(FLCore::FLIndices(A = idx), index)
+  om_survey_indices_se <- rep(0.2, length(FLCore::FLIndices(A = idx)))
   # Load om landings data
   om_landings <- FLCore::catch(om)
   # HANDLE NAs in catch
   om_landings[is.na(om_landings)] <- 0
-  empty <- om_landings %=% 0
-  # Extract the 1st iter landings data for the fishing fleet
-  fishing_fleet_landings <- as.data.frame(iter(om_landings, 1), drop = TRUE)
 
-  #create index module
+  # Extract args and SET dims
+  # end year: 2020
+  ay <- args$ay
+  # number of iterations: 100
+  it <- args$it
+  # start year:1951
+  y0 <- args$y0
+  # number of years:70
+  ny <- dim(om_landings)[2]
+
+  # Create ouput
+  empty <- om_landings %=% 0
+  out <- list(
+    ind = FLQuants(lapply(
+      setNames(nm = c("F", "Fstatus", "B", "Bstatus", "Bdepletion")),
+      function(x) propagate(empty, it)
+    )),
+    rps = FLPar(NA, dimnames = list(
+      params = c("FMSY", "BMSY", "MSY", "K", "B0"),
+      iter = seq(it)
+    ), units = c("f", "t", "t", "t", "t")),
+    conv = rep(NA, it)
+  )
+
+  # Extract the 1st iter landings data for the fishing fleet
+  iter_id <- 1
+  fishing_fleet_landings <- as.data.frame(
+    iter(om_landings, iter_id),
+    drop = TRUE
+  )
+  survey_fleet_index <- model.frame(
+    window(iter(om_survey_indices, iter_id), start = y0),
+    drop = TRUE
+  )
+  se <- survey_fleet_index
+  # Assign indx.se
+  se[, -1] <- as.list(om_survey_indices_se)
+
+  # JABBA (needs to install JABBA, rjags, and R2jags)
+  inp <- JABBA::build_jabba(
+    catch = fishing_fleet_landings,
+    cpue = survey_fleet_index,
+    se = se,
+    assessment = "STK",
+    scenario = "jabba.sa",
+    model.type = "Schaefer",
+    sigma.est = TRUE,
+    fixed.obsE = 0.05,
+    verbose = FALSE
+  )
+  JABBA::mp_jabba(inp)
+
+  # FIMS
+  # create index module
   survey_fleet_index <- methods::new(Index, om_input[["nyr"]])
   purrr::walk(
     1:om_input[["nyr"]],
     \(x) survey_fleet_index$index_data$set(x - 1, survey_index[x])
   )
 
-  #create catch module
+  # create catch module
   methods::new(Landings, nyears)
-   purrr::walk(
+  purrr::walk(
     1:nyears,
     \(x) fishing_fleet_landings$landings_data$set(x - 1, fishing_fleet_landings[x])
   )
@@ -577,7 +662,7 @@ setup_and_run_sp <- function(estimation_mode = TRUE,
   survey_fleet$log_q[1]$estimation_type <- "fixed_effects"
   survey_fleet$SetObservedIndexDataID(survey_fleet_index$get_id())
 
-  #setup distributions for fleet and survey
+  # setup distributions for fleet and survey
   # Set up fishery index data using the lognormal
   fishing_fleet_landings_distribution <- methods::new(DlnormDistribution)
   # lognormal observation error transformed on the log scale
@@ -590,7 +675,7 @@ setup_and_run_sp <- function(estimation_mode = TRUE,
   # Set Data using the IDs from the modules defined above
   fishing_fleet_landings_distribution$set_observed_data(fishing_fleet$GetObservedLandingsDataID())
   fishing_fleet_landings_distribution$set_distribution_links("data", fishing_fleet$log_landings_expected$get_id())
- survey_fleet_index_distribution <- methods::new(DlnormDistribution)
+  survey_fleet_index_distribution <- methods::new(DlnormDistribution)
 
   # lognormal observation error transformed on the log scale
   # sd = sqrt(log(cv^2 + 1)), sd is log transformed
@@ -603,20 +688,20 @@ setup_and_run_sp <- function(estimation_mode = TRUE,
   survey_fleet_index_distribution$set_observed_data(survey_fleet$GetObservedIndexDataID())
   survey_fleet_index_distribution$set_distribution_links("data", survey_fleet$log_index_expected$get_id())
 
-  #create depletion module
-  production <- new(PTDepletion) 
+  # create depletion module
+  production <- new(PTDepletion)
   production$log_r
   production$log_K
-  production$log_m 
+  production$log_m
 
-  #create population module
+  # create population module
   population <- new(Population)
   population$nyears
   population$nages
-  #TODO: add log_init_depletion to population
+  # TODO: add log_init_depletion to population
   population$log_init_depletion
-  #TODO: add SetDepletion function to rcpp_population
+  # TODO: add SetDepletion function to rcpp_population
   population$SetDepletion(production$get_id())
 
-  #TODO: Set up distributions for Depletion and Bayesian priors 
+  # TODO: Set up distributions for Depletion and Bayesian priors
 }

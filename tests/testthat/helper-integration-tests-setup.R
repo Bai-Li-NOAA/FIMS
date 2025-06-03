@@ -658,6 +658,7 @@ setup_and_run_sp <- function(estimation_mode = TRUE,
   survey_fleet$nages$set(om_input[["nages"]])
   survey_fleet$nyears$set(om_input[["nyr"]])
   survey_fleet$nlengths$set(om_input[["nlengths"]])
+  # Estimate q
   survey_fleet$log_q[1]$value <- log(om_output[["survey_q"]][["survey1"]])
   survey_fleet$log_q[1]$estimation_type <- "fixed_effects"
   survey_fleet$SetObservedIndexDataID(survey_fleet_index$get_id())
@@ -690,18 +691,32 @@ setup_and_run_sp <- function(estimation_mode = TRUE,
 
   # create depletion module
   production <- new(PTDepletion)
+  # estimate log r and K
   production$log_r
   production$log_K
-  production$log_m
+  # Fix to get Shaefer model
+  production$log_m[1]$value <- log(1)
+
+  log_r_Prior <- new(DNormDistribution)
+  log_r_Prior$x <- #prior mean
+  log_r_Prior$sd <- #prior sd
+  log_K_Prior <- new(DNormDistribution)
+  log_K_Prior$x <- #prior mean
+  log_K_Prior$sd <- #prior sd
 
   # create population module
   population <- new(Population)
   population$nyears
   population$nages
-  # TODO: add log_init_depletion to population
-  population$log_init_depletion
+  # Fix init depletion
+  population$log_init_depletion[1]$value <- 1
   # TODO: add SetDepletion function to rcpp_population
   population$SetDepletion(production$get_id())
 
   # TODO: Set up distributions for Depletion and Bayesian priors
+
+  #create TMB Model
+  p <- get_parameters()
+  obj <- MakeADFun(parameters = p)
+  stan.out <- tmbstan::tmbstan(obj)
 }

@@ -79,11 +79,15 @@ namespace fims_popdy {
 
         void CalculateDepletion(size_t i_year){   
             for (size_t p = 0; p < this->populations.size(); p++) {   
-
+                if(i_year == 0){
+                    this->populations[p]->derived_quantities["expected_depletion"][i_year] = 
+                    populations[p]->derived_quantities["log_init_depletion"];
+                }
                 this->populations[p]->derived_quantities["expected_depletion"][i_year] = 
                     this->populations[p]->depletion->evaluate_mean(this->population[p]->derived_quantities["expected_depletion"][i_year-1], 
                         this->populations[p]->derived_quantities["observed_catch"][i_year-1]);
-                this->populations[p]->depletion->log_expected_depletion[i_year] = 
+                
+                        this->populations[p]->depletion->log_expected_depletion[i_year] = 
                     log(this->populations[p]->derived_quantities["expected_depletion"][i_year]);
 
             }
@@ -118,11 +122,7 @@ namespace fims_popdy {
             Prepare();
             for (size_t y = 0; y <= this->nyears; y++) {
                 CalculateCatch(y);
-            }
-            for(size_t y = 1; y <= this->nyears; y++){
                 CalculateDepletion(y);
-            }
-            for (size_t y = 0; y <= this->nyears; y++) {
                 CalculateIndex(y);
                 CalculateBiomass(y);
             }

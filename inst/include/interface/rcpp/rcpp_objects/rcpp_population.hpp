@@ -134,6 +134,10 @@ public:
    * @brief The ID of the recruitment module.
    */
   SharedInt recruitment_id;
+   /**
+   * @brief The ID of the depletion module.
+   */
+  SharedInt depletion_id;
   /**
    * @brief The natural log of the natural mortality for each year.
    */
@@ -207,6 +211,7 @@ public:
                                                           maturity_id(other.maturity_id),
                                                           growth_id(other.growth_id),
                                                           recruitment_id(other.recruitment_id),
+                                                          depletion_id(other.depletion_id),
                                                           log_M(other.log_M), log_init_naa(other.log_init_naa),
                                                           numbers_at_age(other.numbers_at_age), ages(other.ages),
                                                           derived_ssb(other.derived_ssb), derived_naa(other.derived_naa),
@@ -259,6 +264,15 @@ public:
   void SetRecruitment(uint32_t recruitment_id)
   {
     this->recruitment_id.set(recruitment_id);
+  }
+  
+  /**
+   * @brief Set the unique ID for the depletion object.
+   * @param depletion_id Unique ID for the depletion object.
+   */
+  void SetDepletion(uint32_t depletion_id)
+  {
+    this->depletion_id.set(depletion_id);
   }
 
   /**
@@ -388,6 +402,7 @@ public:
     ss << " \"type\" : \"population\",\n";
     ss << " \"tag\" : \"" << this->name << "\",\n";
     ss << " \"id\": " << this->id << ",\n";
+    ss << " \"depletion_id\": " << this->depletion_id << ",\n";
     ss << " \"recruitment_id\": " << this->recruitment_id << ",\n";
     ss << " \"growth_id\": " << this->growth_id << ",\n";
     ss << " \"maturity_id\": " << this->maturity_id << ",\n";
@@ -509,6 +524,7 @@ public:
 
     population->growth_id = this->growth_id.get();
     population->recruitment_id = this->recruitment_id.get();
+    population->depletion_id = this->depletion_id.get();
     population->maturity_id = this->maturity_id.get();
     population->log_M.resize(this->log_M.size());
     population->log_init_naa.resize(this->log_init_naa.size());

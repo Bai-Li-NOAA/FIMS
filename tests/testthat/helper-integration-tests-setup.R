@@ -697,12 +697,23 @@ setup_and_run_sp <- function(estimation_mode = TRUE,
   # Fix to get Shaefer model
   production$log_m[1]$value <- log(1)
 
+  production_distribution <- initialize_process_distribution(
+    module = "production",
+    par = "log_expected_depletion",
+    family = gaussian(),
+    sd = list(value = 0,  estimated = TRUE),
+    is_random_effect = FALSE)
+
+  #Setup Priors
   log_r_Prior <- new(DNormDistribution)
-  log_r_Prior$x <- #prior mean
-  log_r_Prior$sd <- #prior sd
+  log_r_Prior$expected_values[1]$value <- #prior mean
+  log_r_Prior$log_sd[1]$value <- #prior sd
+  log_r_Prior$set_distribution_links("prior", production$log_r$get_id())
+
   log_K_Prior <- new(DNormDistribution)
-  log_K_Prior$x <- #prior mean
-  log_K_Prior$sd <- #prior sd
+  log_K_Prior$expected_values[1]$value <- #prior mean
+  log_K_Prior$log_sd[1]$value <- #prior sd
+  log_K_Prior$set_distribution_links("prior", production$log_K$get_id())
 
   # create population module
   population <- new(Population)
@@ -710,13 +721,13 @@ setup_and_run_sp <- function(estimation_mode = TRUE,
   population$nages
   # Fix init depletion
   population$log_init_depletion[1]$value <- 1
-  # TODO: add SetDepletion function to rcpp_population
   population$SetDepletion(production$get_id())
 
-  # TODO: Set up distributions for Depletion and Bayesian priors
+  # TODO: Set up distributions for Depletion
 
   #create TMB Model
   p <- get_parameters()
-  obj <- MakeADFun(parameters = p)
-  stan.out <- tmbstan::tmbstan(obj)
+  re <- get_random_effects()
+  obj <- MakeADFun(parameters = list(p = p, re = re))
+  fims_stan <- tmbstan::tmbstan(obj)
 }

@@ -492,6 +492,45 @@ namespace fims_info
             }
         }
 
+         /**
+         * @brief Set pointers to the recruitment module referened in the population module.
+         *
+         * @param &valid_model reference to true/false boolean indicating whether model is valid.
+         * @param p shared pointer to population module
+         */
+        void SetDepletion(
+            bool &valid_model,
+            std::shared_ptr<fims_popdy::Population<Type>> p)
+        {
+            if (p->depletion_id != -999)
+            {
+                uint32_t depletion_uint = static_cast<uint32_t>(p->depletion_id);
+                FIMS_INFO_LOG("searching for depletion model " + fims::to_string(depletion_uint));
+                depletion_models_iterator it =
+                    this->depletion_models.find(depletion_uint);
+
+                if (it != this->depletion_models.end())
+                {
+                    p->depletion =
+                        (*it).second; // depletion defined in population.hpp
+                    FIMS_INFO_LOG("Depletion model " + fims::to_string(depletion_uint) + " successfully set to population " + fims::to_string(p->id));
+                }
+                else
+                {
+                    valid_model = false;
+                    FIMS_ERROR_LOG("Expected depletion function not defined for "
+                                   "population " +
+                                   fims::to_string(p->id) + ", depletion function " + fims::to_string(depletion_uint));
+                }
+            }
+            else
+            {
+                valid_model = false;
+                FIMS_ERROR_LOG("No depletion function defined for population " + fims::to_string(p->id) + ". FIMS requires depletion functions be defined for all "
+                                                                                                            "populations.");
+            }
+        }
+
         /**
          * @brief Set pointers to the growth module referened in the population module.
          *
@@ -713,6 +752,8 @@ namespace fims_info
                 this->nseasons = std::max(this->nseasons, p->nseasons);
 
                 SetRecruitment(valid_model, p);
+
+                SetDepletion(valid_model, p);
 
                 SetGrowth(valid_model, p);
 

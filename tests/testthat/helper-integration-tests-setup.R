@@ -523,12 +523,13 @@ setup_and_run_sp <- function(estimation_mode = TRUE,
   # path to download the surplus prooduction test data
   path_sp_data <- test_path("fixtures", "integration_test_data_sp.RData")
   download.file(
-    "https://github.com/iagomosqueira/simtest_SP/blob/main/data/sims.RData",
+    "https://github.com/iagomosqueira/simtest_SP/raw/main/data/sims.RData",
     path_sp_data
   )
   load(path_sp_data)
 
   # Simulated data and other information (e.g., number of iteration, end year, and start year)
+  # remotes::install_github("flr/FLCore")
   args <- list(it = dim(om)[6], ay = 2020, y0 = 1951)
   tracking <- FLCore::FLQuant(dimnames = list(
     metric = "conv.est",
@@ -548,8 +549,11 @@ setup_and_run_sp <- function(estimation_mode = TRUE,
   
   # Life history parameters from FishLife (https://github.com/James-Thorson-NOAA/FishLife)
   # More examples can be found at https://github.com/iagomosqueira/simtest_SP/blob/main/data.R
+  # remotes::install_github("James-Thorson-NOAA/FishLife")
   # remotes::install_github("Henning-Winker/SPMpriors")
-  alb <- SPMpriors::flmvn_traits(
+  # remotes::install_github( 'ropensci/rfishbase@fb-21.06', force=TRUE )
+library(FishLife)
+alb <- SPMpriors::flmvn_traits(
     Genus="Thunnus", 
     Species="alalunga",
     h=c(0.6,0.9), 
@@ -614,6 +618,14 @@ setup_and_run_sp <- function(estimation_mode = TRUE,
   se[, -1] <- as.list(om_survey_indices_se)
 
   # JABBA (needs to install JABBA, rjags, and R2jags)
+  # need to run the following in ubuntu before installing rjags:
+  # sudo apt-get update
+  # sudo apt-get install -y jags
+  # install.packages("rjags")
+  # install.packages("R2jags")
+  # remotes::install_github("jabbamodel/JABBA")
+  # TODO: It appears the model is run using default priors, what are these?
+  
   inp <- JABBA::build_jabba(
     catch = fishing_fleet_landings,
     cpue = survey_fleet_index,
@@ -692,8 +704,9 @@ setup_and_run_sp <- function(estimation_mode = TRUE,
   # create depletion module
   production <- new(PTDepletion)
   # estimate log r and K
-  production$log_r
-  production$log_K
+  # TODO: what are good input values for log_r and log_K?
+  production$log_r[1]$value <- log(0.1)  # Example value, adjust as needed
+  production$log_K[1]$value <- log(100)  # Example value, adjust as needed
   # Fix to get Shaefer model
   production$log_m[1]$value <- log(1)
 

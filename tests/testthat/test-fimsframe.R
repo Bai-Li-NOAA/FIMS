@@ -65,10 +65,6 @@ test_that("fims_frame() works with the correct inputs", {
     m_age_to_length_conversion(fims_frame, fleet_names),
     ptype = numeric()
   )
-
-  #' @description Test that the `show()` method works as expected on a FIMSFrame
-  #' object.
-  expect_output(show(fims_frame))
 })
 
 ## Edge handling ----

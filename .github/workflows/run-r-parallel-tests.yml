@@ -48,6 +48,7 @@ jobs:
 
       - name: run parallel tests
         run: |
+          withr::local_options(pkg.build_extra_flags = FALSE)
           devtools::load_all()
           devtools::install()
           devtools::test(filter = "parallel")

@@ -53,5 +53,6 @@ jobs:
       - name: run parallel tests
         run: |
           withr::local_options(pkg.build_extra_flags = FALSE)
+          library(FIMS)
           devtools::test(filter = "parallel")
         shell: Rscript {0}

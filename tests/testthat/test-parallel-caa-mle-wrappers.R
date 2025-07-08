@@ -21,6 +21,12 @@
 # R CMD Check to fail.
 testthat::skip_on_cran()
 
+# Skip this test on R universe
+my_universe <- Sys.getenv("MY_UNIVERSE")
+if (my_universe == "https://noaa-fims.r-universe.dev/FIMS") {
+  testthat::skip("Skipping test on r-universe")
+}
+
 # Skip this test if calculating code coverage
 testthat::skip_on_covr()
 

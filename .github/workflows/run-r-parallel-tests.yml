@@ -46,10 +46,12 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      - name: install FIMS
+        run: R CMD INSTALL ../FIMS
+        shell: bash
+
       - name: run parallel tests
         run: |
           withr::local_options(pkg.build_extra_flags = FALSE)
-          devtools::load_all()
-          devtools::install()
           devtools::test(filter = "parallel")
         shell: Rscript {0}

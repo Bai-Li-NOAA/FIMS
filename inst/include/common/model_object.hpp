@@ -29,7 +29,7 @@ struct FIMSObject {
   std::vector<Type*>
       fixed_effects_parameters; /**< list of fixed effects parameters */
 
-  virtual ~FIMSObject() {}
+  virtual ~FIMSObject() = default;
 
   /**
    * @brief Getter that returns the unique id for parameters in the model

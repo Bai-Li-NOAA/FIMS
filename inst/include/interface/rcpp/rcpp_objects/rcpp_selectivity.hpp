@@ -295,7 +295,7 @@ class LogisticSelectivityInterface : public SelectivityInterfaceBase {
 };
 
 /**
- * @brief Rcpp interface for logistic selectivity as an S4 object. To
+ * @brief Rcpp interface for double logistic selectivity as an S4 object. To
  * instantiate from R: logistic_selectivity <-
  * methods::new(logistic_selectivity)
  */

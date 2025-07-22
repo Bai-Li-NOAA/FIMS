@@ -876,55 +876,56 @@ public:
     return result;
   }
 
-  Rcpp::CharacterVector GetPopulationDerivedQuantitiesName()
+  Rcpp::List GetPopulationDerivedQuantityInfo()
   {
-    Rcpp::CharacterVector population_derived_quantities_names;
-    population_derived_quantities_names.push_back("total_landings_weight");
-    population_derived_quantities_names.push_back("total_landings_numbers");
-    population_derived_quantities_names.push_back("mortality_F");
-    population_derived_quantities_names.push_back("mortality_Z");
-    population_derived_quantities_names.push_back("weight_at_age");
-    population_derived_quantities_names.push_back("numbers_at_age");
-    population_derived_quantities_names.push_back("unfished_numbers_at_age");
-    population_derived_quantities_names.push_back("biomass");
-    population_derived_quantities_names.push_back("spawning_biomass");
-    population_derived_quantities_names.push_back("unfished_biomass");
-    population_derived_quantities_names.push_back("unfished_spawning_biomass");
-    population_derived_quantities_names.push_back("proportion_mature_at_age");
-    population_derived_quantities_names.push_back("expected_recruitment");
-    // population_derived_quantities_names.push_back("sum_selectivity");
+    Rcpp::List dq_info;
+    dq_info["total_landings_weight"] = "total_landings_weight not yet decribed.";
+    dq_info["total_landings_numbers"] = "total_landings_numbers not yet decribed.";
+    dq_info["mortality_F"] = "mortality_F not yet decribed.";
+    dq_info["mortality_Z"] = "mortality_Z not yet decribed.";
+    dq_info["weight_at_age"] = "weight_at_age not yet decribed.";
+    dq_info["numbers_at_age"] = "numbers_at_age not yet decribed.";
+    dq_info["unfished_numbers_at_age"] =
+        "unfished_numbers_at_age not yet decribed.";
+    dq_info["biomass"] = "biomass not yet decribed.";
+    dq_info["spawning_biomass"] = "spawning_biomass not yet decribed.";
+    dq_info["unfished_biomass"] = "unfished_biomass not yet decribed.";
+    dq_info["unfished_spawning_biomass"] = "unfished_spawning_biomass not yet decribed.";
+    dq_info["proportion_mature_at_age"] = "proportion_mature_at_age not yet decribed.";
+    dq_info["expected_recruitment"] = "expected_recruitment not yet decribed.";
+    // dq_info["sum_selectivity"] = "sum_selectivity not yet decribed.";
 
-    return population_derived_quantities_names;
+    return dq_info;
   }
 
 
-  Rcpp::CharacterVector GetFleetDerivedQuantitiesName()
+  Rcpp::List GetFleetDerivedQuantityInfo()
   {
-    Rcpp::CharacterVector fleet_derived_quantities_names;
-    fleet_derived_quantities_names.push_back("landings_numbers_at_age");
-    fleet_derived_quantities_names.push_back("landings_weight_at_age");
-    fleet_derived_quantities_names.push_back("landings_numbers_at_length");
-    fleet_derived_quantities_names.push_back("landings_weight");
-    fleet_derived_quantities_names.push_back("landings_numbers");
-    fleet_derived_quantities_names.push_back("landings_expected");
-    fleet_derived_quantities_names.push_back("log_landings_expected");
-    fleet_derived_quantities_names.push_back("agecomp_proportion");
-    fleet_derived_quantities_names.push_back("lengthcomp_proportion");
-    fleet_derived_quantities_names.push_back("index_numbers_at_age");
-    fleet_derived_quantities_names.push_back("index_weight_at_age");
-    fleet_derived_quantities_names.push_back("index_numbers_at_length");
-    fleet_derived_quantities_names.push_back("index_weight");
-    fleet_derived_quantities_names.push_back("index_numbers");
-    fleet_derived_quantities_names.push_back("index_expected");
-    fleet_derived_quantities_names.push_back("log_index_expected");
-    fleet_derived_quantities_names.push_back("catch_index");
-    fleet_derived_quantities_names.push_back("expected_catch");
-    fleet_derived_quantities_names.push_back("expected_index");
-    fleet_derived_quantities_names.push_back("agecomp_expected");
-    fleet_derived_quantities_names.push_back("lengthcomp_expected");
-    fleet_derived_quantities_names.push_back("age_to_length_conversion");
+    Rcpp::List dq_info;
+    dq_info["landings_numbers_at_age"] = "landings_numbers_at_age not yet decribed.";
+    dq_info["landings_weight_at_age"] = "landings_weight_at_age not yet decribed.";
+    dq_info["landings_numbers_at_length"] = "landings_numbers_at_length not yet decribed.";
+    dq_info["landings_weight"] = "landings_weight not yet decribed.";
+    dq_info["landings_numbers"] = "landings_numbers not yet decribed.";
+    dq_info["landings_expected"] = "landings_expected not yet decribed.";
+    dq_info["log_landings_expected"] = "log_landings_expected not yet decribed.";
+    dq_info["agecomp_proportion"] = "agecomp_proportion not yet decribed.";
+    dq_info["lengthcomp_proportion"] = "lengthcomp_proportion not yet decribed.";
+    dq_info["index_numbers_at_age"] = "index_numbers_at_age not yet decribed.";
+    dq_info["index_weight_at_age"] = "index_weight_at_age not yet decribed.";
+    dq_info["index_numbers_at_length"] = "index_numbers_at_length not yet decribed.";
+    dq_info["index_weight"] = "index_weight not yet decribed.";
+    dq_info["index_numbers"] = "index_numbers not yet decribed.";
+    dq_info["index_expected"] = "index_expected not yet decribed.";
+    dq_info["log_index_expected"] = "log_index_expected not yet decribed.";
+    dq_info["catch_index"] = "catch_index not yet decribed.";
+    dq_info["expected_catch"] = "expected_catch not yet decribed.";
+    dq_info["expected_index"] = "expected_index not yet decribed.";
+    dq_info["agecomp_expected"] = "agecomp_expected not yet decribed.";
+    dq_info["lengthcomp_expected"] = "lengthcomp_expected not yet decribed.";
+    dq_info["age_to_length_conversion"] = "age_to_length_conversion not yet decribed.";
 
-    return fleet_derived_quantities_names;
+    return dq_info;
   }
 
 

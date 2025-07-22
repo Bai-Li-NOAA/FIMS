@@ -447,13 +447,13 @@ RCPP_MODULE(fims)
             .constructor()
             .method("AddPopulation", &CatchAtAgeInterface::AddPopulation)
             .method("get_output", &CatchAtAgeInterface::to_json)
-            .method("GetPopulationDerivedQuantityNames",
-                    &CatchAtAgeInterface::GetPopulationDerivedQuantityNames,
-                    "Returns the names of the derived quantities for the population "
+            .method("GetPopulationDerivedQuantityInfo",
+                    &CatchAtAgeInterface::GetPopulationDerivedQuantityInfo,
+                    "Returns information about the derived quantities for the population "
                     "in the CatchAtAge model.")
-            .method("GetFleetDerivedQuantityNames",
-                    &CatchAtAgeInterface::GetFleetDerivedQuantityNames,
-                    "Returns the names of the derived quantities for the fleet in "
+            .method("GetFleetDerivedQuantityInfo",
+                    &CatchAtAgeInterface::GetFleetDerivedQuantityInfo,
+                    "Returns information about the derived quantities for the fleet in "
                     "the CatchAtAge model.")
             .method("get_id", &CatchAtAgeInterface::get_id,
                     "Returns the unique ID for the CatchAtAge model.")

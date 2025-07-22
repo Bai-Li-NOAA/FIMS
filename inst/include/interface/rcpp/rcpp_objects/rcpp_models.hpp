@@ -879,20 +879,20 @@ public:
   Rcpp::List GetPopulationDerivedQuantityInfo()
   {
     Rcpp::List dq_info;
-    dq_info["total_landings_weight"] = "total_landings_weight not yet decribed.";
-    dq_info["total_landings_numbers"] = "total_landings_numbers not yet decribed.";
-    dq_info["mortality_F"] = "mortality_F not yet decribed.";
-    dq_info["mortality_Z"] = "mortality_Z not yet decribed.";
-    dq_info["weight_at_age"] = "weight_at_age not yet decribed.";
-    dq_info["numbers_at_age"] = "numbers_at_age not yet decribed.";
+    dq_info["total_landings_weight"] = "population total landings in weight.";
+    dq_info["total_landings_numbers"] = "population total landings in numbers.";
+    dq_info["mortality_F"] = "population fishing mortality summed across fleet by year and age.";
+    dq_info["mortality_Z"] = "population total mortality by year and age.";
+    dq_info["weight_at_age"] = "population expected weight at age.";
+    dq_info["numbers_at_age"] = "population expected numbers at age in each year.";
     dq_info["unfished_numbers_at_age"] =
-        "unfished_numbers_at_age not yet decribed.";
-    dq_info["biomass"] = "biomass not yet decribed.";
-    dq_info["spawning_biomass"] = "spawning_biomass not yet decribed.";
-    dq_info["unfished_biomass"] = "unfished_biomass not yet decribed.";
-    dq_info["unfished_spawning_biomass"] = "unfished_spawning_biomass not yet decribed.";
-    dq_info["proportion_mature_at_age"] = "proportion_mature_at_age not yet decribed.";
-    dq_info["expected_recruitment"] = "expected_recruitment not yet decribed.";
+        "population expected unfished numbers at age in each year.";
+    dq_info["biomass"] = "population biomass in each year";
+    dq_info["spawning_biomass"] = "population spawning biomass in each year.";
+    dq_info["unfished_biomass"] = "population biomass assuming unfished.";
+    dq_info["unfished_spawning_biomass"] = "population unfished spawning biomass in each year.";
+    dq_info["proportion_mature_at_age"] = "population proportion mature at age.";
+    dq_info["expected_recruitment"] = "population expected recruitment.";
     // dq_info["sum_selectivity"] = "sum_selectivity not yet decribed.";
 
     return dq_info;
@@ -902,28 +902,26 @@ public:
   Rcpp::List GetFleetDerivedQuantityInfo()
   {
     Rcpp::List dq_info;
-    dq_info["landings_numbers_at_age"] = "landings_numbers_at_age not yet decribed.";
-    dq_info["landings_weight_at_age"] = "landings_weight_at_age not yet decribed.";
-    dq_info["landings_numbers_at_length"] = "landings_numbers_at_length not yet decribed.";
-    dq_info["landings_weight"] = "landings_weight not yet decribed.";
-    dq_info["landings_numbers"] = "landings_numbers not yet decribed.";
-    dq_info["landings_expected"] = "landings_expected not yet decribed.";
-    dq_info["log_landings_expected"] = "log_landings_expected not yet decribed.";
-    dq_info["agecomp_proportion"] = "agecomp_proportion not yet decribed.";
-    dq_info["lengthcomp_proportion"] = "lengthcomp_proportion not yet decribed.";
-    dq_info["index_numbers_at_age"] = "index_numbers_at_age not yet decribed.";
-    dq_info["index_weight_at_age"] = "index_weight_at_age not yet decribed.";
-    dq_info["index_numbers_at_length"] = "index_numbers_at_length not yet decribed.";
-    dq_info["index_weight"] = "index_weight not yet decribed.";
-    dq_info["index_numbers"] = "index_numbers not yet decribed.";
-    dq_info["index_expected"] = "index_expected not yet decribed.";
-    dq_info["log_index_expected"] = "log_index_expected not yet decribed.";
-    dq_info["catch_index"] = "catch_index not yet decribed.";
-    dq_info["expected_catch"] = "expected_catch not yet decribed.";
-    dq_info["expected_index"] = "expected_index not yet decribed.";
-    dq_info["agecomp_expected"] = "agecomp_expected not yet decribed.";
-    dq_info["lengthcomp_expected"] = "lengthcomp_expected not yet decribed.";
-    dq_info["age_to_length_conversion"] = "age_to_length_conversion not yet decribed.";
+    dq_info["landings_numbers_at_age"] = "fleet landings numbers at age.";
+    dq_info["landings_weight_at_age"] = "fleet landings weight at age.";
+    dq_info["landings_numbers_at_length"] = "fleet landings numbers at length.";
+    dq_info["landings_weight"] = "fleet landings in weight.";
+    dq_info["landings_numbers"] = "fleet landings in numbers.";
+    dq_info["landings_expected"] = "fleet expected landings.";
+    dq_info["log_landings_expected"] = "fleet log expected landings.";
+    dq_info["agecomp_proportion"] = "fleet expected composition proportion numbers at age.";
+    dq_info["lengthcomp_proportion"] = "fleet expected composition proportion numbers at length.";
+    dq_info["index_numbers_at_age"] = "fleet index numbers at age.";
+    dq_info["index_weight_at_age"] = "fleet index weight at age.";
+    dq_info["index_numbers_at_length"] = "index of abundance in numbers.";
+    dq_info["index_weight"] = "fleet index weight.";
+    dq_info["index_numbers"] = "fleet index numbers not yet decribed.";
+    dq_info["index_expected"] = "fleet expected index of abundance*.";
+    dq_info["log_index_expected"] = "fleet log index expected not yet decribed.";
+    dq_info["catch_index"] = "fleet catch index not yet decribed.";
+    dq_info["agecomp_expected"] = "fleet expected composition numbers at age.";
+    dq_info["lengthcomp_expected"] = "fleet expected composition numbers at length.";
+    dq_info["age_to_length_conversion"] = "fleet age to length conversion not yet decribed.";
 
     return dq_info;
   }

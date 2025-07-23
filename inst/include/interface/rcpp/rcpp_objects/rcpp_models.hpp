@@ -279,6 +279,22 @@ public:
     return ss.str();
   }
 
+
+
+  bool SetFleetDQDistLink( uint32_t distribution_id, uint32_t fleet_id,std::string input_name, std::string input_type)
+  {
+
+    return true;
+  }
+
+
+  bool SetPopulationDQDistLink( uint32_t distribution_id, uint32_t fleet_id,std::string input_name, std::string input_type)
+  {
+
+    return true;
+  }
+
+
   /**
    * @brief Method to convert a fleet to a JSON string.
    */

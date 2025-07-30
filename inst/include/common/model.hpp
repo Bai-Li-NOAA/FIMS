@@ -64,7 +64,7 @@ class Model {  // may need singleton
           "calling Evaluate().");
       return jnll;
     }
-
+ this->fims_information->SetupPriors();
     for (m_it = this->fims_information->models_map.begin();
          m_it != this->fims_information->models_map.end(); ++m_it) {
       //(*m_it).second points to the Model module
@@ -166,6 +166,7 @@ class Model {  // may need singleton
       FIMS_INFO_LOG("Population successfully evaluated");
     }
 
+    this->fims_information->SetupRandomEffects();
     typename fims_info::Information<Type>::fleet_iterator f_it;
     // Loop over fleets/surveys, and evaluate age comp and index expected values
     for (f_it = this->fims_information->fleets.begin();

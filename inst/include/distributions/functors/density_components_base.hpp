@@ -33,9 +33,8 @@ struct DistributionElementObject {
   fims::Vector<Type>
       expected_values;           /**< expected value of distribution function*/
   fims::Vector<Type>* re = NULL; /**< pointer to random effects vector*/
-  fims::Vector<Type>* re_expected_values =
-      NULL; /**< expected value of random effects*/
-  std::vector<fims::Vector<Type>*>
+  fims::Vector<Type> re_expected_values; /**< expected value of random effects*/
+  fims::Vector<Type>*
       priors; /**< vector of pointers where each points to a prior parameter */
   fims::Vector<Type> x; /**< input value of distribution function for priors or
                            random effects*/
@@ -51,21 +50,18 @@ struct DistributionElementObject {
     if (this->input_type == "data") {
       return observed_values->at(i);
     }
+    else {
+      return x[i];
+    }
+    /*
     if (this->input_type == "random_effects") {
       return (*re)[i];
     }
     if (this->input_type == "prior") {
-      if(priors.size() == 0) {
-        throw std::runtime_error("No priors defined for this distribution.");
-      }
-      if(priors.size() == 1) {
-        return (*(priors[0]))[i];
-      }
-      if(priors.size() > 1) {
-        return (*(priors[i]))[0];
-      }
+        return (*priors)[i];
     }
     return x[i];
+    */
   }
 
   /**
@@ -77,7 +73,10 @@ struct DistributionElementObject {
   inline Type& get_observed(size_t i, size_t j) {
     if (this->input_type == "data") {
       return observed_values->at(i, j);
+    } else {
+      return x[i,j];
     }
+    /*
     if (this->input_type == "random_effects") {
       return (*re)[i, j]; //TODO: This is wrong but need to figure out how to handle
                           // 2D random effects properly. Either:
@@ -86,14 +85,10 @@ struct DistributionElementObject {
                           // c) a 2D array or dimension folder vector of pointers 
     }
     if (this->input_type == "prior") {
-      if(priors.size() == 1) {
-        return (*(priors[0]))[i, j];
-      }
-      if(priors.size() > 1) {
-        return (*(priors[i]))[j];
-      }
+      return (*priors)[i,j];
     }
     return x[i];
+    */
   }
 
   /**
@@ -103,7 +98,7 @@ struct DistributionElementObject {
    */
   inline Type& get_expected(size_t i) {
     if (this->input_type == "random_effects") {
-      return (*re_expected_values)[i];
+      return re_expected_values[i];
     } else {
       return this->expected_values.get_force_scalar(i);
     }
@@ -116,7 +111,9 @@ struct DistributionElementObject {
   inline size_t get_n_x() {
     if (this->input_type == "data") {
       return this->observed_values->data.size();
-    }
+    } else {
+      return x.size();
+    } /*
     if (this->input_type == "random_effects") {
       return this->expected_values.size();
     }
@@ -124,6 +121,8 @@ struct DistributionElementObject {
       return this->expected_values.size();
     }
     return x.size();
+    
+    */
   }
 };
 
@@ -161,8 +160,8 @@ struct DensityComponentBase : public fims_model_object::FIMSObject<Type>,
   DensityComponentBase() {
     // initialize the priors vector with a size of 1 and set the first element
     // to NULL
-    this->priors.resize(1);
-    this->priors[0] = NULL;
+   // this->priors.resize(1);
+   // this->priors[0] = NULL;
     this->id = DensityComponentBase::id_g++;
   }
 

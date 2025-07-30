@@ -101,9 +101,9 @@ struct NormalLPDF : public DensityComponentBase<Type> {
                                    fims_math::exp(log_sd.get_force_scalar(i)));
           }
           if (this->input_type == "prior") {
-            (*(this->priors[i]))[0] =
-                rnorm(this->get_expected(i),
-                      fims_math::exp(log_sd.get_force_scalar(i)));
+       //     (*(this->priors[i]))[0] =
+         //       rnorm(this->get_expected(i),
+           //           fims_math::exp(log_sd.get_force_scalar(i)));
           }
         }
       }

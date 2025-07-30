@@ -174,8 +174,9 @@ class Information {
          it != density_components.end(); ++it) {
       std::shared_ptr<fims_distributions::DensityComponentBase<Type>> d =
           (*it).second;
-      if ((d->priors)[0] != NULL) {
-        d->priors.clear();
+          /*
+      if ((d->priors) != NULL) {
+        d->priors->clear();
       }
       if (d->re != NULL) {
         d->re->clear();
@@ -183,6 +184,7 @@ class Information {
       if (d->re_expected_values != NULL) {
         d->re_expected_values->clear();
       }
+        */
     }
     this->density_components.clear();
   }
@@ -250,14 +252,16 @@ class Information {
         variable_map_iterator vmit;
         FIMS_INFO_LOG("Link prior from distribution " + fims::to_string(d->id) +
                       " to parameter " + fims::to_string(d->key[0]));
-        d->priors.resize(d->key.size());
-        for (size_t i = 0; i < d->key.size(); i++) {
-          FIMS_INFO_LOG("Link prior from distribution " +
-                        fims::to_string(d->id) + " to parameter " +
-                        fims::to_string(d->key[0]));//TODO: should this be d->key[i]?
-          vmit = this->variable_map.find(d->key[i]);
-          d->priors[i] = (*vmit).second;
+       vmit = this->variable_map.find(d->key[0]);
+        d->x = *(*vmit).second;
+        for (size_t i = 1; i < d->key.size(); i++) {
+            FIMS_INFO_LOG("Link prior from distribution " + fims::to_string(d->id)
+                    + " to parameter " + fims::to_string(d->key[0]));
+            vmit = this->variable_map.find(d->key[i]);
+            d->x.insert(std::end(d->x),
+                    std::begin(*(*vmit).second), std::end(*(*vmit).second));
         }
+                
         FIMS_INFO_LOG("Prior size for distribution " + fims::to_string(d->id) +
                       " is: " + fims::to_string(d->x.size()));
       }
@@ -281,12 +285,12 @@ class Information {
                       fims::to_string(d->id) + " to derived value " +
                       fims::to_string(d->key[0]));
         vmit = this->variable_map.find(d->key[0]);
-        d->re = (*vmit).second;
+        d->x = *(*vmit).second;
         if (d->key.size() == 2) {
           vmit = this->variable_map.find(d->key[1]);
-          d->re_expected_values = (*vmit).second;
+          d->re_expected_values = *(*vmit).second;
         } else {
-          d->re_expected_values = &d->expected_values;
+          d->re_expected_values = d->expected_values;
         }
         FIMS_INFO_LOG("Random effect size for distribution " +
                       fims::to_string(d->id) +
@@ -805,8 +809,7 @@ class Information {
     CreateModelingObjects(valid_model);
 
     // setup priors, random effect, and data density components
-    SetupPriors();
-    SetupRandomEffects();
+   
 
     return valid_model;
   }

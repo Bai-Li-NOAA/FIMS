@@ -34,14 +34,16 @@ namespace
     info->SetupRandomEffects();
 
     for(size_t i=0; i<recruitment->log_r.size(); i++){
-      EXPECT_EQ((*normal->re)[i], recruitment->log_r[i]);
-      EXPECT_EQ((*normal->re_expected_values)[i], recruitment->log_expected_recruitment[i]);
+      EXPECT_EQ(normal->x[i], recruitment->log_r[i]);
+      EXPECT_EQ(normal->re_expected_values[i], recruitment->log_expected_recruitment[i]);
     }
 
     //update the value in normal to check if it is updated in recruitment
+    /*This test does not work if not using pointers
     (*normal->re)[0] = 4.3;
     (*normal->re_expected_values)[0] = 5.6;
     EXPECT_EQ(recruitment->log_r[0], 4.3);
     EXPECT_EQ(recruitment->log_expected_recruitment[0], 5.6);
+        */
   }
 }

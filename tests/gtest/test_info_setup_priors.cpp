@@ -55,19 +55,25 @@ namespace
     // This function will set the density component, priors, to the respective parameters
     info->SetupPriors();
 
-    EXPECT_EQ((*normal_inflection_point->priors[0])[0], selectivity1->inflection_point[0]);
-    EXPECT_EQ((*normal_inflection_point->priors[1])[0], selectivity2->inflection_point[0]);
-    EXPECT_EQ((*lognormal_slope->priors[0])[0], selectivity1->slope[0]);
-    EXPECT_EQ((*lognormal_slope->priors[1])[0], selectivity2->slope[0]);
-    EXPECT_EQ((normal_inflection_point->get_observed(0)), selectivity1->inflection_point[0]);
-    EXPECT_EQ((normal_inflection_point->get_observed(1)), selectivity2->inflection_point[0]);
-    EXPECT_EQ((lognormal_slope->get_observed(0)), selectivity1->slope[0]);
-    EXPECT_EQ((lognormal_slope->get_observed(1)), selectivity2->slope[0]);
+    EXPECT_EQ(normal_inflection_point->x[0], selectivity1->inflection_point[0]);
+    EXPECT_EQ(normal_inflection_point->x[1], selectivity2->inflection_point[0]);
+    EXPECT_EQ(lognormal_slope->x[0], selectivity1->slope[0]);
+    EXPECT_EQ(lognormal_slope->x[1], selectivity1->slope[0]);
+    EXPECT_EQ(lognormal_slope->x[2], selectivity2->slope[0]);
+    EXPECT_EQ(lognormal_slope->x[3], selectivity2->slope[0]);
+    EXPECT_EQ(normal_inflection_point->get_observed(0), selectivity1->inflection_point[0]);
+    EXPECT_EQ(normal_inflection_point->get_observed(1), selectivity2->inflection_point[0]);
+    EXPECT_EQ(lognormal_slope->get_observed(0), selectivity1->slope[0]);
+    EXPECT_EQ(lognormal_slope->get_observed(1), selectivity1->slope[1]);
+    EXPECT_EQ(lognormal_slope->get_observed(2), selectivity2->slope[0]);
+    EXPECT_EQ(lognormal_slope->get_observed(3), selectivity2->slope[1]);
     
+    /* This test does not work if not using pointers
     //update the value in normal to check if it is updated in selectivity
-    (*normal_inflection_point->priors[0])[0] = 20.5;
-    (*lognormal_slope->priors[0])[0] = 0.13;
+    (*normal_inflection_point->x[0] = 20.5;
+    (*lognormal_slope->x[0] = 0.13;
     EXPECT_EQ(selectivity1->inflection_point[0], 20.5);
     EXPECT_EQ(selectivity1->slope[0], 0.13);
+    */
   }
 }

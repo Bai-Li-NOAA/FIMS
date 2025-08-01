@@ -50,14 +50,14 @@ struct DoubleNormalSelectivity : public SelectivityBase<Type> {
    * @param x  The independent variable in the double normal function (e.g.,
    * age or size in selectivity).
    */
-  virtual const Type evaluate(int nages,
+  virtual const Type evaluate(const int nages,
                               const Type &age_peak_sel_start,
                               const Type &width_peak_sel,
                               const Type &slope_asc,
                               const Type &slope_desc,
                               const Type &sel_age_zero_logit,
                               const Type &sel_age_A_logit,
-                              Type &x) {
+                              const Type &x) {
     // Creating a bunch of placeholder variables for convenience;
     // Plan to remove and improve code efficiency later
     // ?s:
@@ -109,14 +109,15 @@ struct DoubleNormalSelectivity : public SelectivityBase<Type> {
    * age or size in selectivity).
    * @param pos Position index, e.g., which year.
    */
-  virtual const Type evaluate(int nages,
+  virtual const Type evaluate(const int nages,
                               const Type &age_peak_sel_start,
                               const Type &width_peak_sel,
                               const Type &slope_asc,
                               const Type &slope_desc,
                               const Type &sel_age_zero_logit,
                               const Type &sel_age_A_logit,
-                              Type &x) {
+                              const Type &x,
+                              size_t pos) {
     // Creating a bunch of placeholder variables for convenience;
     // Plan to remove and improve code efficiency later
     // ?s:

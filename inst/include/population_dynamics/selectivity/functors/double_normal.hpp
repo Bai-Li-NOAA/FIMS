@@ -12,7 +12,7 @@
 // #include "../../../interface/interface.hpp"
 #include "../../../common/fims_math.hpp"
 #include "../../../common/fims_vector.hpp"
-#include "../../../common/information.hpp"//Can I run GetNages() here?
+#include "../../../common/information.hpp"//Added in case I can run GetNages() here
 #include "selectivity_base.hpp"
 
 namespace fims_popdy {
@@ -23,6 +23,7 @@ namespace fims_popdy {
  */
 template <typename Type>
 struct DoubleNormalSelectivity : public SelectivityBase<Type> {
+  size_t nages;         /*< the number of ages in the model*/
   fims::Vector<Type> age_peak_sel_start; /**< age at which selectivity=1
             starts, or p1 */
   fims::Vector<Type> width_peak_sel; /**< width of "top" in which selectivity=1, 
@@ -34,9 +35,7 @@ struct DoubleNormalSelectivity : public SelectivityBase<Type> {
   fims::Vector<Type> sel_age_zero_logit; /** selectivity at age0 (parameterized
             in logit space), or p5 */
   fims::Vector<Type> sel_age_A_logit; /** selectivity at age A 
-            (parameterized in logit space), or p5 */
-  fims::Vector<Type> max_age; /** max age, or A; 
-            ?: Is this already defined and/or available somewhere*/
+            (parameterized in logit space), or p6 */
 
   DoubleNormalSelectivity() : SelectivityBase<Type>() {}
 
@@ -51,13 +50,13 @@ struct DoubleNormalSelectivity : public SelectivityBase<Type> {
    * @param x  The independent variable in the double normal function (e.g.,
    * age or size in selectivity).
    */
-  virtual const Type evaluate(const Type &age_peak_sel_start,
+  virtual const Type evaluate(int nages,
+                              const Type &age_peak_sel_start,
                               const Type &width_peak_sel,
                               const Type &slope_asc,
                               const Type &slope_desc,
                               const Type &sel_age_zero_logit,
                               const Type &sel_age_A_logit,
-                              const Type &max_age, // 
                               Type &x) {
     // Creating a bunch of placeholder variables for convenience;
     // Plan to remove and improve code efficiency later
@@ -65,13 +64,13 @@ struct DoubleNormalSelectivity : public SelectivityBase<Type> {
       // Am I using static_cast correctly? Trying to specify fixed value of 1, etc
       // Should use fims_math::inv_logit here instead, w/ a=0 and b=1
       // Am I using fims_math::pow() correctly?
-    
+    this->nages = nages; // assign value to nages (borrow from fleet.hpp syntax)
     const Type sel_age_zero = static_cast<Type>(1.0) / 
       (static_cast<Type>(1.0) + exp(Type(-1.0) * sel_age_zero_logit[0]));
     const Type sel_age_A = static_cast<Type>(1.0) / 
       (static_cast<Type>(1.0) + exp(Type(-1.0) * sel_age_A_logit[0]));
     const Type gamma = age_peak_sel_start[0] + static_cast<Type>(1.0) + 
-      (Type(0.99) * max_age[0] - age_peak_sel_start[0] - static_cast<Type>(1.0)) / 
+      (Type(0.99) * nages - age_peak_sel_start[0] - static_cast<Type>(1.0)) / 
       (static_cast<Type>(1.0) + exp(Type(-1.0) * width_peak_sel[0]));
     const Type alpha_a = sel_age_zero +
       (static_cast<Type>(1.0) - sel_age_zero) *
@@ -110,13 +109,13 @@ struct DoubleNormalSelectivity : public SelectivityBase<Type> {
    * age or size in selectivity).
    * @param pos Position index, e.g., which year.
    */
-  virtual const Type evaluate(const Type &age_peak_sel_start,
+  virtual const Type evaluate(int nages,
+                              const Type &age_peak_sel_start,
                               const Type &width_peak_sel,
                               const Type &slope_asc,
                               const Type &slope_desc,
                               const Type &sel_age_zero_logit,
                               const Type &sel_age_A_logit,
-                              const Type &max_age,
                               Type &x) {
     // Creating a bunch of placeholder variables for convenience;
     // Plan to remove and improve code efficiency later
@@ -124,12 +123,14 @@ struct DoubleNormalSelectivity : public SelectivityBase<Type> {
       // Am I using static_cast correctly? Trying to specify fixed value of 1, etc
       // Should use fims_math::inv_logit here instead, w/ a=0 and b=1
       // Am I using fims_math::pow() correctly?
+
+    this->nages = nages; // assign value to nages (borrow from fleet.hpp syntax)
     const Type sel_age_zero = static_cast<Type>(1.0) / 
       (static_cast<Type>(1.0) + exp(Type(-1.0) * sel_age_zero_logit.get_force_scalar(pos)));
     const Type sel_age_A = static_cast<Type>(1.0) / 
       (static_cast<Type>(1.0) + exp(Type(-1.0) * sel_age_A_logit.get_force_scalar(pos)));
     const Type gamma = age_peak_sel_start.get_force_scalar(pos) + static_cast<Type>(1.0) + 
-      (Type(0.99) * max_age[0] - age_peak_sel_start.get_force_scalar(pos) - static_cast<Type>(1.0)) / 
+      (Type(0.99) * nages - age_peak_sel_start.get_force_scalar(pos) - static_cast<Type>(1.0)) / 
       (static_cast<Type>(1.0) + exp(Type(-1.0) * width_peak_sel.get_force_scalar(pos)));
     const Type alpha_a = sel_age_zero +
       (static_cast<Type>(1.0) - sel_age_zero) *

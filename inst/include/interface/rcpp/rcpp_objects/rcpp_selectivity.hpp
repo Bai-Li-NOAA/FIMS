@@ -605,7 +605,7 @@ class DoubleLogisticSelectivityInterface : public SelectivityInterfaceBase {
  */
 class DoubleNormalSelectivityInterface : public SelectivityInterfaceBase {
  public:
-  SharedInt nages = 0;
+  SharedInt nages; // try size_t? Neither result in compilation
   ParameterVector age_peak_sel_start; /**< Age at which selectivity=1 
                                       starts (p1) */
   ParameterVector width_peak_sel; /**< Width of peak selectivity (in which 
@@ -651,7 +651,7 @@ class DoubleNormalSelectivityInterface : public SelectivityInterfaceBase {
   virtual double evaluate(double x) {
     fims_popdy::DoubleNormalSelectivity<double> DoubleNormalSel;
     // Not sure what I need to do with nages here!
-    nages = this->nages;
+    DoubleNormalSel.nages = this->nages;
     DoubleNormalSel.age_peak_sel_start.resize(1);
     DoubleNormalSel.age_peak_sel_start[0] =
         this->age_peak_sel_start[0].initial_value_m;

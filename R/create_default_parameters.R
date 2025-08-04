@@ -293,11 +293,11 @@ create_default_DoubleNormal <- function() {
     age_peak_sel_start.value = 2, # consider making this a function of nages
     age_peak_sel_start.estimation_type = "fixed_effects",
     width_peak_sel.value = 2, # consider making this a function of nages
-    width_peak_sel.estimation_type = "fixed_effects"
+    width_peak_sel.estimation_type = "fixed_effects",
     slope_asc.value = 1,
     slope_asc.estimation_type = "fixed_effects",
     slope_desc.value = 1,
-    slope_desc.estimation_type = "fixed_effects"
+    slope_desc.estimation_type = "fixed_effects",
     sel_age_zero_logit.value = 0, # equivalent to selectivity = 0.5 at age 0
     sel_age_zero_logit.estimation_type = "fixed_effects",
     sel_age_A_logit.value = 0, # equivalent to selectivity = 0.5 at max age

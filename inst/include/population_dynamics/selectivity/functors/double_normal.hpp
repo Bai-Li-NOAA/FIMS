@@ -12,7 +12,7 @@
 // #include "../../../interface/interface.hpp"
 #include "../../../common/fims_math.hpp"
 #include "../../../common/fims_vector.hpp"
-#include "../../../common/information.hpp"//Added in case I can run GetNages() here
+// #include "../../../common/information.hpp"//Added in case I can run GetNages() here
 #include "selectivity_base.hpp"
 
 namespace fims_popdy {
@@ -50,53 +50,12 @@ struct DoubleNormalSelectivity : public SelectivityBase<Type> {
    * @param x  The independent variable in the double normal function (e.g.,
    * age or size in selectivity).
    */
-  virtual const Type evaluate(const int nages,
-                              const Type &age_peak_sel_start,
-                              const Type &width_peak_sel,
-                              const Type &slope_asc,
-                              const Type &slope_desc,
-                              const Type &sel_age_zero_logit,
-                              const Type &sel_age_A_logit,
-                              const Type &x) {
-    // Creating a bunch of placeholder variables for convenience;
-    // Plan to remove and improve code efficiency later
-    // ?s:
-      // Am I using static_cast correctly? Trying to specify fixed value of 1, etc
-      // Should use fims_math::inv_logit here instead, w/ a=0 and b=1
-      // Am I using fims_math::pow() correctly?
-    this->nages = nages; // assign value to nages (borrow from fleet.hpp syntax)
-    const Type sel_age_zero = static_cast<Type>(1.0) / 
-      (static_cast<Type>(1.0) + exp(Type(-1.0) * sel_age_zero_logit[0]));
-    const Type sel_age_A = static_cast<Type>(1.0) / 
-      (static_cast<Type>(1.0) + exp(Type(-1.0) * sel_age_A_logit[0]));
-    const Type gamma = age_peak_sel_start[0] + static_cast<Type>(1.0) + 
-      (Type(0.99) * nages - age_peak_sel_start[0] - static_cast<Type>(1.0)) / 
-      (static_cast<Type>(1.0) + exp(Type(-1.0) * width_peak_sel[0]));
-    const Type alpha_a = sel_age_zero +
-      (static_cast<Type>(1.0) - sel_age_zero) *
-      (exp(Type(-1.0) * pow<Type>((x - age_peak_sel_start[0]), static_cast<Type>(2.0)) / 
-        exp(slope_asc[0])) - 
-        exp(fims_math::pow<Type>(age_peak_sel_start[0], static_cast<Type>(2.0)) / 
-        exp(slope_asc[0]))) / 
-      (static_cast<Type>(1.0) - exp(pow<Type>(age_peak_sel_start[0], static_cast<Type>(2.0)) / 
-        exp(slope_asc[0])));
-    const Type beta_a = static_cast<Type>(1.0) + 
-      (sel_age_A - static_cast<Type>(1.0)) * 
-      (exp(Type(-1.0) * (pow((x - gamma), static_cast<Type>(2.0))) / 
-        exp(slope_desc[0])) - static_cast<Type>(1.0)) / 
-      (exp(Type(-1.0) * (pow((x - gamma), static_cast<Type>(2.0))) / 
-        exp(slope_desc[0])) - static_cast<Type>(1.0));
-    const Type j_one_a = pow((static_cast<Type>(1.0) + 
-      exp(Type(-20.0) * (x - age_peak_sel_start[0]) / 
-        (static_cast<Type>(1.0) + abs(x - age_peak_sel_start[0])))), 
-      Type(-1.0));
-    const Type j_two_a = pow((static_cast<Type>(1.0) + 
-      exp(Type(-20.0) * (x - gamma) / 
-        (static_cast<Type>(1.0) + abs(x - gamma)))), 
-      Type(-1.0));
-    return alpha_a * (static_cast<Type>(1.0) - j_one_a) +
-      j_one_a * ((static_cast<Type>(1.0) - j_two_a) +
-      j_two_a * beta_a);
+  virtual const Type evaluate(const Type &x) {
+    // this->nages = nages; // one way to assign value to nages (borrow from fleet.hpp syntax)?
+      // currently, I hope nages gets read from rcpp_selectivity.hpp
+    return fims_math::double_normal<Type>(
+        nages, age_peak_sel_start[0], width_peak_sel[0], slope_asc[0],
+        slope_desc[0], sel_age_zero_logit[0], sel_age_A_logit[0], x);
   }
 
   /**
@@ -109,55 +68,16 @@ struct DoubleNormalSelectivity : public SelectivityBase<Type> {
    * age or size in selectivity).
    * @param pos Position index, e.g., which year.
    */
-  virtual const Type evaluate(const int nages,
-                              const Type &age_peak_sel_start,
-                              const Type &width_peak_sel,
-                              const Type &slope_asc,
-                              const Type &slope_desc,
-                              const Type &sel_age_zero_logit,
-                              const Type &sel_age_A_logit,
-                              const Type &x,
+  virtual const Type evaluate(const Type &x,
                               size_t pos) {
-    // Creating a bunch of placeholder variables for convenience;
-    // Plan to remove and improve code efficiency later
-    // ?s:
-      // Am I using static_cast correctly? Trying to specify fixed value of 1, etc
-      // Should use fims_math::inv_logit here instead, w/ a=0 and b=1
-      // Am I using fims_math::pow() correctly?
-
-    this->nages = nages; // assign value to nages (borrow from fleet.hpp syntax)
-    const Type sel_age_zero = static_cast<Type>(1.0) / 
-      (static_cast<Type>(1.0) + exp(Type(-1.0) * sel_age_zero_logit.get_force_scalar(pos)));
-    const Type sel_age_A = static_cast<Type>(1.0) / 
-      (static_cast<Type>(1.0) + exp(Type(-1.0) * sel_age_A_logit.get_force_scalar(pos)));
-    const Type gamma = age_peak_sel_start.get_force_scalar(pos) + static_cast<Type>(1.0) + 
-      (Type(0.99) * nages - age_peak_sel_start.get_force_scalar(pos) - static_cast<Type>(1.0)) / 
-      (static_cast<Type>(1.0) + exp(Type(-1.0) * width_peak_sel.get_force_scalar(pos)));
-    const Type alpha_a = sel_age_zero +
-      (static_cast<Type>(1.0) - sel_age_zero) *
-      (exp(Type(-1.0) * pow<Type>((x - age_peak_sel_start.get_force_scalar(pos)), static_cast<Type>(2.0)) / 
-        exp(slope_asc.get_force_scalar(pos))) - 
-        exp(fims_math::pow<Type>(age_peak_sel_start.get_force_scalar(pos), static_cast<Type>(2.0)) / 
-        exp(slope_asc.get_force_scalar(pos)))) / 
-      (static_cast<Type>(1.0) - exp(pow<Type>(age_peak_sel_start.get_force_scalar(pos), static_cast<Type>(2.0)) / 
-        exp(slope_asc.get_force_scalar(pos))));
-    const Type beta_a = static_cast<Type>(1.0) + 
-      (sel_age_A - static_cast<Type>(1.0)) * 
-      (exp(Type(-1.0) * (pow((x - gamma), static_cast<Type>(2.0))) / 
-        exp(slope_desc.get_force_scalar(pos))) - static_cast<Type>(1.0)) / 
-      (exp(Type(-1.0) * (pow((x - gamma), static_cast<Type>(2.0))) / 
-        exp(slope_desc.get_force_scalar(pos))) - static_cast<Type>(1.0));
-    const Type j_one_a = pow((static_cast<Type>(1.0) + 
-      exp(Type(-20.0) * (x - age_peak_sel_start.get_force_scalar(pos)) / 
-        (static_cast<Type>(1.0) + abs(x - age_peak_sel_start.get_force_scalar(pos))))), 
-      Type(-1.0));
-    const Type j_two_a = pow((static_cast<Type>(1.0) + 
-      exp(Type(-20.0) * (x - gamma) / 
-        (static_cast<Type>(1.0) + abs(x - gamma)))), 
-      Type(-1.0));
-    return alpha_a * (static_cast<Type>(1.0) - j_one_a) +
-      j_one_a * ((static_cast<Type>(1.0) - j_two_a) +
-      j_two_a * beta_a);
+    return fims_math::double_normal<Type>(
+      nages,
+      age_peak_sel_start.get_force_scalar(pos),
+      width_peak_sel.get_force_scalar(pos),
+      slope_asc.get_force_scalar(pos),
+      slope_desc.get_force_scalar(pos), 
+      sel_age_zero_logit.get_force_scalar(pos), 
+      sel_age_A_logit.get_force_scalar(pos), x);
   }
 };
 

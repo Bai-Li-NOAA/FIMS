@@ -351,26 +351,28 @@ inline const Type double_normal(const Type nages,
       // Do I need static_cast for Type<2.0>?
     // Should use fims_math::inv_logit here instead, w/ a=0 and b=1
     // Am I using fims_math::pow() correctly?
+  const Type max_age = nages - static_cast<Type>(1.0);
   const Type sel_age_zero = static_cast<Type>(1.0) / 
     (static_cast<Type>(1.0) + exp(Type(-1.0) * sel_age_zero_logit));
   const Type sel_age_A = static_cast<Type>(1.0) / 
     (static_cast<Type>(1.0) + exp(Type(-1.0) * sel_age_A_logit));
   const Type gamma = age_peak_sel_start + static_cast<Type>(1.0) + 
-    (Type(0.99) * nages - age_peak_sel_start - static_cast<Type>(1.0)) / 
+    (Type(0.99) * max_age - age_peak_sel_start - static_cast<Type>(1.0)) / 
     (static_cast<Type>(1.0) + exp(Type(-1.0) * width_peak_sel));
   const Type alpha_a = sel_age_zero +
     (static_cast<Type>(1.0) - sel_age_zero) *
     (exp(Type(-1.0) * pow<Type>((x - age_peak_sel_start), Type(2.0)) / 
       exp(slope_asc)) - 
-      exp(fims_math::pow<Type>(age_peak_sel_start, Type(2.0)) / 
+      exp(Type(-1.0) * fims_math::pow<Type>(age_peak_sel_start, Type(2.0)) / 
       exp(slope_asc))) / 
-    (static_cast<Type>(1.0) - exp(pow<Type>(age_peak_sel_start, Type(2.0)) / 
+    (static_cast<Type>(1.0) - exp(Type(-1.0) * 
+      pow<Type>(age_peak_sel_start, Type(2.0)) / 
       exp(slope_asc)));
   const Type beta_a = static_cast<Type>(1.0) + 
     (sel_age_A - static_cast<Type>(1.0)) * 
     (exp(Type(-1.0) * (pow((x - gamma), Type(2.0))) / 
       exp(slope_desc)) - static_cast<Type>(1.0)) / 
-    (exp(Type(-1.0) * (pow((x - gamma), Type(2.0))) / 
+    (exp(Type(-1.0) * (pow((max_age - gamma), Type(2.0))) / 
       exp(slope_desc)) - static_cast<Type>(1.0));
   const Type j_one_a = pow((static_cast<Type>(1.0) + 
     exp(Type(-20.0) * (x - age_peak_sel_start) / 

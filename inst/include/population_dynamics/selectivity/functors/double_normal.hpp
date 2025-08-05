@@ -23,7 +23,7 @@ namespace fims_popdy {
  */
 template <typename Type>
 struct DoubleNormalSelectivity : public SelectivityBase<Type> {
-  size_t nages;         /*< the number of ages in the model*/
+  size_t nages;         /*< the number of modeled ages in the model*/
   fims::Vector<Type> age_peak_sel_start; /**< age at which selectivity=1
             starts, or p1 */
   fims::Vector<Type> width_peak_sel; /**< width of "top" in which selectivity=1, 

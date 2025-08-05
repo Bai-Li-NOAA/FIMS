@@ -290,9 +290,9 @@ create_default_DoubleLogistic <- function() {
 #' @noRd
 create_default_DoubleNormal <- function() {
   default <- list(
-    age_peak_sel_start.value = 2, # consider making this a function of nages
+    age_peak_sel_start.value = 1, # consider making this a function of nages
     age_peak_sel_start.estimation_type = "fixed_effects",
-    width_peak_sel.value = 2, # consider making this a function of nages
+    width_peak_sel.value = 1, # consider making this a function of nages
     width_peak_sel.estimation_type = "fixed_effects",
     slope_asc.value = 1,
     slope_asc.estimation_type = "fixed_effects",

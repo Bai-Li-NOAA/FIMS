@@ -141,6 +141,7 @@ struct Fleet : public fims_model_object::FIMSObject<Type> {
     this->nyears = nyears;
     this->nages = nages;
     this->nlengths = nlengths;
+    //selectivity->nages = nages; //Option B: expose nages to selectivity for dbl-norm
     q.resize(this->log_q.size());
     log_Fmort.resize(nyears);
     Fmort.resize(nyears);

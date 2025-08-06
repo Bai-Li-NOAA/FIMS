@@ -23,7 +23,7 @@ namespace fims_popdy {
  */
 template <typename Type>
 struct DoubleNormalSelectivity : public SelectivityBase<Type> {
-  size_t nages;         /*< the number of modeled ages in the model*/
+  //size_t nages; // not sure if I need to supply nages/max_age here for Option B/C
   fims::Vector<Type> age_peak_sel_start; /**< age at which selectivity=1
             starts, or p1 */
   fims::Vector<Type> width_peak_sel; /**< width of "top" in which selectivity=1, 
@@ -54,7 +54,9 @@ struct DoubleNormalSelectivity : public SelectivityBase<Type> {
     // this->nages = nages; // one way to assign value to nages (borrow from fleet.hpp syntax)?
       // currently, I hope nages gets read from rcpp_selectivity.hpp
     return fims_math::double_normal<Type>(
-        nages, age_peak_sel_start[0], width_peak_sel[0], slope_asc[0],
+        //nages, //Option B
+        //max_age, //Option C
+        age_peak_sel_start[0], width_peak_sel[0], slope_asc[0],
         slope_desc[0], sel_age_zero_logit[0], sel_age_A_logit[0], x);
   }
 
@@ -71,7 +73,8 @@ struct DoubleNormalSelectivity : public SelectivityBase<Type> {
   virtual const Type evaluate(const Type &x,
                               size_t pos) {
     return fims_math::double_normal<Type>(
-      nages,
+      // nages, //Option B
+      // max_age, //Option C
       age_peak_sel_start.get_force_scalar(pos),
       width_peak_sel.get_force_scalar(pos),
       slope_asc.get_force_scalar(pos),

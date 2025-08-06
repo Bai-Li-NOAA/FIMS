@@ -600,12 +600,11 @@ class DoubleLogisticSelectivityInterface : public SelectivityInterfaceBase {
 
 /**
  * @brief Rcpp interface for double normal selectivity as an S4 object. To
- * instantiate from R: logistic_selectivity <-
- * methods::new(logistic_selectivity)
+ * instantiate from R: selectivity <- methods::new(DoubleNormalSelectivity)
  */
 class DoubleNormalSelectivityInterface : public SelectivityInterfaceBase {
  public:
-  SharedInt nages; // try size_t? Neither result in compilation
+  //SharedInt max_age = 10; // Option C for double-normal
   ParameterVector age_peak_sel_start; /**< Age at which selectivity=1 
                                       starts (p1) */
   ParameterVector width_peak_sel; /**< Width of peak selectivity (in which 
@@ -631,7 +630,7 @@ class DoubleNormalSelectivityInterface : public SelectivityInterfaceBase {
   DoubleNormalSelectivityInterface(
       const DoubleNormalSelectivityInterface& other)
       : SelectivityInterfaceBase(other),
-        nages(other.nages),
+        //max_age(other.max_age), # Option C for dbl-norm
         age_peak_sel_start(other.age_peak_sel_start),
         width_peak_sel(other.width_peak_sel),
         slope_asc(other.slope_asc),
@@ -650,8 +649,6 @@ class DoubleNormalSelectivityInterface : public SelectivityInterfaceBase {
    */
   virtual double evaluate(double x) {
     fims_popdy::DoubleNormalSelectivity<double> DoubleNormalSel;
-    // Not sure what I need to do with nages here!
-    DoubleNormalSel.nages = this->nages;
     DoubleNormalSel.age_peak_sel_start.resize(1);
     DoubleNormalSel.age_peak_sel_start[0] =
         this->age_peak_sel_start[0].initial_value_m;
@@ -837,6 +834,7 @@ class DoubleNormalSelectivityInterface : public SelectivityInterfaceBase {
     std::stringstream ss;
     // set relative info
     selectivity->id = this->id;
+    //selectivity->max_age = this->max_age.get(); //Option C
     selectivity->age_peak_sel_start.resize(this->age_peak_sel_start.size());
     for (size_t i = 0; i < this->age_peak_sel_start.size(); i++) {
       selectivity->age_peak_sel_start[i] =

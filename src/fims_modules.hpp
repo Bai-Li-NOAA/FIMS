@@ -362,8 +362,8 @@ RCPP_MODULE(fims) {
 
   Rcpp::class_<DoubleNormalSelectivityInterface>("DoubleNormalSelectivity")
       .constructor()
-      .field("nages", &DoubleNormalSelectivityInterface::nages, 
-             "number of ages")
+      //.field("max_age", &DoubleNormalSelectivityInterface::max_age, 
+      //       "maximum age") //Option C
       .field("age_peak_sel_start",
              &DoubleNormalSelectivityInterface::age_peak_sel_start,
              "Age at which selectivity=1 starts (p1).")

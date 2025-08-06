@@ -331,12 +331,11 @@ T sum(const fims::Vector<T> &v) {
  * @param sel_age_A_logit selectivity at age A (parameterized in logit space), 
  * or p6
  * @param x the index the logistic function should be evaluated at
- * @param nages the number of modeled ages
  * @return
  */
 
 template <class Type>
-inline const Type double_normal(const Type nages,
+inline const Type double_normal(//const Type nages, //Option B
                               const Type &age_peak_sel_start,
                               const Type &width_peak_sel,
                               const Type &slope_asc,
@@ -351,7 +350,8 @@ inline const Type double_normal(const Type nages,
       // Do I need static_cast for Type<2.0>?
     // Should use fims_math::inv_logit here instead, w/ a=0 and b=1
     // Am I using fims_math::pow() correctly?
-  const Type max_age = nages - static_cast<Type>(1.0);
+  const Type max_age = Type(12.0); // Option A
+  //const Type max_age = nages // - static_cast<Type>(1.0); // Option B 
   const Type sel_age_zero = static_cast<Type>(1.0) / 
     (static_cast<Type>(1.0) + exp(Type(-1.0) * sel_age_zero_logit));
   const Type sel_age_A = static_cast<Type>(1.0) / 

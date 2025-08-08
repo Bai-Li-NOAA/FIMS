@@ -802,13 +802,13 @@ class DoubleNormalSelectivityInterface : public SelectivityInterfaceBase {
     ss << "   \"name\": \"slope_desc\",\n";
     ss << "   \"id\":" << this->slope_desc.id_m << ",\n";
     ss << "   \"type\": \"vector\",\n";
-    ss << "   \"values\":" << this->slope_desc << "\n}]\n";
+    ss << "   \"values\":" << this->slope_desc << "\n},\n";
 
     ss << "{\n";
     ss << "   \"name\": \"sel_age_zero_logit\",\n";
     ss << "   \"id\":" << this->sel_age_zero_logit.id_m << ",\n";
     ss << "   \"type\": \"vector\",\n";
-    ss << "   \"values\":" << this->sel_age_zero_logit << "\n}]\n";
+    ss << "   \"values\":" << this->sel_age_zero_logit << "\n},\n";
 
     ss << "{\n";
     ss << "   \"name\": \"sel_age_A_logit\",\n";

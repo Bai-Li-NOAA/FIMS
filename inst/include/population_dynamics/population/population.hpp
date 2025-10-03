@@ -45,6 +45,13 @@ struct Population : public fims_model_object::FIMSObject<Type> {
   fims::Vector<double> years;     /*!< vector of years for referencing*/
   fims::Vector<Type> mortality_F; /*!< vector of fishing mortality summed across
                              fleet by year and age*/
+  
+  fims::Vector<Type> log_f_multiplier;     /*!< estimated parameter: vector of
+  annual fishing mortality multipliers to scale total mortality of all fleets*/
+
+  fims::Vector<Type> f_multiplier;     /*!< transformed parameter: vector of 
+  annual fishing mortality multipliers to scale total mortality of all fleets*/
+
   fims::Vector<Type>
       mortality_Z; /*!< vector of total mortality by year and age*/
 
@@ -60,6 +67,8 @@ struct Population : public fims_model_object::FIMSObject<Type> {
   fims::Vector<Type>
       biomass; /*!< Derived quantity: total population biomass in each year*/
   fims::Vector<Type> spawning_biomass; /*!< Derived quantity: Spawning_biomass*/
+  fims::Vector<Type> spawning_biomass_ratio; /*!< Derived quantity: 
+  Annual spawning biomass as a proportion of virgin spawning biomass*/
   fims::Vector<Type> unfished_biomass; /*!< Derived quantity
                                   biomass assuming unfished*/
   fims::Vector<Type> unfished_spawning_biomass; /*!< Derived quantity Spawning
@@ -124,6 +133,8 @@ struct Population : public fims_model_object::FIMSObject<Type> {
     total_landings_weight.resize(nyears);
     total_landings_numbers.resize(nyears);
     years.resize(nyears);
+    log_f_multiplier.resize(nyears);
+    f_multiplier.resize(nyears);
     mortality_F.resize(nyears * nages);
     mortality_Z.resize(nyears * nages);
     proportion_mature_at_age.resize((nyears + 1) * nages);
@@ -134,6 +145,7 @@ struct Population : public fims_model_object::FIMSObject<Type> {
     unfished_biomass.resize((nyears + 1));
     unfished_spawning_biomass.resize((nyears + 1));
     spawning_biomass.resize((nyears + 1));
+    spawning_biomass_ratio.resize((nyears + 1));
     expected_recruitment.resize((nyears + 1));
     M.resize(nyears * nages);
     ages.resize(nages);
@@ -158,6 +170,8 @@ struct Population : public fims_model_object::FIMSObject<Type> {
               unfished_spawning_biomass.end(), static_cast<Type>(0.0));
     std::fill(spawning_biomass.begin(), spawning_biomass.end(),
               static_cast<Type>(0.0));
+    std::fill(spawning_biomass_ratio.begin(), spawning_biomass_ratio.end(),
+              static_cast<Type>(0.0));
     std::fill(total_landings_weight.begin(), total_landings_weight.end(),
               static_cast<Type>(0.0));
     std::fill(total_landings_numbers.begin(), total_landings_numbers.end(),
@@ -180,6 +194,9 @@ struct Population : public fims_model_object::FIMSObject<Type> {
         // within a loop
         this->mortality_F[i_age_year] = static_cast<Type>(0.0);
       }
+    }
+    for (size_t year = 0; year < this->nyears; year++) {
+        this->f_multiplier[year] = fims_math::exp(this->log_f_multiplier[year]);
     }
   }
 
@@ -227,6 +244,7 @@ struct Population : public fims_model_object::FIMSObject<Type> {
     for (size_t fleet_ = 0; fleet_ < this->nfleets; fleet_++) {
       this->mortality_F[i_age_year] +=
           this->fleets[fleet_]->Fmort[year] *
+          this->f_multiplier[year] *
           // evaluate is a member function of the selectivity class
           this->fleets[fleet_]->selectivity->evaluate(ages[age]);
     }
@@ -392,6 +410,17 @@ struct Population : public fims_model_object::FIMSObject<Type> {
         this->proportion_female[age] *
         this->unfished_numbers_at_age[i_age_year] *
         this->proportion_mature_at_age[i_age_year] * this->weight_at_age[age];
+  }
+
+  /**
+   * @brief Calculates spawning biomass ratio for a specified year
+   *
+   * @param year the year of spawning biomass ratio to calculate
+   */
+  void CalculateSpawningBiomassRatio(size_t year) {
+    this->spawning_biomass_ratio[year] =
+        this->spawning_biomass[year] /
+        this->unfished_spawning_biomass[0];
   }
 
   /**
@@ -563,6 +592,7 @@ struct Population : public fims_model_object::FIMSObject<Type> {
       // Baranov Catch Equation
       this->fleets[fleet_]->landings_numbers_at_age[i_age_year] +=
           (this->fleets[fleet_]->Fmort[year] *
+           this->f_multiplier[year] *
            this->fleets[fleet_]->selectivity->evaluate(ages[age])) /
           this->mortality_Z[i_age_year] * this->numbers_at_age[i_age_year] *
           (1 - fims_math::exp(-(this->mortality_Z[i_age_year])));
@@ -754,37 +784,17 @@ struct Population : public fims_model_object::FIMSObject<Type> {
           CalculateInitialNumbersAA(i_age_year, a);
 
           if (a == 0) {
+              /*
+             Expected recruitment in year 0 is numbers at age 0 in year 0.
+             */
+            this->expected_recruitment[i_age_year] =
+              this->numbers_at_age[i_age_year];
+
             this->unfished_numbers_at_age[i_age_year] =
                 fims_math::exp(this->recruitment->log_rzero[0]);
           } else {
             CalculateUnfishedNumbersAA(i_age_year, a - 1, a);
           }
-
-          /*
-           Fished and unfished biomass vectors are summing biomass at
-           age across ages.
-           */
-
-          CalculateBiomass(i_age_year, y, a);
-
-          CalculateUnfishedBiomass(i_age_year, y, a);
-
-          /*
-           Fished and unfished spawning biomass vectors are summing biomass at
-           age across ages to allow calculation of recruitment in the next year.
-           */
-
-          CalculateSpawningBiomass(i_age_year, y, a);
-
-          CalculateUnfishedSpawningBiomass(i_age_year, y, a);
-
-          /*
-           Expected recruitment in year 0 is numbers at age 0 in year 0.
-           */
-
-          this->expected_recruitment[i_age_year] =
-              this->numbers_at_age[i_age_year];
-
         } else {
           if (a == 0) {
             // Set the nrecruits for age a=0 year y (use pointers instead of
@@ -798,12 +808,24 @@ struct Population : public fims_model_object::FIMSObject<Type> {
             CalculateNumbersAA(i_age_year, i_agem1_yearm1, a);
             CalculateUnfishedNumbersAA(i_age_year, i_agem1_yearm1, a);
           }
-          CalculateBiomass(i_age_year, y, a);
-          CalculateSpawningBiomass(i_age_year, y, a);
-
-          CalculateUnfishedBiomass(i_age_year, y, a);
-          CalculateUnfishedSpawningBiomass(i_age_year, y, a);
         }
+        /*
+        Fished and unfished biomass vectors are summing biomass at
+        age across ages.
+        */
+
+        CalculateBiomass(i_age_year, y, a);
+
+        CalculateUnfishedBiomass(i_age_year, y, a);
+
+        /*
+        Fished and unfished spawning biomass vectors are summing biomass at
+        age across ages to allow calculation of recruitment in the next year.
+        */
+
+        CalculateSpawningBiomass(i_age_year, y, a);
+
+        CalculateUnfishedSpawningBiomass(i_age_year, y, a);
 
         /*
         Here composition, total landings, and index values are calculated for
@@ -821,6 +843,8 @@ struct Population : public fims_model_object::FIMSObject<Type> {
           CalculateIndex(i_age_year, y, a);
         }
       }
+      /* Calculate spawning biomass depletion */
+      CalculateSpawningBiomassRatio(y);
     }
   }
   virtual void create_report_vectors(

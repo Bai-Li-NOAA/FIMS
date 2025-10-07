@@ -63,6 +63,10 @@ class CAAInitializeTestFixture : public testing::Test {
           this->catch_at_age_model->populations[p]->nyears *
           this->catch_at_age_model->populations[p]->nages);
 
+      derived_quantities["mortality_M"] = fims::Vector<double>(
+        this->catch_at_age_model->populations[p]->nyears *
+          this->catch_at_age_model->populations[p]->nages);
+
       derived_quantities["mortality_Z"] = fims::Vector<double>(
           this->catch_at_age_model->populations[p]->nyears *
           this->catch_at_age_model->populations[p]->nages);
@@ -86,6 +90,9 @@ class CAAInitializeTestFixture : public testing::Test {
       derived_quantities["unfished_biomass"] = fims::Vector<double>(
           this->catch_at_age_model->populations[p]->nyears + 1);
 
+      derived_quantities["spawning_biomass_ratio"] = fims::Vector<double>(
+        this->catch_at_age_model->populations[p]->nyears + 1);
+
       derived_quantities["unfished_spawning_biomass"] = fims::Vector<double>(
           this->catch_at_age_model->populations[p]->nyears + 1);
 
@@ -106,6 +113,9 @@ class CAAInitializeTestFixture : public testing::Test {
       this->catch_at_age_model->populations[p]->M.resize(
           this->catch_at_age_model->populations[p]->nyears *
           this->catch_at_age_model->populations[p]->nages);
+
+      this->catch_at_age_model->populations[p]->f_multiplier.resize(
+          this->catch_at_age_model->populations[p]->nyears);
     }
 
     for (fleet_iterator fit = this->catch_at_age_model->fleets.begin();
@@ -285,6 +295,7 @@ class CAAEvaluateTestFixture : public testing::Test {
     catch_at_age_model->populations[0]->ages.resize(nages);
     catch_at_age_model->populations[0]->log_init_naa.resize(nages);
     catch_at_age_model->populations[0]->log_M.resize(nyears * nages);
+    catch_at_age_model->populations[0]->log_f_multiplier.resize(nyears);
     for (int i = 0; i < nages; i++) {
       catch_at_age_model->populations[0]->ages[i] = i + 1;
     }
@@ -311,6 +322,10 @@ class CAAEvaluateTestFixture : public testing::Test {
           log_M_distribution(generator);
     }
 
+    for (int i = 0; i < nyears; i++) {
+      catch_at_age_model->populations[0]->log_f_multiplier[i] =
+        static_cast<double>(0.0);
+    }
     // Set initialized values for derived quantities
     catch_at_age_model->Prepare();
 
@@ -409,6 +424,10 @@ class CAAEvaluateTestFixture : public testing::Test {
           this->catch_at_age_model->populations[p]->nyears *
           this->catch_at_age_model->populations[p]->nages);
 
+      derived_quantities["mortality_M"] = fims::Vector<double>(
+        this->catch_at_age_model->populations[p]->nyears *
+          this->catch_at_age_model->populations[p]->nages);
+
       derived_quantities["mortality_Z"] = fims::Vector<double>(
           this->catch_at_age_model->populations[p]->nyears *
           this->catch_at_age_model->populations[p]->nages);
@@ -432,6 +451,9 @@ class CAAEvaluateTestFixture : public testing::Test {
       derived_quantities["unfished_biomass"] = fims::Vector<double>(
           this->catch_at_age_model->populations[p]->nyears + 1);
 
+      derived_quantities["spawning_biomass_ratio"] = fims::Vector<double>(
+        this->catch_at_age_model->populations[p]->nyears + 1);
+
       derived_quantities["unfished_spawning_biomass"] = fims::Vector<double>(
           this->catch_at_age_model->populations[p]->nyears + 1);
 
@@ -452,6 +474,9 @@ class CAAEvaluateTestFixture : public testing::Test {
       this->catch_at_age_model->populations[p]->M.resize(
           this->catch_at_age_model->populations[p]->nyears *
           this->catch_at_age_model->populations[p]->nages);
+
+      this->catch_at_age_model->populations[p]->f_multiplier.resize(
+          this->catch_at_age_model->populations[p]->nyears);
     }
 
     for (fleet_iterator fit = this->catch_at_age_model->fleets.begin();
@@ -649,6 +674,12 @@ class CAAPrepareTestFixture : public testing::Test {
           log_M_distribution(generator);
     }
 
+    catch_at_age_model->populations[0]->log_f_multiplier.resize(nyears);
+    for (int i = 0; i < nyears * nages; i++) {
+      catch_at_age_model->populations[0]->log_f_multiplier[i] =
+        static_cast<double>(0.0);
+    }
+
     // weight_at_age
     double weight_at_age_min = 0.5;
     double weight_at_age_max = 12.0;
@@ -692,6 +723,10 @@ class CAAPrepareTestFixture : public testing::Test {
           this->catch_at_age_model->populations[p]->nyears *
           this->catch_at_age_model->populations[p]->nages);
 
+      derived_quantities["mortality_M"] = fims::Vector<double>(
+        this->catch_at_age_model->populations[p]->nyears *
+          this->catch_at_age_model->populations[p]->nages);
+
       derived_quantities["mortality_Z"] = fims::Vector<double>(
           this->catch_at_age_model->populations[p]->nyears *
           this->catch_at_age_model->populations[p]->nages);
@@ -715,6 +750,9 @@ class CAAPrepareTestFixture : public testing::Test {
       derived_quantities["unfished_biomass"] = fims::Vector<double>(
           this->catch_at_age_model->populations[p]->nyears + 1);
 
+      derived_quantities["spawning_biomass_ratio"] = fims::Vector<double>(
+        this->catch_at_age_model->populations[p]->nyears + 1);
+
       derived_quantities["unfished_spawning_biomass"] = fims::Vector<double>(
           this->catch_at_age_model->populations[p]->nyears + 1);
 
@@ -735,6 +773,9 @@ class CAAPrepareTestFixture : public testing::Test {
       this->catch_at_age_model->populations[p]->M.resize(
           this->catch_at_age_model->populations[p]->nyears *
           this->catch_at_age_model->populations[p]->nages);
+
+      this->catch_at_age_model->populations[p]->f_multiplier.resize(
+          this->catch_at_age_model->populations[p]->nyears);
     }
 
     for (fleet_iterator fit = this->catch_at_age_model->fleets.begin();

@@ -303,8 +303,8 @@ class CatchAtAgeInterface : public FisheryModelInterfaceBase {
       ss << " \"id\":" << population_interface->log_f_multiplier.id_m << ",\n";
       ss << " \"type\": \"vector\",\n";
       ss << " \"dimensionality\": {\n";
-      ss << "  \"header\": [" << "\"nyears\", \"nfleets\"" << "],\n";
-      ss << "  \"dimensions\": [" << population_interface->nyears.get() << ", " << population_interface->nfleets.get() << "]\n},\n";
+      ss << "  \"header\": [" << "\"nyears\"" << "],\n";
+      ss << "  \"dimensions\": [" << population_interface->nyears.get() << "]\n},\n";
       ss << " \"values\": " << population_interface->log_f_multiplier << "\n\n";
       ss << "},\n";
 

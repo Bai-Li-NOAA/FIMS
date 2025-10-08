@@ -1261,6 +1261,13 @@ class CatchAtAgeInterface : public FisheryModelInterfaceBase {
                                     fims::Vector<int>{(population->nyears.get() + 1)},
                                     fims::Vector<std::string>{"nyears+1"});
 
+      derived_quantities["f_multiplier"] =
+        fims::Vector<Type>((population->nyears.get()));
+      derived_quantities_dim_info["f_multiplier"] =
+        fims_popdy::DimensionInfo("f_multiplier",
+                                  fims::Vector<int>{(population->nyears.get())},
+                                  fims::Vector<std::string>{"nyears"});
+
       derived_quantities["proportion_mature_at_age"] = fims::Vector<Type>(
           (population->nyears.get() + 1) * population->nages.get());
       derived_quantities_dim_info["proportion_mature_at_age"] =
@@ -1296,6 +1303,9 @@ class CatchAtAgeInterface : public FisheryModelInterfaceBase {
 
       info->variable_map[population->spawning_biomass_ratio.id_m] =
           &(derived_quantities["spawning_biomass_ratio"]);
+
+      info->variable_map[population->f_multiplier.id_m] =
+          &(derived_quantities["f_multiplier"]);
 
       for (fleet_ids_iterator fit = population->fleet_ids->begin();
            fit != population->fleet_ids->end(); ++fit) {

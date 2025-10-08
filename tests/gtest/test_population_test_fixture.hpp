@@ -675,7 +675,7 @@ class CAAPrepareTestFixture : public testing::Test {
     }
 
     catch_at_age_model->populations[0]->log_f_multiplier.resize(nyears);
-    for (int i = 0; i < nyears * nages; i++) {
+    for (int i = 0; i < nyears; i++) {
       catch_at_age_model->populations[0]->log_f_multiplier[i] =
         static_cast<double>(0.0);
     }

@@ -1304,9 +1304,6 @@ class CatchAtAgeInterface : public FisheryModelInterfaceBase {
       info->variable_map[population->spawning_biomass_ratio.id_m] =
           &(derived_quantities["spawning_biomass_ratio"]);
 
-      info->variable_map[population->f_multiplier.id_m] =
-          &(derived_quantities["f_multiplier"]);
-
       for (fleet_ids_iterator fit = population->fleet_ids->begin();
            fit != population->fleet_ids->end(); ++fit) {
         fleet_ids.insert(*fit);

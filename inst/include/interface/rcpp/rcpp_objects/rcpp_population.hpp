@@ -139,7 +139,7 @@ class PopulationInterface : public PopulationInterfaceBase {
    */
   ParameterVector spawning_biomass;
   /**
-   * @brief The population spawning biomass ratiofor each year.
+   * @brief The population spawning biomass ratio for each year.
    */
   ParameterVector spawning_biomass_ratio;
   /**
@@ -345,7 +345,7 @@ class PopulationInterface : public PopulationInterfaceBase {
       // set the derived quantities
       this->derived_naa = Rcpp::NumericVector(pop->numbers_at_age.size());
       this->derived_ssb = Rcpp::NumericVector(pop->spawning_biomass.size());
-      this->derived_spawning_biomass_ratio = 
+      this->derived_spawning_biomass_ratio =
       Rcpp::NumericVector(pop->spawning_biomass_ratio.size());
       this->derived_biomass = Rcpp::NumericVector(pop->biomass.size());
       this->derived_recruitment =
@@ -442,7 +442,7 @@ class PopulationInterface : public PopulationInterfaceBase {
       }
     }
     info->variable_map[this->log_M.id_m] = &(population)->log_M;
-    
+
     for (size_t i = 0; i < log_f_multiplier.size(); i++) {
       population->log_f_multiplier[i] = this->log_f_multiplier[i].initial_value_m;
       if (this->log_f_multiplier[i].estimation_type_m.get() == "fixed_effects") {

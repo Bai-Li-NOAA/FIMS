@@ -17,10 +17,10 @@
 			"packages": "clang,clang-format,clang-tidy,cmake,doxygen,g++,gcc,libxt6,libxtst6,lldb,make,ninja-build,gdb,valgrind",
 			"updatePackages": true			
 		},
-		 "ghcr.io/rocker-org/devcontainer-features/r-packages:1": {
-			"packages": "covr,dplyr,devtools,ggplot2,jsonlite,methods,Rcpp,RcppEigen,scales,snowfall,TMB,tibble,tidyr,usethis,spelling,RTMB,stockassessment,tictoc",
+		"ghcr.io/rocker-org/devcontainer-features/r-packages:1": {
+			"packages": "covr,dplyr,devtools,ggplot2,jsonlite,methods,Rcpp,RcppEigen,scales,snowfall,TMB,tibble,tidyr,usethis,spelling,RTMB,github::fishfollower/SAM/stockassessment,tictoc",
 			"installSystemRequirements": true
-		  },
+		},
 		 // option to run rstudio. you can type rserver into the command line to
 		 // get an session going (opens on a port, that you can open as a 
 		 // separate browser window).

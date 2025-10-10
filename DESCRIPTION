@@ -85,7 +85,10 @@ Suggests:
     testthat (>= 3.0.0),
     tidyr,
     usethis,
-    withr
+    withr,
+    RTMB,
+    stockassessment,
+    tictoc
 LinkingTo:
     Rcpp,
     RcppEigen,

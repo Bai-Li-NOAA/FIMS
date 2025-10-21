@@ -37,7 +37,7 @@
 
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": {
-	  "R -q w 'remotes::install_github(\"fishfollower/SAM/stockassessment\")'",
+	  //"R -q w 'remotes::install_github(\"fishfollower/SAM/stockassessment\")'",
 
 	  "echo 'options(repos = c(CRAN = \"https://cloud.r-project.org\"))' | sudo sh -c 'cat - >>\"${R_HOME}/etc/Rprofile.site\"'"
 	},

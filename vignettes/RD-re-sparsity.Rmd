@@ -131,7 +131,7 @@ We compared the deviation and process approaches in a simple catch-at-age stock 
 
 The case study is built off of an existing SAM model and the data list (`dat`) can be updated for RTMB as follows
 
-```{r datsection, echo=TRUE}
+```{r datsection, echo=TRUE, eval=FALSE}
 library(RTMB)
 library(stockassessment)
 library(tictoc)
@@ -183,7 +183,7 @@ for year $y$ and for age 1 with mean recruitment $\hat{r}$, written as the follo
 
 The parameters estimated in the RTMB code appear below; the parameters that matter most between implementations of the deviations and process approaches  of recruitment deviations are the last two (`z` and `rec_intercept`).
 
-```{r parsection, echo=TRUE}
+```{r parsection, echo=TRUE, eval=FALSE}
 # Parameter section
 par <- list()
 par$logsdR <- 0

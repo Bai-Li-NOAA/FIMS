@@ -85,12 +85,7 @@ Suggests:
     testthat (>= 3.0.0),
     tidyr,
     usethis,
-    withr,
-    RTMB,
-    stockassessment,
-    tictoc
-Remotes:
-    github::fishfollower/SAM/stockassessment
+    withr
 LinkingTo:
     Rcpp,
     RcppEigen,

@@ -89,6 +89,8 @@ Suggests:
     RTMB,
     stockassessment,
     tictoc
+Remotes:
+    github::fishfollower/SAM/stockassessment
 LinkingTo:
     Rcpp,
     RcppEigen,

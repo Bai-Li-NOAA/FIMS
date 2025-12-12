@@ -1,6 +1,6 @@
-# Runs devtools::document() and styler::style_active_package(), then opens a
-# pull request to the branch that had changes in the push that triggered the
-# workflow.
+# Runs devtools::document() and styler::style_active_package() when a PR is
+# opened or updated, then opens a pull request with changes targeting the
+# feature branch.
 #
 # Workflow Trigger:
 # - This workflow runs when a pull request is opened or updated (synchronized)

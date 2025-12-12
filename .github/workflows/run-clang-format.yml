@@ -1,5 +1,5 @@
-# Runs clang-format to format C++ code and then creates a PR to the branch
-# that had changes and triggered this action.
+# Runs clang-format to format C++ code when a PR is opened or updated,
+# then creates a PR with formatting changes targeting the feature branch.
 #
 # Workflow Trigger:
 # - This workflow runs when a pull request is opened or updated (synchronized) 

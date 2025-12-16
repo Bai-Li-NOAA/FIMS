@@ -7,3 +7,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    target-branch: "dev"
+    reviewers:
+      - "@NOAA-FIMS/project-lead"

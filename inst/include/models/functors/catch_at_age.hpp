@@ -197,6 +197,9 @@ public:
       for (size_t year = 0; year < fleet->n_years; year++) {
         fleet->Fmort[year] = fims_math::exp(fleet->log_Fmort[year]);
       }
+
+
+
       // // TODO: does this age_length_to_conversion need to be a dq and
       // parameter
       // // of fleet?
@@ -612,6 +615,16 @@ void CalculateLandingsNumbersAL(
     std::map<std::string, fims::Vector<Type>> &fdq_ =
         this->GetFleetDerivedQuantities(population->fleets[fleet_]->GetId());
     if (population->fleets[fleet_]->nlengths > 0) {
+
+      size_t i_length_age = age * this->fleets[fleet_]->nlengths + i_length;
+      size_t i_length_year = year * this->fleets[fleet_]->nlengths + i_length;
+
+      fdq_["landings_numbers_at_length"][i_length_year] +=
+          (population->fleets[fleet_]->Fmort[year] *
+           population->fleets[fleet_]->selectivity_at_length[i_length]) /
+          fdq_["mortality_Z"][i_age_year] * fdq_["numbers_at_age"][i_age_year] *
+          (1 - fims_math::exp(-(fdq_["mortality_Z"][i_age_year]))) *
+          this->fleets[fleet_]->age_to_length_conversion[i_length_age];
     }
   }
 }
@@ -678,10 +691,15 @@ void CalculateIndexNumbersAL(
     std::map<std::string, fims::Vector<Type>> &fdq_ =
         this->GetFleetDerivedQuantities(population->fleets[fleet_]->GetId());
     if (population->fleets[fleet_]->nlengths > 0) {
+      size_t i_length_age = age * this->fleets[fleet_]->nlengths + i_length;
+      size_t i_length_year = year * this->fleets[fleet_]->nlengths + i_length;
+      fdq_["index_numbers_at_length"][i_length_year] +=
+          population->fleets[fleet_]->q.get_force_scalar(year) *
+          population->fleets[fleet_]->selectivity_at_length[i_length] *
+          fdq_["numbers_at_age"][i_age_year] *
+          population->fleets[fleet_]->age_to_length_conversion[i_length_age];
     }
   }
-  // Implementation for length-based index numbers at age
-  // This is a placeholder for the actual implementation
 }
 
 /**

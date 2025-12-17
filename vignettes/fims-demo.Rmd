@@ -254,7 +254,7 @@ substr(recruitment_log, 1, 100)
 
 The results can be plotted with either base R, {ggplot2}, or {stockplotr}. Where, we recommend using {stockplotr} where possible.
 
-```{r fit-plots}
+```{r fit-output}
 # Temporary manipulation to the returned estimates to get them
 # to work with stockplotr
 output <- get_estimates(fit) |>
@@ -264,12 +264,19 @@ output <- get_estimates(fit) |>
     estimate = estimated
   )
 
+```{r fit-plots-spawning-biomass}
 # Plot spawning biomass
+#| fig.alt: >
+#|   Plot of spawning biomass.
 stockplotr::plot_spawning_biomass(
   dplyr::filter(output, label == "spawning_biomass")
 ) +
   stockplotr::theme_noaa()
+```
 
+```{r fit-plots-others}
+#| fig.alt: >
+#|   Plot of log fishing mortality.
 # Plot of log fishing mortality
 stockplotr::plot_timeseries(
   stockplotr::filter_data(
@@ -284,6 +291,8 @@ stockplotr::plot_timeseries(
   stockplotr::theme_noaa()
 
 # Plot the index of abundance against the observed values
+#| fig.alt: >
+#|   Plot of estimated index of abundance versus observed values.
 stockplotr::plot_timeseries(
   stockplotr::filter_data(
     output |> dplyr::filter(module_id == 2),
@@ -305,6 +314,8 @@ stockplotr::plot_timeseries(
   stockplotr::theme_noaa()
 
 # Plot the landings estimates
+#| fig.alt: >
+#|   Plot of landings estimates.
 stockplotr::plot_timeseries(
   stockplotr::filter_data(
     output |> dplyr::filter(module_id == 1),
@@ -320,7 +331,7 @@ stockplotr::plot_timeseries(
 
 ### Sensitivities
 
-Multiple fits, i.e., sensitivity runs, can be set up by modifying the parameter list using `update_parameters()` or changing the data that is used to fit the model.
+Multiple fits, i.e., sensitivity runs, can be set up by modifying the parameter list using `dplyr::mutate()` or changing the data that is used to fit the model.
 
 #### Initial values
 
@@ -398,6 +409,8 @@ length_only_fit <- parameters_4_model |>
 clear()
 
 # Plot spawning biomass for each sensitivity model
+#| fig.alt: >
+#|   Plot of spawning biomass for each sensitivty model.
 stockplotr::plot_biomass(
   list(
     "age" = get_estimates(age_only_fit) |>

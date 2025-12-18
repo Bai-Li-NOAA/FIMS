@@ -9,7 +9,13 @@ vignette: >
 
 
 ```{r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE)
+withr::local_options(list(
+  cli.num_colors = 1,
+  crayon.enabled = FALSE,
+  pillar.subtle = FALSE
+))
 ```
 
 ## FIMS
@@ -78,13 +84,13 @@ The `create_default_configurations()` function is designed to generate a set of 
 # Create default configurations based on the data
 default_configurations <- create_default_configurations(data = data_4_model)
 
-default_configurations |> knitr::kable()
+default_configurations
 
 # The output is a nested tibble, with details in the `data` column.
 default_configurations_unnested <- default_configurations |>
   tidyr::unnest(cols = data)
 
-default_configurations_unnested |> knitr::kable()
+default_configurations_unnested
 ```
 
 ### Update configurations
@@ -102,7 +108,7 @@ updated_configurations <- default_configurations_unnested |>
     by = c("module_name", "fleet_name")
   )
   
-  updated_configurations |> knitr::kable()
+  updated_configurations
 
 # Nest updated_configurations
 updated_configurations_nested <- updated_configurations |>
@@ -131,13 +137,13 @@ default_parameters <- create_default_parameters(
   data = data_4_model
 ) 
 
-default_parameters |> knitr::kable()
+default_parameters
 
 # Unnest the default_parameters to see the detailed parameters
 default_parameters_unnested <- tidyr::unnest(default_parameters, cols = data)
 
 
-default_parameters_unnested |> knitr::kable()
+default_parameters_unnested
 ```
 
 ### Update parameters

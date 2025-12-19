@@ -58,7 +58,7 @@ jobs:
     # Example: If this runs on PR 'feature-x' -> 'dev', the new PR will be
     # 'format-c++-code-feature-x' -> 'feature-x'
     - name: Create Pull Request
-      uses: peter-evans/create-pull-request@v7
+      uses: peter-evans/create-pull-request@v8
       with:
         commit-message: 'style: run clang format'
         token: ${{ secrets.GITHUB_TOKEN }}

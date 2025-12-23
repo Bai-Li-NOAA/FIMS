@@ -3,7 +3,7 @@
 {
   "name": "FIMS Developer",
   // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-  "image": "ghcr.io/rocker-org/devcontainer/r-ver:4.3", //commma needed if other sections are used.
+  "image": "ghcr.io/rocker-org/devcontainer/r-ver:4.5", //commma needed if other sections are used.
   // Add capAdd and securityOpt to allow debugging with lldb
   "capAdd": [
     "SYS_PTRACE"
@@ -37,7 +37,7 @@
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
   // "forwardPorts": [],
   // Use 'postCreateCommand' to run commands after the container is created.
-  "postCreateCommand": "echo 'options(repos = c(CRAN = \"https://cloud.r-project.org\"))' | sudo sh -c 'cat - >>\"${R_HOME}/etc/Rprofile.site\"'",
+  "postCreateCommand": "echo 'options(repos = c(CRAN = \"https://packagemanager.posit.co/cran/latest\"))' | sudo sh -c 'cat - >>\"${R_HOME}/etc/Rprofile.site\"'",
   // Configure tool-specific properties.
   "customizations": {
     "vscode": {

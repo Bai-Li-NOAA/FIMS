@@ -57,8 +57,8 @@ R_PROF="$HOME/.Rprofile"
 touch "$R_PROF"
 [ -n "$(tail -c1 "$R_PROF")" ] && echo "" >> "$R_PROF"
 
-if ! grep -Fq "packagemanager.posit.co" "$R_PROF"; then
-    echo "options(repos = c(CRAN = 'https://packagemanager.posit.co/cran/latest'))" >> "$R_PROF"
+if ! grep -Fq "noaa-fisheries-integrated-toolbox" "$R_PROF"; then
+    echo "options(repos = c(NOAA = 'https://noaa-fisheries-integrated-toolbox.r-universe.dev', CRAN = 'https://packagemanager.posit.co/cran/latest'))" >> "$R_PROF"
 fi
 
 # --- R INSTALLATION WITH ERROR HANDLING ---
@@ -72,20 +72,12 @@ if (!dir.exists(lib_loc)) dir.create(lib_loc, recursive = TRUE)
 .libPaths(c(lib_loc, .libPaths()))
 
 # Define Requirements
-pkgs <- c('languageserver', 'FIMS', 'asar', 'stockplotr', 'remotes', 'renv', 'rlang', 'tinytex')
-repos <- c(
-    'https://noaa-fisheries-integrated-toolbox.r-universe.dev',
-    CRAN = 'https://packagemanager.posit.co/cran/latest'
-)
+pkgs <- c('languageserver', 'renv', 'rlang', 'stockplotr', 'FIMS', 'tinytex')
+# Install pak if missing
+if (!requireNamespace('pak', quietly = TRUE)) install.packages('pak')
 
-# Install missing packages
-installed_before <- installed.packages(lib.loc = lib_loc)[, 'Package']
-missing <- setdiff(pkgs, installed_before)
-
-if (length(missing) > 0) {
-    message('>>> Installing missing: ', paste(missing, collapse = ', '))
-    install.packages(missing, lib = lib_loc, repos = repos, INSTALL_opts = c('--no-lock'))
-}
+# Install packages
+pak::pkg_install(pkgs, ask = FALSE)
 
 # Handle VS Code httpgd
 if (Sys.getenv('TERM_PROGRAM') == 'vscode' && !'httpgd' %in% installed.packages()[, 'Package']) {
@@ -107,6 +99,25 @@ if (length(failed) > 0) {
     stop('\n!!! FAILED TO INSTALL PACKAGES: ', paste(failed, collapse = ', '), ' !!!\n')
 } else {
     message('>>> All R packages verified.')
+  
+    # Check FIMS versions specifically
+    current_fims <- as.character(packageVersion('FIMS'))
+        
+    # Pull the latest version available
+    available_pkgs <- available.packages()
+    latest_fims <- if ('FIMS' %in% rownames(available_pkgs)) available_pkgs['FIMS', 'Version'] else 'Unknown'
+    
+    message('------------------------------------------------------------------')
+    message(paste0('* FIMS Version Check:'))
+    message(paste0('  - Installed: ', current_fims))
+    message(paste0('  - Latest:    ', latest_fims))
+    
+    if (current_fims != latest_fims && latest_fims != 'Unknown') {
+        message('  ! Note: A newer version of FIMS is available.')
+    } else {
+        message('  - You are running the latest version of FIMS.')
+    }
+    message('------------------------------------------------------------------')
 }
 "
 

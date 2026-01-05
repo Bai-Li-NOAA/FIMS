@@ -1,0 +1,14 @@
+# Tests R-universe builds for pull requests to main.
+name: Test R-universe
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: R-universe testing
+    uses: r-universe-org/workflows/.github/workflows/build.yml@v3
+    with:
+      universe: ${{ github.repository_owner }}

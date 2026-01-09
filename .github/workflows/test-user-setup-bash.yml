@@ -1,8 +1,7 @@
 name: Test FIMS User Setup Bash Script
 
 on:
-  pull_request:
-    branches: [ main ]
+  push:
   workflow_dispatch: 
 
 jobs:

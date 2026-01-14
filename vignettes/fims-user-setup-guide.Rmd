@@ -100,10 +100,10 @@ knitr::purl(
 source('fims_demo.R')
 "
 
-# Fetch the remote R script for the data bucket example
-readwrite_databucket_url <- "https://raw.githubusercontent.com/nmfs-opensci/CloudComputingSetup/refs/heads/main/R/readwrite_databucket.R"
-readwrite_databucket_script <- tryCatch(
-  readLines(readwrite_databucket_url, warn = FALSE),
+# Fetch the remote R script for the GitHub setup
+github_setup_url <- "https://raw.githubusercontent.com/nmfs-opensci/CloudComputingSetup/refs/heads/main/R/github_setup.R"
+github_setup_script <- tryCatch(
+  readLines(github_setup_url, warn = FALSE),
   error = function(e) "# Could not load remote script."
 )
 
@@ -111,6 +111,13 @@ readwrite_databucket_script <- tryCatch(
 mount_bucket_url <- "https://raw.githubusercontent.com/nmfs-opensci/CloudComputingSetup/refs/heads/main/R/mount_bucket.R"
 mount_bucket_script <- tryCatch(
   readLines(mount_bucket_url, warn = FALSE),
+  error = function(e) "# Could not load remote script."
+)
+
+# Fetch the remote R script for the data bucket example
+readwrite_databucket_url <- "https://raw.githubusercontent.com/NOAA-FIMS/FIMS/refs/heads/main/vignettes/r_example/read_write_google_cloud_storage_bucket.R"
+readwrite_databucket_script <- tryCatch(
+  readLines(readwrite_databucket_url, warn = FALSE),
   error = function(e) "# Could not load remote script."
 )
 ```
@@ -155,14 +162,17 @@ cat("\n```")
 
 - To stop a workstation, close the workstation page and go to the `Overview` page of the workstations user interface to click the `■` (stop) button. Stopping a workstation does not delete it, ensuring that files and settings remain intact. 
 
-<details>
-<summary>🤿 Deep dive: R code to read/write to Google Cloud Storage Buckets (Click to expand)</summary>
+> **Note:** If the instructions above do not work, please visit the FIMS [discussion page](https://github.com/orgs/NOAA-FIMS/discussions/1073) to see known issues and documented solutions. If you encounter a new error, feel free to post it there for technical assistance.
 
-To read/write data to a Google Cloud Storage Bucket, use the R example from `nmfs-opensci/CloudComputingSetup`:
+<details>
+<summary>🤿 Deep dive: R code to connect github to a Google Cloud Workstation (Click to expand)</summary>
+
+A Personal Access Token (PAT) can be used to link a workstation to a GitHub Enterprise Account. Please follow GitHub's instructions ([PAT settings](https://github.com/settings/tokens) and [tutorial](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)) to generate a PAT. Then, use the R code below from `nmfs-opensci/CloudComputingSetup` to link a workstation to a GitHub Enterprise account.
+
 ```{r, echo=FALSE, results='asis'}
 # Wrap the script in markdown backticks manually
-cat("```r\n")
-cat(readwrite_databucket_script, sep = "\n")
+cat("```bash\n")
+cat(github_setup_script, sep = "\n")
 cat("\n```")
 ```
 
@@ -182,6 +192,19 @@ cat("\n```")
 </details>
 
 <details>
+<summary>🤿 Deep dive: R code to read/write to Google Cloud Storage Buckets (Click to expand)</summary>
+
+Work through local IT to request a data bucket. To read/write data to a Google Cloud Storage Bucket, use the R example below:
+```{r, echo=FALSE, results='asis'}
+# Wrap the script in markdown backticks manually
+cat("```r\n")
+cat(readwrite_databucket_script, sep = "\n")
+cat("\n```")
+```
+
+</details>
+
+<details>
 <summary> 🗂️ Cloud Computing Documentation (Click to expand)</summary>
 
 - [NOAA Fisheries Cloud Program](https://docs.google.com/document/d/1nziPdPULoRWOYQ9WKzISNUgJvANACvfYpFr1z3Ro2Bc/edit?usp=sharing) began a Cloud Compute Accelerator Pilot in early 2025: Enhancing NOAA Fisheries' Mission with Google Cloud Workstations. 
@@ -189,21 +212,6 @@ cat("\n```")
 - Consult the Pilot Participant [Frequently Asked Questions](https://docs.google.com/document/d/1U1PzGS7G70xsXtD6F6WxkjTSCw7bwNVyZ-YnFyOLOqU/edit?usp=sharing) for support regarding access and billing.
 
 - [NOAA Fisheries Cloud Computing Setup repository](https://github.com/nmfs-opensci/CloudComputingSetup/) details cloud computing resources at NOAA Fisheries, with a focus on Google Cloud Workstations for R users. It includes instructions for linking workstations to GitHub and mounting Google Cloud Storage buckets.
-
-</details>
-
-<details>
-<summary> 🛠️ Troubleshooting and Technical Support (Click to expand)</summary>
-
-- If the instructions above do not work, please visit the FIMS [discussion page](https://github.com/orgs/NOAA-FIMS/discussions/1073) to see known issues and documented solutions. If you encounter a new error, feel free to post it there for technical assistance. Below is a scrollable (but not searchable) preview of the discussion page.
-
-<p align="center">
-  <iframe src="https://github.com/orgs/NOAA-FIMS/discussions/1073" 
-          width="100%" 
-          height="500px" 
-          style="border:1px solid #ddd;">
-  </iframe>
-</p>
 
 </details>
 

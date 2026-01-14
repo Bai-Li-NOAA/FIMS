@@ -189,6 +189,9 @@ command)</td>
 </tr>
 </tbody>
 </table>
+<pre><code><span><span class="co">## Warning in file(con, "r"): cannot open URL</span></span>
+<span><span class="co">## 'https://raw.githubusercontent.com/NOAA-FIMS/FIMS/refs/heads/main/vignettes/r_example/read_write_google_cloud_storage_bucket.R':</span></span>
+<span><span class="co">## HTTP status was '404 Not Found'</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="google-cloud-workstations">☁️ Google Cloud Workstations<a class="anchor" aria-label="anchor" href="#google-cloud-workstations"></a>
@@ -232,7 +235,7 @@ terminal</a> within your session and copy/paste this command below. This
 will automatically set up the workstation by installing all necessary
 system and R dependencies.</p></li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">bash</span> <span class="op">&lt;(</span><span class="ex">curl</span> <span class="at">-sL</span> https://raw.githubusercontent.com/NOAA-FIMS/FIMS/main/setup_fims.sh<span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">bash</span> <span class="op">&lt;(</span><span class="ex">curl</span> <span class="at">-sL</span> https://raw.githubusercontent.com/NOAA-FIMS/FIMS/main/setup_fims.sh<span class="op">)</span></span></code></pre></div>
 <blockquote>
 <p><strong>Note:</strong> The dependency installation process typically
 takes 10 minutes. If using <code>Positron Pro</code>, a restart of the R
@@ -249,7 +252,7 @@ model run.</p>
 <li>To verify that FIMS is ready, run the R code below to download the
 FIMS demo R script:</li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/knit.html" class="external-link">purl</a></span><span class="op">(</span></span>
 <span>  input <span class="op">=</span> <span class="st">'https://raw.githubusercontent.com/NOAA-FIMS/FIMS/refs/heads/main/vignettes/fims-demo.Rmd'</span>, </span>
@@ -264,34 +267,42 @@ FIMS demo R script:</li>
 the <code>■</code> (stop) button. Stopping a workstation does not delete
 it, ensuring that files and settings remain intact.</li>
 </ul>
+<blockquote>
+<p><strong>Note:</strong> If the instructions above do not work, please
+visit the FIMS <a href="https://github.com/orgs/NOAA-FIMS/discussions/1073" class="external-link">discussion
+page</a> to see known issues and documented solutions. If you encounter
+a new error, feel free to post it there for technical assistance.</p>
+</blockquote>
 <details><summary>
-🤿 Deep dive: R code to read/write to Google Cloud Storage Buckets
+🤿 Deep dive: R code to connect github to a Google Cloud Workstation
 (Click to expand)
-</summary><p>To read/write data to a Google Cloud Storage Bucket, use the R
-example from <code>nmfs-opensci/CloudComputingSetup</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># R code to read and write data to a Google bucket</span></span>
-<span><span class="co"># Current code links to a data bucket set up by SEFSC located at...</span></span>
-<span><span class="co"># https://console.cloud.google.com/storage/browser/mollystevens-gcwpilot;tab=objects?inv=1&amp;invt=Ab4Pyw&amp;pageState=(%22StorageObjectListTable%22:(%22f%22:%22%255B%255D%22))&amp;prefix=&amp;forceOnObjectsSortingFiltering=false</span></span>
-<span><span class="co"># Permissions to view, read, and write to this data bucket must be amended by SEFSC IT</span></span>
-<span><span class="co"># Author: Molly Stevens</span></span>
-<span></span>
-<span><span class="co">##List files in the entire bucket</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span><span class="st">"~/my_gcs_bucket"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">##List files in the desired folder </span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/list.files.html" class="external-link">list.files</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"~/my_gcs_bucket/CloudComputingSetup"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## read in .RData from data bucket</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/load.html" class="external-link">load</a></span><span class="op">(</span><span class="st">'~/my_gcs_bucket/CloudComputingSetup/bsh_agg.RData'</span><span class="op">)</span> </span>
-<span></span>
-<span><span class="co">## read in .csv from data bucket</span></span>
-<span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"~/my_gcs_bucket/CloudComputingSetup/sampdata.csv"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## amend .csv, test write.csv</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
-<span><span class="va">data2</span> <span class="op">&lt;-</span> <span class="va">data</span> <span class="op">%&gt;%</span> <span class="fu">mutate</span><span class="op">(</span>testvar<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/write.table.html" class="external-link">write.csv</a></span><span class="op">(</span><span class="va">data2</span>,<span class="st">"~/my_gcs_bucket/CloudComputingSetup/sampdata3.csv"</span><span class="op">)</span></span></code></pre></div>
+</summary><p>A Personal Access Token (PAT) can be used to link a workstation to a
+GitHub Enterprise Account. Please follow GitHub’s instructions (<a href="https://github.com/settings/tokens" class="external-link">PAT settings</a> and <a href="https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens" class="external-link">tutorial</a>)
+to generate a PAT. Then, use the R code below from
+<code>nmfs-opensci/CloudComputingSetup</code> to link a workstation to a
+GitHub Enterprise account.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># R code to connect github to a Google Cloud Workstation</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co"># Author: Alexandra Norelli</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co"># Go to Github and generate a Personal Access Token (PAT) with the permissions </span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="co"># you need:  </span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># https://github.com/settings/tokens</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co"># Github tutorial here: </span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co"># https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co"># Github Governaance Team Video tutorial here:  </span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="co"># https://drive.google.com/file/d/1tbbw_xXARK689Zj5tm4lVo18aBaXhdKX/view?t=4</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co"># ctrl+f and replace USER_NAME with your username</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co"># ctrl+f and replace E_MAIL with your email address</span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co"># ctrl+f and replace TOKEN with your PAT Token</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="ex">system</span><span class="er">(</span><span class="st">'git config --global user.name "USER_NAME"'</span><span class="kw">)</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="ex">system</span><span class="er">(</span><span class="st">'git config --global user.email "E_MAIL"'</span><span class="kw">)</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="ex">system</span><span class="er">(</span><span class="st">"git config --list"</span><span class="kw">)</span>  <span class="co">#check that the info is correct</span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="ex">cred_line</span> <span class="op">&lt;</span>- <span class="st">"https://USER_NAME:TOKEN@github.com"</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="ex">writeLines</span><span class="er">(</span><span class="ex">cred_line,</span> <span class="st">"~/.git-credentials"</span><span class="kw">)</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="ex">system</span><span class="er">(</span><span class="st">'git config --global credential.helper store'</span><span class="kw">)</span></span></code></pre></div>
 </details><details><summary>
 🤿 Deep dive: Terminal code for mounting Google Cloud Storage Buckets
 (Click to expand)
@@ -299,56 +310,63 @@ example from <code>nmfs-opensci/CloudComputingSetup</code>:</p>
 act like a local folder on the Google Cloud Workstation for easy reading
 and writing of data, use the R example below from
 <code>nmfs-opensci/CloudComputingSetup</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Terminal code for mounting Google Cloud Buckets to Google Cloud Workstations</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co"># Author: Alexandra Norelli with Gemini assistance for R to BASH translations.  </span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="co"># Paste all of this code in the terminal and follow the instructions to </span></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="co"># authenticate your google account.  </span></span>
-<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># Define your bucket and the mount point.</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="co"># replace "nmfs-opensci" with your bucket name</span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="co"># The `$HOME` symbol is a shortcut for your home directory, so this will</span></span>
-<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a><span class="co"># create the folder at /home/your_username/my_gcs_bucket.</span></span>
-<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a><span class="va">BUCKET_NAME</span><span class="op">=</span><span class="st">"nmfs-opensci"</span></span>
-<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a><span class="va">MOUNT_POINT</span><span class="op">=</span><span class="st">"</span><span class="va">$HOME</span><span class="st">/my_gcs_bucket"</span></span>
-<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co"># --- Authentication ---</span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co"># This command authenticates your user account with Google Cloud.</span></span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co"># You'll be prompted to open a browser to complete the login process.</span></span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Running gcloud authentication. Please follow the instructions to log in in your browser."</span></span>
-<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a><span class="ex">gcloud</span> auth application-default login <span class="at">--no-launch-browser</span></span>
-<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a></span>
-<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a><span class="co"># --- Installation and Setup (Run only once) ---</span></span>
-<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a><span class="co"># Create the mount point if it doesn't exist.</span></span>
-<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a><span class="co"># Since this directory is in your home folder, you don't need `sudo` to create it.</span></span>
-<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">!</span> <span class="ot">-d</span> <span class="st">"</span><span class="va">$MOUNT_POINT</span><span class="st">"</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>    <span class="fu">mkdir</span> <span class="at">-p</span> <span class="st">"</span><span class="va">$MOUNT_POINT</span><span class="st">"</span></span>
-<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a></span>
-<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co"># Add the Google Cloud GPG key to your system's trusted keys.</span></span>
-<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a><span class="co"># This is a critical step to verify the authenticity of the packages.</span></span>
-<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-fsSL</span> https://packages.cloud.google.com/apt/doc/apt-key.gpg <span class="kw">|</span> <span class="fu">sudo</span> gpg <span class="at">--dearmor</span> <span class="at">-o</span> /etc/apt/trusted.gpg.d/gcsfuse.gpg</span>
-<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a></span>
-<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a><span class="co"># Add the GCS FUSE repository to your system's sources list.</span></span>
-<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"deb [signed-by=/etc/apt/trusted.gpg.d/gcsfuse.gpg] https://packages.cloud.google.com/apt gcsfuse-</span><span class="kw">`</span><span class="ex">lsb_release</span> <span class="at">-c</span> <span class="at">-s</span><span class="kw">`</span><span class="st"> main"</span> <span class="kw">|</span> <span class="fu">sudo</span> tee /etc/apt/sources.list.d/gcsfuse.list <span class="op">&gt;</span> /dev/null</span>
-<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a></span>
-<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a><span class="co"># Update the package list to include the new repository.</span></span>
-<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Updating package list..."</span></span>
-<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a><span class="fu">sudo</span> apt-get update</span>
-<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a></span>
-<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a><span class="co"># Install gcsfuse.</span></span>
-<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Installing gcsfuse..."</span></span>
-<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a><span class="fu">sudo</span> apt-get install <span class="at">-y</span> gcsfuse</span>
-<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a></span>
-<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a><span class="co"># --- Mounting the Bucket ---  you might only need to run this if restarting a workstation</span></span>
-<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a><span class="co"># Use the gcsfuse tool to mount the bucket to the specified mount point.</span></span>
-<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a><span class="co"># The mount point is in your home directory, so `sudo` is no longer needed.</span></span>
-<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Mounting the bucket..."</span></span>
-<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a><span class="ex">gcsfuse</span> <span class="at">--implicit-dirs</span> <span class="st">"</span><span class="va">$BUCKET_NAME</span><span class="st">"</span> <span class="st">"</span><span class="va">$MOUNT_POINT</span><span class="st">"</span></span>
-<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a></span>
-<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Mounting complete. You can now access the bucket contents at </span><span class="va">$MOUNT_POINT</span><span class="st">"</span></span>
-<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a></span>
-<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a><span class="co"># Optional: List the contents to verify the mount was successful.</span></span>
-<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="st">"</span><span class="va">$MOUNT_POINT</span><span class="st">"</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="co"># Terminal code for mounting Google Cloud Buckets to Google Cloud Workstations</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co"># Author: Alexandra Norelli with Gemini assistance for R to BASH translations.  </span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># Paste all of this code in the terminal and follow the instructions to </span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co"># authenticate your google account.  </span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co"># Define your bucket and the mount point.</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co"># replace "nmfs-opensci" with your bucket name</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="co"># The `$HOME` symbol is a shortcut for your home directory, so this will</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="co"># create the folder at /home/your_username/my_gcs_bucket.</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="va">BUCKET_NAME</span><span class="op">=</span><span class="st">"nmfs-opensci"</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="va">MOUNT_POINT</span><span class="op">=</span><span class="st">"</span><span class="va">$HOME</span><span class="st">/my_gcs_bucket"</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co"># --- Authentication ---</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co"># This command authenticates your user account with Google Cloud.</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co"># You'll be prompted to open a browser to complete the login process.</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Running gcloud authentication. Please follow the instructions to log in in your browser."</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="ex">gcloud</span> auth application-default login <span class="at">--no-launch-browser</span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co"># --- Installation and Setup (Run only once) ---</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co"># Create the mount point if it doesn't exist.</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co"># Since this directory is in your home folder, you don't need `sudo` to create it.</span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="ot">!</span> <span class="ot">-d</span> <span class="st">"</span><span class="va">$MOUNT_POINT</span><span class="st">"</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>    <span class="fu">mkdir</span> <span class="at">-p</span> <span class="st">"</span><span class="va">$MOUNT_POINT</span><span class="st">"</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb5-25"><a href="#cb5-25" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" tabindex="-1"></a><span class="co"># Add the Google Cloud GPG key to your system's trusted keys.</span></span>
+<span id="cb5-27"><a href="#cb5-27" tabindex="-1"></a><span class="co"># This is a critical step to verify the authenticity of the packages.</span></span>
+<span id="cb5-28"><a href="#cb5-28" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-fsSL</span> https://packages.cloud.google.com/apt/doc/apt-key.gpg <span class="kw">|</span> <span class="fu">sudo</span> gpg <span class="at">--dearmor</span> <span class="at">-o</span> /etc/apt/trusted.gpg.d/gcsfuse.gpg</span>
+<span id="cb5-29"><a href="#cb5-29" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" tabindex="-1"></a><span class="co"># Add the GCS FUSE repository to your system's sources list.</span></span>
+<span id="cb5-31"><a href="#cb5-31" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"deb [signed-by=/etc/apt/trusted.gpg.d/gcsfuse.gpg] https://packages.cloud.google.com/apt gcsfuse-</span><span class="kw">`</span><span class="ex">lsb_release</span> <span class="at">-c</span> <span class="at">-s</span><span class="kw">`</span><span class="st"> main"</span> <span class="kw">|</span> <span class="fu">sudo</span> tee /etc/apt/sources.list.d/gcsfuse.list <span class="op">&gt;</span> /dev/null</span>
+<span id="cb5-32"><a href="#cb5-32" tabindex="-1"></a></span>
+<span id="cb5-33"><a href="#cb5-33" tabindex="-1"></a><span class="co"># Update the package list to include the new repository.</span></span>
+<span id="cb5-34"><a href="#cb5-34" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Updating package list..."</span></span>
+<span id="cb5-35"><a href="#cb5-35" tabindex="-1"></a><span class="fu">sudo</span> apt-get update</span>
+<span id="cb5-36"><a href="#cb5-36" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" tabindex="-1"></a><span class="co"># Install gcsfuse.</span></span>
+<span id="cb5-38"><a href="#cb5-38" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Installing gcsfuse..."</span></span>
+<span id="cb5-39"><a href="#cb5-39" tabindex="-1"></a><span class="fu">sudo</span> apt-get install <span class="at">-y</span> gcsfuse</span>
+<span id="cb5-40"><a href="#cb5-40" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" tabindex="-1"></a><span class="co"># --- Mounting the Bucket ---  you might only need to run this if restarting a workstation</span></span>
+<span id="cb5-42"><a href="#cb5-42" tabindex="-1"></a><span class="co"># Use the gcsfuse tool to mount the bucket to the specified mount point.</span></span>
+<span id="cb5-43"><a href="#cb5-43" tabindex="-1"></a><span class="co"># The mount point is in your home directory, so `sudo` is no longer needed.</span></span>
+<span id="cb5-44"><a href="#cb5-44" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Mounting the bucket..."</span></span>
+<span id="cb5-45"><a href="#cb5-45" tabindex="-1"></a><span class="ex">gcsfuse</span> <span class="at">--implicit-dirs</span> <span class="st">"</span><span class="va">$BUCKET_NAME</span><span class="st">"</span> <span class="st">"</span><span class="va">$MOUNT_POINT</span><span class="st">"</span></span>
+<span id="cb5-46"><a href="#cb5-46" tabindex="-1"></a></span>
+<span id="cb5-47"><a href="#cb5-47" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Mounting complete. You can now access the bucket contents at </span><span class="va">$MOUNT_POINT</span><span class="st">"</span></span>
+<span id="cb5-48"><a href="#cb5-48" tabindex="-1"></a></span>
+<span id="cb5-49"><a href="#cb5-49" tabindex="-1"></a><span class="co"># Optional: List the contents to verify the mount was successful.</span></span>
+<span id="cb5-50"><a href="#cb5-50" tabindex="-1"></a><span class="fu">ls</span> <span class="at">-l</span> <span class="st">"</span><span class="va">$MOUNT_POINT</span><span class="st">"</span></span></code></pre></div>
+</details><details><summary>
+🤿 Deep dive: R code to read/write to Google Cloud Storage Buckets
+(Click to expand)
+</summary><p>Work through local IT to request a data bucket. To read/write data to
+a Google Cloud Storage Bucket, use the R example below:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Could not load remote script.</span></span></code></pre></div>
 </details><details><summary>
 🗂️ Cloud Computing Documentation (Click to expand)
 </summary><ul>
@@ -363,20 +381,7 @@ Fisheries Cloud Computing Setup repository</a> details cloud computing
 resources at NOAA Fisheries, with a focus on Google Cloud Workstations
 for R users. It includes instructions for linking workstations to GitHub
 and mounting Google Cloud Storage buckets.</p></li>
-</ul></details><details><summary>
-🛠️ Troubleshooting and Technical Support (Click to expand)
-</summary><ul>
-<li>If the instructions above do not work, please visit the FIMS <a href="https://github.com/orgs/NOAA-FIMS/discussions/1073" class="external-link">discussion
-page</a> to see known issues and documented solutions. If you encounter
-a new error, feel free to post it there for technical assistance. Below
-is a scrollable (but not searchable) preview of the discussion
-page.</li>
-</ul>
-<p align="center">
-<iframe src="https://github.com/orgs/NOAA-FIMS/discussions/1073" width="100%" height="500px" style="border:1px solid #ddd;">
-</iframe>
-</p>
-</details>
+</ul></details>
 </div>
 <div class="section level2">
 <h2 id="github-codespaces">🌐 GitHub Codespaces<a class="anchor" aria-label="anchor" href="#github-codespaces"></a>
@@ -390,7 +395,7 @@ browser.</p>
 <li>To verify that FIMS is ready, run the R code below to download the
 FIMS demo R script:</li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/knit.html" class="external-link">purl</a></span><span class="op">(</span></span>
 <span>  input <span class="op">=</span> <span class="st">'https://raw.githubusercontent.com/NOAA-FIMS/FIMS/refs/heads/main/vignettes/fims-demo.Rmd'</span>, </span>
@@ -411,7 +416,7 @@ Engine.</p>
 <p><strong>Note:</strong> To verify that FIMS is ready, run the R code
 below to download the FIMS demo R script:</p>
 </blockquote>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/knit.html" class="external-link">purl</a></span><span class="op">(</span></span>
 <span>  input <span class="op">=</span> <span class="st">'https://raw.githubusercontent.com/NOAA-FIMS/FIMS/refs/heads/main/vignettes/fims-demo.Rmd'</span>, </span>
@@ -428,12 +433,12 @@ below to download the FIMS demo R script:</p>
 (Windows, Linux, or macOS) can do so using the
 <code>setup_fims.sh</code> bash script. To install, execute the
 following command in the bash terminal:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="fu">bash</span> <span class="op">&lt;(</span><span class="ex">curl</span> <span class="at">-sL</span> https://raw.githubusercontent.com/NOAA-FIMS/FIMS/main/setup_fims.sh<span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">bash</span> <span class="op">&lt;(</span><span class="ex">curl</span> <span class="at">-sL</span> https://raw.githubusercontent.com/NOAA-FIMS/FIMS/main/setup_fims.sh<span class="op">)</span></span></code></pre></div>
 <ul>
 <li>To verify that FIMS is ready, run the R code below to download the
 FIMS demo R script:</li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/knit.html" class="external-link">purl</a></span><span class="op">(</span></span>
 <span>  input <span class="op">=</span> <span class="st">'https://raw.githubusercontent.com/NOAA-FIMS/FIMS/refs/heads/main/vignettes/fims-demo.Rmd'</span>, </span>

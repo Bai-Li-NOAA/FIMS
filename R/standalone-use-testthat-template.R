@@ -13,6 +13,7 @@
 # before creating it.
 #
 # ## Changelog
+# TODO: remove this line, just for testing purposes
 # 2026-04-30:
 # - Initial version of standalone test template generator.
 #
@@ -63,6 +64,7 @@ use_testthat_template <- function(name) {
   # TODO: add the ability to also pass the arguments for the function or find
   #       them within the code base and ensure that the template includes the
   #       necessary structure for each input argument
+  # TODO: remove this line, just for testing purposes
   if (missing(name) || is.null(name) || name == "") {
     cli::cli_abort("{.arg name} must be specified to create a test file.")
   }
@@ -111,6 +113,7 @@ use_testthat_template <- function(name) {
 # warnings [Error handling]. See `?{{{ package_name }}}:::use_testthat_template` for more
 # information. Add clear comments to document each test_that() block and each
 # expectation so the test intent is easy to understand.
+# TODO: remove this line, just for testing purposes
 
 # {{{ function_name }}} ----
 ## Setup ----

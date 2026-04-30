@@ -35,6 +35,7 @@ look like. Last, the list is used to create the module, using another
 wrapper function.
 
 ``` r
+
 # Load the FIMS package
 library(FIMS)
 
@@ -51,13 +52,13 @@ default_parameters <- create_default_configurations(fims_frame) |>
   FIMS:::create_default_maturity(data = fims_frame)
 
 show(default_parameters)
-#> # A tibble: 2 × 13
-#>   model_family module_name module_type label  distribution_link fleet_name   age
-#>   <chr>        <chr>       <chr>       <chr>  <chr>             <chr>      <dbl>
-#> 1 NA           Maturity    Logistic    infle… NA                NA            NA
-#> 2 NA           Maturity    Logistic    slope  NA                NA            NA
-#> # ℹ 6 more variables: length <dbl>, time <int>, value <dbl>,
-#> #   estimation_type <chr>, distribution_type <chr>, distribution <chr>
+#> # A tibble: 2 × 12
+#>   model_family module_name module_type label fleet_name   age length  time value
+#>   <chr>        <chr>       <chr>       <chr> <chr>      <dbl>  <dbl> <int> <dbl>
+#> 1 NA           Maturity    Logistic    infl… NA            NA     NA    NA     2
+#> 2 NA           Maturity    Logistic    slope NA            NA     NA    NA     1
+#> # ℹ 3 more variables: estimation_type <chr>, distribution_type <chr>,
+#> #   distribution <chr>
 
 # The default maturity parameters can be updated
 parameters <- default_parameters |>
@@ -72,13 +73,13 @@ parameters <- default_parameters |>
   )
 
 show(parameters)
-#> # A tibble: 2 × 13
-#>   model_family module_name module_type label  distribution_link fleet_name   age
-#>   <chr>        <chr>       <chr>       <chr>  <chr>             <chr>      <dbl>
-#> 1 catch_at_age Maturity    Logistic    infle… NA                NA            NA
-#> 2 catch_at_age Maturity    Logistic    slope  NA                NA            NA
-#> # ℹ 6 more variables: length <dbl>, time <int>, value <dbl>,
-#> #   estimation_type <chr>, distribution_type <chr>, distribution <chr>
+#> # A tibble: 2 × 12
+#>   model_family module_name module_type label fleet_name   age length  time value
+#>   <chr>        <chr>       <chr>       <chr> <chr>      <dbl>  <dbl> <int> <dbl>
+#> 1 catch_at_age Maturity    Logistic    infl… NA            NA     NA    NA  2.25
+#> 2 catch_at_age Maturity    Logistic    slope NA            NA     NA    NA  3   
+#> # ℹ 3 more variables: estimation_type <chr>, distribution_type <chr>,
+#> #   distribution <chr>
 
 # Initialize maturity module based on the list of parameters
 maturity <- FIMS:::initialize_maturity(
@@ -92,6 +93,7 @@ the module without using lists of parameters or any wrapper functions.
 The following code also creates the same maturity module.
 
 ``` r
+
 # load FIMS
 library(FIMS)
 # Create a new maturity model
@@ -111,6 +113,7 @@ that growth and recruitment modules, i.e., modules 2 and 3, have already
 been set up.
 
 ``` r
+
 # Initialize the population module and link the maturity module
 # The IDs of the growth and recruitment modules are pseudo code and don't exist
 population <- create_default_configurations(fims_frame) |>
@@ -132,6 +135,7 @@ the population module without using lists of parameters or any wrapper
 functions.
 
 ``` r
+
 population <- methods::new(Population)
 population$SetMaturityID(maturity$get_id())
 population$SetGrowthID(2)
@@ -147,6 +151,7 @@ Restarting or closing your R session will also work to free up the
 memory.
 
 ``` r
+
 # Clear C++ memory
 clear()
 # Clear R memory
@@ -475,6 +480,7 @@ within `FIMS::initialize_population` but can also be done by hand with
 `SetMaturity`. Where both options are shown, again, below.
 
 ``` r
+
 # Helper function
 population <- create_default_configurations(fims_frame) |>
   tidyr::unnest(cols = data) |>
@@ -728,6 +734,7 @@ different parameter set. Note that additional modules should be included
 in population, e.g., growth, but that will be ignored for this example.
 
 ``` r
+
 population_modules <- list(
   "Pop 1" = list(
     id = 1,
@@ -754,6 +761,7 @@ comparable to using Rcpp in R to set up the modules and store them in
 memory.
 
 ``` r
+
 # maturity1 <- methods::new(LogisticMaturity)
 # maturity1$inflection_point$value <- 10
 # maturity1$slope$value <- 0.2
@@ -770,6 +778,7 @@ three populations. Which is actually done using `SetMaturity` in R
 (i.e., the commented out code).
 
 ``` r
+
 population_modules[[1]]$maturity_id <- maturity_modules[[1]]$id
 population_modules[[2]]$maturity_id <- maturity_modules[[1]]$id
 population_modules[[3]]$maturity_id <- maturity_modules[[2]]$id
@@ -785,6 +794,7 @@ element of the map is the pointer to the Population or Maturity class.
 This can be thought about in R using a list but in C++ maps are used.
 
 ``` r
+
 information <- list(
   populations = list(id = NULL, pointer = "Population"),
   maturity = list(id = NULL, pointer = "MaturityBase")
@@ -797,6 +807,7 @@ information <- list(
 Pointers are used to link Information to each respective module.
 
 ``` r
+
 information$populations[[1]] <- list(id = 1, pointer = population_modules[[1]])
 information$populations[[2]] <- list(id = 2, pointer = population_modules[[2]])
 information$populations[[3]] <- list(id = 3, pointer = population_modules[[3]])
@@ -811,6 +822,7 @@ the pointer to information and `maturity` is the pointer to a specific
 maturity module.
 
 ``` r
+
 ## // (e.g., maturity = maturity_modules[[1]])
 # info->maturity_models[maturity->id] = maturity;
 ```
@@ -821,6 +833,7 @@ back out to the Population class used to run all the calculations in the
 model.
 
 ``` r
+
 for (it in 1:length(population_modules)) {
   # for (population_iterator it = this->populations.begin();
   #      it != this->populations.end(); ++it) {

@@ -14,12 +14,12 @@ to manually install the dependencies FIMS requires.
 
 Please follow the section below that matches your preferred setup:
 
-| Option                                                         | Best For                                                                           | Where it Runs | Setup Effort                                        | Internet Needed |
-|:---------------------------------------------------------------|:-----------------------------------------------------------------------------------|:--------------|:----------------------------------------------------|:----------------|
-| ☁️ **[Google Cloud Workstations](#google-cloud-workstations)** | **NOAA-internal users** interested in using Google Cloud Workstations.             | Cloud Browser | **Moderate** (requires running a one-line command)  | **Always**      |
-| 🌐 **[GitHub Codespaces](#github-codespaces)**                 | Anyone with a **GitHub account** who wants a fast, browser-based environment.      | Browser       | **Minimal**                                         | **Always**      |
-| 🐧 **[WSL2](#wsl2)**                                           | Windows users who want to run the **FIMS container** in a local Linux environment. | Local Machine | **Moderate** to **Complex** (if WSL2 not installed) | **Setup only**  |
-| 🧑‍💻 **[Local](#local)**                                         | **Everyone else** installing packages directly on their own operating system.      | Local Machine | **Moderate** (requires running a one-line command)  | **Setup only**  |
+| Option | Best For | Where it Runs | Setup Effort | Internet Needed |
+|:---|:---|:---|:---|:---|
+| ☁️ **[Google Cloud Workstations](#google-cloud-workstations)** | **NOAA-internal users** interested in using Google Cloud Workstations. | Cloud Browser | **Moderate** (requires running a one-line command) | **Always** |
+| 🌐 **[GitHub Codespaces](#github-codespaces)** | Anyone with a **GitHub account** who wants a fast, browser-based environment. | Browser | **Minimal** | **Always** |
+| 🐧 **[WSL2](#wsl2)** | Windows users who want to run the **FIMS container** in a local Linux environment. | Local Machine | **Moderate** to **Complex** (if WSL2 not installed) | **Setup only** |
+| 🧑‍💻 **[Local](#local)** | **Everyone else** installing packages directly on their own operating system. | Local Machine | **Moderate** (requires running a one-line command) | **Setup only** |
 
 ## ☁️ Google Cloud Workstations
 
@@ -83,6 +83,7 @@ bash <(curl -sL https://raw.githubusercontent.com/NOAA-FIMS/FIMS/main/setup_fims
   FIMS demo R script:
 
 ``` r
+
 
 knitr::purl(
   input = 'https://raw.githubusercontent.com/NOAA-FIMS/FIMS/refs/heads/main/vignettes/fims-demo.Rmd',
@@ -202,6 +203,7 @@ Work through local IT to request a data bucket. To read/write data to a
 Google Cloud Storage Bucket, use the R example below:
 
 ``` r
+
 # R code to read and write data to Google Cloud Storage Bucket
 # - This R script uses a "cloud mount", meaning the Google Bucket behaves like a local
 #   folder on your workstation located at "~/my_gcs_bucket".
@@ -309,6 +311,7 @@ or follow the manual steps below.
 
 ``` r
 
+
 knitr::purl(
   input = 'https://raw.githubusercontent.com/NOAA-FIMS/FIMS/refs/heads/main/vignettes/fims-demo.Rmd',
   output = 'fims_demo.R',
@@ -323,9 +326,12 @@ source('fims_demo.R')
 For Windows users who prefer local execution of the FIMS user container,
 we recommend using WSL2 in conjunction with Docker Engine.
 
-To open the container on your local Windows machine using Windows
-Subsystem for Linux 2 (WSL2), Docker Engine, and Visual Studio Code (VS
-Code) use the following instructions:
+Instructions for installing Windows Subsystem for Linux 2 (WSL2) can be
+found on the on the [onboarding GitHub
+webpage](https://nmfs-ost.github.io/on-off-boarding/getting-started.html#wsl)
+for the National Stock Assessment Program. Once installed, to open the
+container on your local Windows machine using WSL2, Docker Engine, and
+Visual Studio Code (VS Code) use the following instructions:
 
 ### Connect VS Code to WSL
 
@@ -370,6 +376,7 @@ type `Remote: Close Remote Connection`.
 
 ``` r
 
+
 knitr::purl(
   input = 'https://raw.githubusercontent.com/NOAA-FIMS/FIMS/refs/heads/main/vignettes/fims-demo.Rmd',
   output = 'fims_demo.R',
@@ -393,6 +400,7 @@ bash <(curl -sL https://raw.githubusercontent.com/NOAA-FIMS/FIMS/main/setup_fims
   FIMS demo R script:
 
 ``` r
+
 
 knitr::purl(
   input = 'https://raw.githubusercontent.com/NOAA-FIMS/FIMS/refs/heads/main/vignettes/fims-demo.Rmd',

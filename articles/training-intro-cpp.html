@@ -28,7 +28,7 @@
     <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
     <img class="navlogo" src="https://noaa-fims.github.io/images/FIMS_logo3.png" alt="FIMS logo with a fish" width="60" align="left"><a class="navbar-brand me-2" href="../index.html">FIMS</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,11 +49,13 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><h6 class="dropdown-header" data-toc-skip>Intro to FIMS</h6></li>
     <li><a class="dropdown-item" href="../articles/fims-demo.html">Introducing the Fisheries Integrated Modeling System (FIMS)</a></li>
+    <li><a class="dropdown-item" href="../articles/fims-input-data.html">Introducing FIMS Input Data</a></li>
     <li><a class="dropdown-item" href="../articles/fims-logging.html">Introducing the FIMS Logging System</a></li>
     <li><a class="dropdown-item" href="../articles/fims-user-setup-guide.html">FIMS User Setup Guide</a></li>
     <li><a class="dropdown-item" href="../articles/fims-demo-projections.html">Simple projections using FIMS</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>Developer</h6></li>
+    <li><a class="dropdown-item" href="../articles/adding-new-module.html">Adding a New C++ Module</a></li>
     <li><a class="dropdown-item" href="../articles/fims-path-maturity.html">FIMS Path - Maturity</a></li>
     <li><hr class="dropdown-divider"></li>
     <li><h6 class="dropdown-header" data-toc-skip>C++ Training</h6></li>
@@ -76,8 +78,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-reports" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Reports</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-reports">
-<li><a class="external-link dropdown-item" href="https://noaa-fims.github.io/FIMS/coverage/coverage.html">coverage</a></li>
-    <li><a class="external-link dropdown-item" href="https://noaa-fims.github.io/FIMS/coverage/codecoverage_explanation.html">coverage explained</a></li>
+<li><a class="external-link dropdown-item" href="https://app.codecov.io/gh/NOAA-FIMS/FIMS" target="_blank">coverage (codecov)</a></li>
     <li><a class="external-link dropdown-item" href="https://noaa-fims.github.io/FIMS/testdown/index.html">testdown</a></li>
   </ul>
 </li>
@@ -819,8 +820,8 @@ will explore later.</p>
 <span></span>
 <span><span class="fu">pointer</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## x is equal to the address of y</span></span>
-<span><span class="co">## x is: 0x7ffc1f0fa454</span></span>
-<span><span class="co">## The address of y is: 0x7ffc1f0fa454</span></span>
+<span><span class="co">## x is: 0x7fff5e7d0074</span></span>
+<span><span class="co">## The address of y is: 0x7fff5e7d0074</span></span>
 <span><span class="co">## *x returns the value of y: 3.1459</span></span></code></pre>
 <pre><code><span><span class="co">## [1] 0</span></span></code></pre>
 </details>
@@ -859,8 +860,8 @@ e.g., <code>&amp;y</code>.</p>
 <span><span class="fu">reference</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## x is: 3</span></span>
 <span><span class="co">## y is: 3</span></span>
-<span><span class="co">## The memory address of x is: 0x7ffc1f0fa454</span></span>
-<span><span class="co">## The memory address of y is: 0x7ffc1f0fa454</span></span></code></pre>
+<span><span class="co">## The memory address of x is: 0x7fff5e7d0074</span></span>
+<span><span class="co">## The memory address of y is: 0x7fff5e7d0074</span></span></code></pre>
 <pre><code><span><span class="co">## [1] 0</span></span></code></pre>
 </details>
 </div>
@@ -924,9 +925,9 @@ following example?</p>
 <span></span>
 <span><span class="fu">reassign_pointer</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## c now equals the address of b</span></span>
-<span><span class="co">## &amp;a = 0x7ffc1f0fa450</span></span>
-<span><span class="co">## &amp;b = 0x7ffc1f0fa454</span></span>
-<span><span class="co">## c = 0x7ffc1f0fa454</span></span>
+<span><span class="co">## &amp;a = 0x7fff5e7d0070</span></span>
+<span><span class="co">## &amp;b = 0x7fff5e7d0074</span></span>
+<span><span class="co">## c = 0x7fff5e7d0074</span></span>
 <span><span class="co">## a = 100</span></span>
 <span><span class="co">## b = 10</span></span>
 <span><span class="co">## *c = 10</span></span></code></pre>
@@ -1039,9 +1040,9 @@ automatically deleted.</p>
 <span><span class="fu">shared_pointer</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## ptr1: 42</span></span>
 <span><span class="co">## ptr2: 24</span></span>
-<span><span class="co">## ptr1 = 0x55d8fb420420</span></span>
-<span><span class="co">## ptr2 = 0x55d8fb030ec0</span></span>
-<span><span class="co">## ptr3 = 0x55d8fb420420</span></span></code></pre>
+<span><span class="co">## ptr1 = 0x55c35cc4d1f0</span></span>
+<span><span class="co">## ptr2 = 0x55c35c8e8be0</span></span>
+<span><span class="co">## ptr3 = 0x55c35cc4d1f0</span></span></code></pre>
 <pre><code><span><span class="co">## [1] 0</span></span></code></pre>
 </details>
 </div>
@@ -1053,7 +1054,7 @@ automatically deleted.</p>
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Kelli F. Johnson, Grant D. Adams, Jon K. T. Brodziak, Kathryn L. Doering, Daniel R. Goethel, Andrea M. Havron, Ronald Klasky, Peter T. Kuriyama, Emily M. Liljestrand, Christopher M. Legault, Bai Li, Timothy J. Miller, Cole C. Monnahan, Elizabeth F. Perl, Megumi C. Oshima, Kyle W. Shertzer, Christine C. Stawitz, Jane Y. Sullivan, Matthew Supernaw, Ian G. Taylor, Nathan R. Vaughan, Erik H. Williams.</p>
+  <p>Developed by Kelli F. Johnson, Grant D. Adams, Jon K. T. Brodziak, Kathryn L. Doering, Daniel R. Goethel, Andrea M. Havron, Ronald Klasky, Peter T. Kuriyama, Emily M. Liljestrand, Christopher M. Legault, Bai Li, Timothy J. Miller, Cole C. Monnahan, Elizabeth F. Perl, Megumi C. Oshima, Kyle W. Shertzer, Christine C. Stawitz, Jane Y. Sullivan, Matthew Supernaw, Ian G. Taylor, Nathan R. Vaughan, Erik H. Williams, Adrianne T. Wilson.</p>
 </div>
 
 <div class="pkgdown-footer-right">

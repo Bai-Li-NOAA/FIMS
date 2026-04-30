@@ -3,8 +3,10 @@
 <url><loc>https://NOAA-FIMS.github.io/FIMS/CONTRIBUTING.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/LICENSE-text.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/articles/RD-re-sparsity.html</loc></url>
+<url><loc>https://NOAA-FIMS.github.io/FIMS/articles/adding-new-module.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/articles/fims-demo-projections.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/articles/fims-demo.html</loc></url>
+<url><loc>https://NOAA-FIMS.github.io/FIMS/articles/fims-input-data.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/articles/fims-logging.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/articles/fims-path-maturity.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/articles/fims-user-setup-guide.html</loc></url>
@@ -13,8 +15,6 @@
 <url><loc>https://NOAA-FIMS.github.io/FIMS/articles/training-intro-rcpp.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/authors.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/copilot-instructions.html</loc></url>
-<url><loc>https://NOAA-FIMS.github.io/FIMS/coverage/codecoverage_explanation.html</loc></url>
-<url><loc>https://NOAA-FIMS.github.io/FIMS/coverage/coverage.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/index.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/news/index.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/reference/Cpp_classes.html</loc></url>
@@ -55,6 +55,8 @@
 <url><loc>https://NOAA-FIMS.github.io/FIMS/testdown/global-results-for-package-fims.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/testdown/how-to-read-this-report.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/testdown/index.html</loc></url>
+<url><loc>https://NOAA-FIMS.github.io/FIMS/testdown/test-check_mle_convergence.html</loc></url>
+<url><loc>https://NOAA-FIMS.github.io/FIMS/testdown/test-check_sdreport_convergence.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/testdown/test-create_default_configurations.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/testdown/test-create_default_parameters.html</loc></url>
 <url><loc>https://NOAA-FIMS.github.io/FIMS/testdown/test-distribution-formulas.html</loc></url>

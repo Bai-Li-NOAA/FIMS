@@ -444,6 +444,7 @@ in an R session using {Rcpp} and call the program `my_class_add()`, see
 the following code:
 
 ``` r
+
 Rcpp::sourceCpp("cpp/my_class.cpp")
 my_class_add()
 ```
@@ -561,6 +562,7 @@ below.
 **Example: Run inheritance example from R**
 
 ``` r
+
 Rcpp::sourceCpp("cpp/my_inheritance.cpp")
 
 calculate_areas("rectangle", 6, 4)
@@ -569,12 +571,14 @@ calculate_areas("rectangle", 6, 4)
     ## [1] 24
 
 ``` r
+
 calculate_areas("square", 2)
 ```
 
     ## [1] 4
 
 ``` r
+
 calculate_areas("triangle", 3, 4)
 ```
 
@@ -678,6 +682,7 @@ new instances of the desired class.
 **Example: Load module**
 
 ``` r
+
 Rcpp::sourceCpp("cpp/my_polymorphism.cpp")
 # Note that "shape" matches the name passed to RCPP_MODULE
 Rcpp::loadModule("shape", TRUE)
@@ -690,6 +695,7 @@ c$area()
     ## [1] 12.56637
 
 ``` r
+
 r$area()
 ```
 
@@ -715,6 +721,7 @@ which we will explore later.
 **Example: Pointers**
 
 ``` r
+
 Rcpp::cppFunction('
 #include <Rcpp.h>
 int pointer(){
@@ -732,8 +739,8 @@ pointer()
 ```
 
     ## x is equal to the address of y
-    ## x is: 0x7ffc1f0fa454
-    ## The address of y is: 0x7ffc1f0fa454
+    ## x is: 0x7fff5e7d0074
+    ## The address of y is: 0x7fff5e7d0074
     ## *x returns the value of y: 3.1459
 
     ## [1] 0
@@ -755,6 +762,7 @@ used to return the memory address of a variable, e.g., `&y`.
 **Example: References**
 
 ``` r
+
 Rcpp::cppFunction('
   #include <Rcpp.h>
   int reference() {
@@ -773,8 +781,8 @@ reference()
 
     ## x is: 3
     ## y is: 3
-    ## The memory address of x is: 0x7ffc1f0fa454
-    ## The memory address of y is: 0x7ffc1f0fa454
+    ## The memory address of x is: 0x7fff5e7d0074
+    ## The memory address of y is: 0x7fff5e7d0074
 
     ## [1] 0
 
@@ -788,6 +796,7 @@ updated in the model, we want it updated everywhere in the model.
 **Example: Updating pointers**
 
 ``` r
+
 Rcpp::cppFunction('
 #include <Rcpp.h>
 int update_pointer(){
@@ -819,6 +828,7 @@ and `*c` to return in the following example?
 **Example: Reassigning pointers**
 
 ``` r
+
 Rcpp::cppFunction('
 #include <Rcpp.h>
 int reassign_pointer(){
@@ -845,9 +855,9 @@ reassign_pointer()
 ```
 
     ## c now equals the address of b
-    ## &a = 0x7ffc1f0fa450
-    ## &b = 0x7ffc1f0fa454
-    ## c = 0x7ffc1f0fa454
+    ## &a = 0x7fff5e7d0070
+    ## &b = 0x7fff5e7d0074
+    ## c = 0x7fff5e7d0074
     ## a = 100
     ## b = 10
     ## *c = 10
@@ -876,6 +886,7 @@ old objects from interfering with new analyses.
 **Example: Manual memory management**
 
 ``` r
+
 Rcpp::cppFunction('
 #include <Rcpp.h>
 int manage_memory(){
@@ -952,6 +963,7 @@ shared_ptr<double> ptr = make_shared(x);
 **Example: Shared pointers**
 
 ``` r
+
 Rcpp::cppFunction('
   #include <Rcpp.h>
   //std::shared_ptr is defined in <memory>
@@ -978,8 +990,8 @@ shared_pointer()
 
     ## ptr1: 42
     ## ptr2: 24
-    ## ptr1 = 0x55d8fb420420
-    ## ptr2 = 0x55d8fb030ec0
-    ## ptr3 = 0x55d8fb420420
+    ## ptr1 = 0x55c35cc4d1f0
+    ## ptr2 = 0x55c35c8e8be0
+    ## ptr3 = 0x55c35cc4d1f0
 
     ## [1] 0

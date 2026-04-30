@@ -31,6 +31,7 @@ hosted by NOAA Fisheries Integrated Toolbox. You can install the latest
 version from GitHub.
 
 ``` r
+
 # Install the pre-compiled version of the latest release
 install.packages(
   "FIMS",
@@ -81,11 +82,12 @@ repository](https://nmfs-ost.github.io/on-off-boarding/).
 
 ## Cheatsheet
 
-[![](https://raw.githubusercontent.com/noaa-fims/fims/main/pkgdown/assets/fims-cheatsheet-thumb.png)](hhttps://github.com/NOAA-FIMS/FIMS/blob/main/pkgdown/assets/fims-cheatsheet.pdf)
+[![](https://raw.githubusercontent.com/noaa-fims/fims/main/pkgdown/assets/fims-cheatsheet-thumb.png)](https://github.com/NOAA-FIMS/FIMS/blob/main/pkgdown/assets/fims-cheatsheet.pdf)
 
 ## Usage
 
 ``` r
+
 library(FIMS)
 # Load sample data
 data("data_big")
@@ -132,7 +134,7 @@ blog](https://noaa-fims.github.io/blog/).
 
 All contributions to this project are gratefully acknowledged using the
 [`allcontributors` package](https://github.com/ropensci/allcontributors)
-following the [all-contributors](https://allcontributors.org)
+following the [allcontributors](https://allcontributors.org)
 specification. Contributions of any kind are welcome!
 
 ### Code

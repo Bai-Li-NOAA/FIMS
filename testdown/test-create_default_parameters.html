@@ -187,7 +187,7 @@
 <td align="left">expect_s3_class(result, “tbl_df”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-create_default_parameters.R#27</td>
-<td align="left">2026-04-30 12:53:42.09691</td>
+<td align="left">2026-04-30 16:40:54.542271</td>
 </tr>
 <tr class="even">
 <td align="left"><code>create_default_parameters()</code> works with correct inputs</td>
@@ -195,7 +195,7 @@
 <td align="left">expect_equal( colnames(result), c(“model_family”, “module_name”, “fleet_name”, “data”) )</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-create_default_parameters.R#29</td>
-<td align="left">2026-04-30 12:53:42.111202</td>
+<td align="left">2026-04-30 16:40:54.555836</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>create_default_parameters()</code> works with correct inputs</td>
@@ -203,7 +203,7 @@
 <td align="left">expect_true(is.list(result[[“data”]]))</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-create_default_parameters.R#34</td>
-<td align="left">2026-04-30 12:53:42.125165</td>
+<td align="left">2026-04-30 16:40:54.568815</td>
 </tr>
 <tr class="even">
 <td align="left"><code>create_default_parameters()</code> works with correct inputs</td>
@@ -211,7 +211,7 @@
 <td align="left">expect_s3_class(result[[“data”]][[1]], “tbl_df”)</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-create_default_parameters.R#36</td>
-<td align="left">2026-04-30 12:53:42.134006</td>
+<td align="left">2026-04-30 16:40:54.577787</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>create_default_parameters()</code> works with correct inputs</td>
@@ -219,7 +219,7 @@
 <td align="left">expect_equal( colnames(result[[“data”]][[1]]), c( “module_type”, “label”, “age”, “length”, “time”, “value”, “estimation_type”, “distribution_type”, “distribution” ) )</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-create_default_parameters.R#38</td>
-<td align="left">2026-04-30 12:53:42.143338</td>
+<td align="left">2026-04-30 16:40:54.587305</td>
 </tr>
 <tr class="even">
 <td align="left"><code>create_default_parameters()</code> works with correct inputs</td>
@@ -227,7 +227,7 @@
 <td align="left">expect_snapshot_file( save_csv(result_unnested), “default_parameters.csv”, compare = compare_file_text )</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-create_default_parameters.R#46</td>
-<td align="left">2026-04-30 12:53:42.154222</td>
+<td align="left">2026-04-30 16:40:54.598394</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>create_default_parameters()</code> works with edge cases</td>
@@ -235,7 +235,7 @@
 <td align="left">expect_equal( result |&gt; tidyr::unnest(cols = data) |&gt; dplyr::filter(module_name == “Recruitment”, label == “log_sd”) |&gt; dplyr::pull(value), numeric(0) )</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-create_default_parameters.R#74</td>
-<td align="left">2026-04-30 12:53:42.284113</td>
+<td align="left">2026-04-30 16:40:54.731931</td>
 </tr>
 <tr class="even">
 <td align="left"><code>create_default_parameters()</code> works with edge cases</td>
@@ -243,7 +243,7 @@
 <td align="left">expect_equal( result |&gt; tidyr::unnest(cols = data) |&gt; dplyr::filter(module_name == “Recruitment”, label == “log_devs”) |&gt; dplyr::pull(estimation_type), rep(“constant”, result |&gt; tidyr::unnest(cols = data) |&gt; dplyr::filter(module_name == “Recruitment”, label == “log_devs”) |&gt; nrow()) )</td>
 <td align="left"><span title="This expectation is successful.">✅ <font color='green'>Success</font></span></td>
 <td align="left">test-create_default_parameters.R#83</td>
-<td align="left">2026-04-30 12:53:42.306827</td>
+<td align="left">2026-04-30 16:40:54.753908</td>
 </tr>
 </tbody>
 </table>
